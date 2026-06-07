@@ -1,0 +1,44 @@
+# Repository Guidelines
+
+NextSlope is a Spring Boot 4 + Thymeleaf web app that recommends three ski resorts based on a user's profile. Solo developer, 3-week after-hours MVP; product scope lives in `@context/foundation/prd.md`.
+
+## Hard Rules
+
+- Single-tier stack: server-rendered Thymeleaf with Bootstrap 5 + HTMX via CDN. Do not introduce a JS build step, SPA framework, or Node tier. Full rationale: `@context/foundation/tech-stack.md`.
+- Java 21 toolchain is pinned in `@build.gradle`; do not bump.
+- Remote: `git@github.com:wbiniecki/NextSlope-10x.git` (`main` tracks `origin/main`).
+- Recommendation logic must honor the PRD guardrails: always three results or an explicit explanation, truthful rationale, profile and visited-list privacy. See `@context/foundation/prd.md` → "Success Criteria → Guardrails".
+
+## Project Structure
+
+- `src/main/java/com/nextslope/` — Java sources under the single base package.
+- `src/main/resources/application.properties` — runtime config (currently only `spring.application.name`).
+- `src/main/resources/templates/`, `src/main/resources/static/` — Thymeleaf views and static assets (create as needed).
+- `src/test/java/com/nextslope/` — JUnit 5 tests; class suffix `*Tests` (see `NextslopeApplicationTests.java`).
+- `context/foundation/` — PRD, tech-stack hand-off, shape-notes (authoritative product/architecture).
+- `context/changes/` — change logs (e.g., bootstrap verification).
+- `.cursor/skills/` — 10x workflow skills you can invoke.
+
+## Build, Test & Development Commands
+
+- `./gradlew bootRun` — start the app locally.
+- `./gradlew test` — run the JUnit 5 suite.
+- `./gradlew build` — compile, test, and assemble the boot jar.
+- `./gradlew test --tests com.nextslope.NextslopeApplicationTests` — run one test class.
+- `./gradlew --version` — verify Gradle wrapper + JDK 21.
+
+## Coding Style & Conventions
+
+- Java 21, base package `com.nextslope`. Build files use tabs (see `@build.gradle`).
+- Lombok is wired on `compileOnly` + `annotationProcessor`; prefer it over hand-written boilerplate.
+- No formatter or linter is configured yet — use @Controller / @Service / @Repository and constructor injection.
+- HTMX partials must be returned as Thymeleaf `th:fragment` snippets from controllers (per `@context/foundation/tech-stack.md`).
+
+## Testing
+
+- JUnit 5 is enabled via `useJUnitPlatform()` in `@build.gradle`. Per-domain Spring Boot test starters (`*-data-jpa-test`, `*-security-test`, `*-webmvc-test`, etc.) are on the classpath — pick the slice that matches the unit rather than booting the full context.
+
+## Deployment & Configuration
+
+- Target is Fly.io with GitHub Actions auto-deploy-on-merge per `@context/foundation/tech-stack.md`; `.github/workflows/` does not yet exist, add it before relying on CI gating.
+- PostgreSQL (Fly) and H2 (local) are both on the runtime classpath; profile-driven datasource config still needs to be wired in `application.properties`. Spring Security is on the classpath, so every endpoint is locked down until a `SecurityConfig` is added.
