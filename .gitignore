@@ -41,3 +41,6 @@ out/
 .cursor/**/.10x*
 /.cursor/**/skill-explainer.md
 /.cursor/**/m[0-9]l[0-9]-*
+
+### Neon CLI ###
+.neon

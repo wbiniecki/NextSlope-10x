@@ -10,6 +10,8 @@ Cross-change living documents that span multiple changes. Each project picks whi
 
 When a foundation doc is fully superseded — replaced by a new approach rather than refined — move it to `foundation/archive/YYYY-MM-DD-<doc>.md` and write the replacement at the original path. The archive folder is a historical record; nothing reads from it routinely.
 
+Note: this `foundation/archive/` is for superseded *foundation docs* only. Completed *changes* archive separately under `context/archive/` (see that folder's README) — don't conflate the two.
+
 ## Anti-pattern
 
 Do **not** put change-scoped docs here. Anything tied to a single change (its plan, its research, its review) belongs under `context/changes/<change-id>/`. Foundation is for what outlives any one change.

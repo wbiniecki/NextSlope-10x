@@ -40,5 +40,5 @@ NextSlope is a Spring Boot 4 + Thymeleaf web app that recommends three ski resor
 
 ## Deployment & Configuration
 
-- Target is Fly.io with GitHub Actions auto-deploy-on-merge per `@context/foundation/tech-stack.md`; `.github/workflows/` does not yet exist, add it before relying on CI gating.
-- PostgreSQL (Fly) and H2 (local) are both on the runtime classpath; profile-driven datasource config still needs to be wired in `application.properties`. Spring Security is on the classpath, so every endpoint is locked down until a `SecurityConfig` is added.
+- Target is Render (Free web tier, $0/mo) with an external Neon free Postgres and GitHub Actions auto-deploy-on-merge per `@context/foundation/infrastructure.md`; `.github/workflows/` does not yet exist, add it before relying on CI gating. Rationale: Render is the only candidate with a genuine $0 path, the lowest-regret choice for an MVP that may be discarded. Fly.io is the documented runner-up for cheapest always-on if cold starts become unacceptable; deploy via a multi-stage Dockerfile (no native Java runtime on Render).
+- PostgreSQL (Neon free tier, external) and H2 (local) are both on the runtime classpath; profile-driven datasource config still needs to be wired in `application.properties` (set `SPRING_DATASOURCE_URL` to the Neon pooled connection string as a Render secret). Spring Security is on the classpath, so every endpoint is locked down until a `SecurityConfig` is added.

@@ -13,6 +13,10 @@ audit_command: "null"
 
 ## Hand-off
 
+> Note (2026-06-07): the deployment target later changed from Fly.io to Render — see
+> `context/foundation/infrastructure.md`. This log preserves the original bootstrap state
+> (the `deployment_target: fly` values below are historical, not current).
+
 Hand-off frontmatter, copied verbatim from `context/foundation/tech-stack.md`:
 
 ```yaml
