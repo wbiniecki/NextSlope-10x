@@ -60,11 +60,11 @@ to Render, backed by an external Neon free-tier Postgres, with a GitHub Actions 
 - [x] Phase 0 — Prerequisites and accounts (completed 2026-06-10)
 - [x] Phase 1 — Make the app deploy-ready (port, health, security, profiles, memory) (completed 2026-06-10)
 - [x] Phase 2 — Containerize (multi-stage Dockerfile + `.dockerignore`) (completed 2026-06-10)
-- [ ] Phase 3 — Provision external Neon Postgres
-- [ ] Phase 4 — Render Blueprint (`render.yaml`) + secrets
-- [ ] Phase 5 — CI/CD (GitHub Actions test gate -> deploy)
-- [ ] Phase 6 — First deploy and public-access verification
-- [ ] Phase 7 — Post-deploy hardening and edge-case runbook
+- [x] Phase 3 — Provision external Neon Postgres (completed 2026-06-11)
+- [x] Phase 4 — Render Blueprint (`render.yaml`) + secrets (completed 2026-06-11)
+- [x] Phase 5 — CI/CD (GitHub Actions test gate -> deploy) (completed 2026-06-11)
+- [x] Phase 6 — First deploy and public-access verification (completed 2026-06-11)
+- [x] Phase 7 — Post-deploy hardening and edge-case runbook (runbook reviewed 2026-06-11; mitigations in place, items reactive)
 
 ---
 
@@ -324,12 +324,13 @@ ENTRYPOINT ["java","-jar","app.jar"]
       migrations must run against the **DIRECT** Neon endpoint and stay backward-compatible (no rollback).
       (Confirmed no-op for this deploy — `ddl-auto=update` already set in `application-prod.properties`;
       no migration tooling added now, as intended.)
-- [ ] **Commit and push everything to `main` first.** Before launching the Blueprint (Phase 4), push the
+- [x] **Commit and push everything to `main` first.** Before launching the Blueprint (Phase 4), push the
       Phase 1-2 app files (`SecurityConfig`, `Dockerfile`, `.dockerignore`, `index.html`, `error.html`),
       the Phase 4 `render.yaml`, AND the Phase 5 `ci.yml` in one push. Reasons: (a) the dashboard Blueprint
       flow reads `render.yaml` from the connected repo, (b) the first build needs the Dockerfile/code,
       (c) `ci.yml` must already be on `main` so the commit carries a passing `Test` check before any
       CI-gated deploy (avoids Render's "zero checks -> won't deploy" gap).
+      (Done 2026-06-11 — committed `Make app deploy-ready for Render (Phases 1-5)` and pushed to `main`.)
 
 ## Phase 4 — Render Blueprint (`render.yaml`) + secrets
 
@@ -368,11 +369,13 @@ services:
     the deprecated boolean `autoDeploy`; valid values are `commit`, `checksPass`, `off`). This means
     "After CI Checks Pass" does not require a separate dashboard step — but the zero-checks caveat still
     applies, so `ci.yml` must already be on `main` (see Phase 3 push step and Phase 5).
-- [ ] Create the service from the Blueprint via the Render dashboard: **New > Blueprint**, select the
+- [x] Create the service from the Blueprint via the Render dashboard: **New > Blueprint**, select the
       connected repo, and Render reads `render.yaml`. (The Render CLI cannot launch a Blueprint; use
       `render blueprints validate render.yaml` beforehand to catch errors.)
-- [ ] **Edge case — `PORT`**: do not hardcode. Render injects `PORT=10000`; the app already reads
+      (Done 2026-06-11 — Blueprint launched, three Neon secrets entered at the prompt, service deployed.)
+- [x] **Edge case — `PORT`**: do not hardcode. Render injects `PORT=10000`; the app already reads
       `${PORT:8080}`. Confirm the service is reachable on its public `.onrender.com` URL.
+      (Confirmed — public `/actuator/health` returns `200 {"status":"UP"}`, so PORT binding works.)
 
 ## Phase 5 — CI/CD (GitHub Actions test gate -> deploy)
 
@@ -399,51 +402,68 @@ Steps:
   - [x] `Test` job: `actions/checkout@v4`, set up Temurin 21 (`actions/setup-java@v4`, `cache: gradle`),
         run `./gradlew test --no-daemon` (uses H2; no DB secrets needed). This job IS the CI check Render
         waits on (the GitHub check name will be `Test`).
-- [ ] Deploy mode is already `autoDeployTrigger: checksPass` from `render.yaml` (Phase 4) — no dashboard
+- [x] Deploy mode is already `autoDeployTrigger: checksPass` from `render.yaml` (Phase 4) — no dashboard
       toggle needed. Just confirm the `Test` check has passed at least once on `main` before relying on the
       gate (otherwise the "zero checks -> won't deploy" gap blocks the first deploy). To switch manually
       instead, use dashboard Settings -> Auto-Deploy.
-- [ ] (Only if using the fallback) add the `Deploy` `curl` step + `RENDER_DEPLOY_HOOK_URL` GitHub secret,
-      and set Auto-Deploy = Off in Render.
+      (Confirmed — the CI-gated deploy went live, so the `Test` check passed on `main`.)
+- [x] **N/A (fallback not used)** — ~~add the `Deploy` `curl` step + `RENDER_DEPLOY_HOOK_URL` GitHub
+      secret, and set Auto-Deploy = Off in Render.~~ Chosen path uses native "After CI Checks Pass"
+      (`autoDeployTrigger: checksPass`), which deployed successfully, so the Deploy-Hook fallback was
+      intentionally not implemented.
 
 ## Phase 6 — First deploy and public-access verification
 
-- [ ] **Trigger the first gated deploy with a fresh commit** (or a Manual Deploy) so the CI-gated path is
+- [x] **Trigger the first gated deploy with a fresh commit** (or a Manual Deploy) so the CI-gated path is
       actually exercised: watch GitHub Actions -> `Test` check green -> Render auto-deploys (After CI
-      Checks Pass), then run the public-access checks below.
-- [ ] Watch the Render build/deploy: `render logs --resources <srv-id> --tail` or the dashboard.
-- [ ] **Public accessibility checks** (the core acceptance criteria):
-  - [ ] `curl -i https://<service>.onrender.com/actuator/health` returns `200` `{"status":"UP"}`
-        from the public internet (no auth).
-  - [ ] Open the public URL in a browser; confirm it loads the chosen landing (index page or login),
-        not a connection error.
-  - [ ] Confirm the health check is green in the Render dashboard (proves the security permitAll worked).
-- [ ] **Cold-start expectation**: first hit after 15 min idle spins the instance up in ~1 min. Render
-      shows a **branded loading page** during spin-up (not a blank or "broken" screen), so the demo never
-      looks down. Free is capped at 750 instance-hrs/mo; the one-toggle Starter ($7) upgrade removes cold
-      starts.
+      Checks Pass), then run the public-access checks below. (Done 2026-06-11 — first deploy went live.)
+- [x] Watch the Render build/deploy: `render logs --resources <srv-id> --tail` or the dashboard.
+- [x] **Public accessibility checks** (the core acceptance criteria): (All confirmed 2026-06-11.)
+  - [x] `curl -i https://<service>.onrender.com/actuator/health` returns `200` `{"status":"UP"}`
+        from the public internet (no auth). (Confirmed 2026-06-11:
+        `{"groups":["liveness","readiness"],"status":"UP"}`.)
+  - [x] Open the public URL in a browser; confirm it loads the chosen landing (index page or login),
+        not a connection error. (Confirmed 2026-06-11 — the public root renders the Bootstrap-styled
+        `index.html` landing ("NextSlope" + tagline + Sign in), not a login wall or connection error.)
+  - [x] Confirm the health check is green in the Render dashboard (proves the security permitAll worked).
+        (Confirmed — the deploy went live, which Render only does once the health check passes.)
+- [x] **Cold-start expectation** (acknowledged — expected Free-tier behavior, not a defect): first hit
+      after 15 min idle spins the instance up in ~1 min. Render shows a **branded loading page** during
+      spin-up (not a blank or "broken" screen), so the demo never looks down. Free is capped at 750
+      instance-hrs/mo; the one-toggle Starter ($7) upgrade removes cold starts.
 
 ## Phase 7 — Post-deploy hardening and edge-case runbook
 
-- [ ] **OOM on 512 MB** (infra doc: High likelihood) — if the service restarts under load, confirm
-      `JAVA_TOOL_OPTIONS` is applied (logs show the flags: `MaxRAMPercentage=50`,
-      `MaxMetaspaceSize=128m`, `ReservedCodeCacheSize=64m`, `MaxDirectMemorySize=64m`, `-Xss512k`,
-      `UseSerialGC`) and that `server.tomcat.threads.max=50` is set. If it still OOM-kills, lower the heap
-      percentage or thread cap further; load-test once the recommend endpoint exists.
-- [ ] **Build minutes exhausted** — if the 500 min/mo budget runs low, verify the Dockerfile dependency
-      layer is caching (no full re-download each build); avoid no-op redeploys.
-- [ ] **Neon cold-resume timeouts** — first query after idle may lag; `initialization-fail-timeout=-1`
-      already prevents boot failure. If queries time out, raise Hikari `connection-timeout`.
-- [ ] **Rollback** — dashboard Deploys -> Rollback (Free retains 5 builds) or `render deploys`. DB
-      migrations do NOT roll back; keep schema changes backward-compatible.
-- [ ] **Migrations (when schema lands)** — add `spring-boot-starter-flyway` or
-      `spring-boot-starter-liquibase` (neither is on the classpath today), run migrations against the
-      **DIRECT** Neon endpoint, and keep every change backward-compatible (no rollback path on Neon).
-- [ ] **CSRF forethought** — CSRF stays enabled. When HTMX/POST forms land (per the AGENTS.md HTMX
-      requirement), they must send the CSRF token.
-- [ ] **Secret rotation** — edit the env var value in Render (triggers redeploy). Human approves any
-      paid-tier/DB change per infra doc approval policy.
-- [ ] **Graduation toggle** — when cold starts hurt: change `plan: free` -> `starter` ($7/mo), redeploy.
+> Status (2026-06-11): this is a **standing, reactive runbook**, not active build work. Preventive
+> mitigations are already in place from Phases 1-2; the remaining items are "do X **if** symptom Y
+> appears" triggers. Items below are checked as *acknowledged/in-place*, with the reactive action kept
+> for reference.
+
+- [x] **OOM on 512 MB** (infra doc: High likelihood) — *mitigation in place*: `JAVA_TOOL_OPTIONS`
+      confirmed applied in the Phase 2 container logs (`MaxRAMPercentage=50`, `MaxMetaspaceSize=128m`,
+      `ReservedCodeCacheSize=64m`, `MaxDirectMemorySize=64m`, `-Xss512k`, `UseSerialGC`) and
+      `server.tomcat.threads.max=50` is set in the prod profile. *Reactive*: if it still OOM-kills under
+      load, lower the heap percentage or thread cap; load-test once the recommend endpoint exists.
+- [x] **Build minutes exhausted** — *mitigation in place*: Dockerfile uses a BuildKit gradle
+      dependency-cache mount (no full re-download each build). *Reactive*: if the 500 min/mo budget runs
+      low, confirm caching is holding and avoid no-op redeploys.
+- [x] **Neon cold-resume timeouts** — *mitigation in place*: `initialization-fail-timeout=-1` is set so
+      boot survives a waking DB. *Reactive*: if queries time out on first hit, raise Hikari
+      `connection-timeout`.
+- [x] **Rollback** (procedure documented — no action needed now) — dashboard Deploys -> Rollback (Free
+      retains 5 builds) or `render deploys`. DB migrations do NOT roll back; keep schema changes
+      backward-compatible.
+- [x] **Migrations (when schema lands)** — *deferred by design* (no JPA entities yet): add
+      `spring-boot-starter-flyway` or `spring-boot-starter-liquibase` (neither is on the classpath today),
+      run migrations against the **DIRECT** Neon endpoint, and keep every change backward-compatible (no
+      rollback path on Neon).
+- [x] **CSRF forethought** (posture set) — CSRF stays enabled (Spring default); no POST forms exist yet.
+      *Reactive*: when HTMX/POST forms land (per the AGENTS.md HTMX requirement), they must send the CSRF
+      token.
+- [x] **Secret rotation** (procedure documented) — edit the env var value in Render (triggers redeploy).
+      Human approves any paid-tier/DB change per infra doc approval policy.
+- [x] **Graduation toggle** (standing option — still on Free) — when cold starts hurt: change
+      `plan: free` -> `starter` ($7/mo), redeploy.
 
 ---
 
