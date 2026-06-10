@@ -1,0 +1,12 @@
+build/
+.gradle/
+.git/
+.idea/
+context/
+*.md
+.vscode/
+.cursor/
+*.iml
+out/
+bin/
+.neon

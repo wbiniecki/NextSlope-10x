@@ -58,8 +58,8 @@ to Render, backed by an external Neon free-tier Postgres, with a GitHub Actions 
 ## Progress tracker (high-level)
 
 - [x] Phase 0 — Prerequisites and accounts (completed 2026-06-10)
-- [ ] Phase 1 — Make the app deploy-ready (port, health, security, profiles, memory)
-- [ ] Phase 2 — Containerize (multi-stage Dockerfile + `.dockerignore`)
+- [x] Phase 1 — Make the app deploy-ready (port, health, security, profiles, memory) (completed 2026-06-10)
+- [x] Phase 2 — Containerize (multi-stage Dockerfile + `.dockerignore`) (completed 2026-06-10)
 - [ ] Phase 3 — Provision external Neon Postgres
 - [ ] Phase 4 — Render Blueprint (`render.yaml`) + secrets
 - [ ] Phase 5 — CI/CD (GitHub Actions test gate -> deploy)
@@ -173,16 +173,17 @@ Verified against live Render + Neon docs on 2026-06-10. The infra doc's bandwidt
 
 Edits to `src/main/resources/application.properties` (+ a new profile file) and a new `SecurityConfig`.
 
-- [ ] **Port binding** — Render forwards to `0.0.0.0:$PORT` (default `10000`). Spring binds to `0.0.0.0`
+- [x] **Port binding** — Render forwards to `0.0.0.0:$PORT` (default `10000`). Spring binds to `0.0.0.0`
       by default; just make the port dynamic:
       `server.port=${PORT:8080}`.
-- [ ] **Health check** — `spring-boot-starter-actuator` is already a dependency. Confirm
-      `/actuator/health` returns `200 {"status":"UP"}`.
-  - [ ] *(Optional)* `management.endpoints.web.exposure.include=health` — this is already the default;
+- [x] **Health check** — `spring-boot-starter-actuator` is already a dependency. Confirm
+      `/actuator/health` returns `200 {"status":"UP"}`. (Verified 2026-06-10 via local bootRun:
+      `HTTP 200 {"groups":["liveness","readiness"],"status":"UP"}`.)
+  - [x] *(Optional)* `management.endpoints.web.exposure.include=health` — this is already the default;
         include it only as explicit documentation. `health.show-details` defaults to `never`, so the
         public body is just `{"status":"UP"}` — safe to `permitAll`. Keep all other actuator endpoints
         closed.
-- [ ] **Security: permit the health check and static assets** — add
+- [x] **Security: permit the health check and static assets** — add
       `src/main/java/com/nextslope/config/SecurityConfig.java` with a `SecurityFilterChain` that
       `permitAll()` on at least `/actuator/health` (plus `/css/**`, `/js/**`, `/webjars/**`). Without this,
       an unauthenticated health-check request 302-redirects to `/login`; Render accepts `3xx` as healthy,
@@ -208,41 +209,42 @@ public class SecurityConfig {
 }
 ```
 
-- [ ] **Public landing (CONFIRMED: add a real index page)** — because there are no controllers yet, the
+- [x] **Public landing (CONFIRMED: add a real index page)** — because there are no controllers yet, the
       public URL would otherwise redirect to Spring Security's `/login`. Add:
-  - [ ] `src/main/java/com/nextslope/web/HomeController.java` — a `@Controller` mapping `/` to an
+  - [x] `src/main/java/com/nextslope/web/HomeController.java` — a `@Controller` mapping `/` to an
         `index` view.
-  - [ ] `src/main/resources/templates/index.html` — minimal Thymeleaf page (Bootstrap 5 + HTMX CDN per
+  - [x] `src/main/resources/templates/index.html` — minimal Thymeleaf page (Bootstrap 5 + HTMX CDN per
         tech-stack base layout) so the root URL shows a real public home.
-  - [ ] `permitAll()` on `/` (and `/index`) in `SecurityConfig`.
-- [ ] **Custom error page** — add `src/main/resources/templates/error.html` so the public site never
+  - [x] `permitAll()` on `/` (and `/index`) in `SecurityConfig`.
+- [x] **Custom error page** — add `src/main/resources/templates/error.html` so the public site never
       shows Spring's Whitelabel error page on a 4xx/5xx.
-- [ ] **HTTPS / proxy headers** — Render terminates TLS automatically (free, auto HTTP->HTTPS), so no cert
+- [x] **HTTPS / proxy headers** — Render terminates TLS automatically (free, auto HTTP->HTTPS), so no cert
       work is needed. Add `server.forward-headers-strategy=framework` to `application.properties` so Spring
       builds correct `https` redirect URLs / scheme behind Render's proxy. Devtools (`developmentOnly`) is
       NOT packaged in the prod boot jar, so no extra exclusion is required.
-- [ ] **Profiles / datasource split** — keep H2 for local + CI, Postgres for prod:
-  - [ ] Create `src/main/resources/application-prod.properties` reading Neon from env (placeholders ONLY —
+- [x] **Profiles / datasource split** — keep H2 for local + CI, Postgres for prod:
+  - [x] Create `src/main/resources/application-prod.properties` reading Neon from env (placeholders ONLY —
         no literal credentials; see the Secrets bullet in Critical context):
         `spring.datasource.url=${SPRING_DATASOURCE_URL}`,
         `spring.datasource.username=${SPRING_DATASOURCE_USERNAME}`,
         `spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}`,
         `spring.jpa.hibernate.ddl-auto=update` (safe no-op for this deploy — no JPA entities yet; see
         Phase 3 for the migration path).
-  - [ ] **Defense-in-depth**: `spring.h2.console.enabled=false` in the prod profile (the H2 console
+  - [x] **Defense-in-depth**: `spring.h2.console.enabled=false` in the prod profile (the H2 console
         dependency is also moved to `developmentOnly` in `build.gradle`, so it can never ship to prod).
-  - [ ] **Neon autosuspend survival**: `spring.datasource.hikari.initialization-fail-timeout=-1` so the
+  - [x] **Neon autosuspend survival**: `spring.datasource.hikari.initialization-fail-timeout=-1` so the
         app boots even while Neon's compute is waking. Also size the pool small with a shorter lifetime
         for Neon autosuspend: `spring.datasource.hikari.maximum-pool-size=5` and
         `spring.datasource.hikari.max-lifetime=300000`.
-  - [ ] **Cap thread-stack memory**: `server.tomcat.threads.max=50` (each thread reserves stack space; see
+  - [x] **Cap thread-stack memory**: `server.tomcat.threads.max=50` (each thread reserves stack space; see
         the JVM memory rationale in Phase 2).
-  - [ ] Render will set `SPRING_PROFILES_ACTIVE=prod` (Phase 4) so local/test stays on H2.
-- [ ] **JVM memory** is handled in the Dockerfile via `JAVA_TOOL_OPTIONS` (Phase 2).
+  - [x] Render will set `SPRING_PROFILES_ACTIVE=prod` (Phase 4) so local/test stays on H2.
+- [x] **JVM memory** is handled in the Dockerfile via `JAVA_TOOL_OPTIONS` (Phase 2). (Done in Phase 2 —
+      flags applied and confirmed in container logs.)
 
 ## Phase 2 — Containerize (no native Java runtime on Render)
 
-- [ ] Add a root `Dockerfile`. Improve on the infra-doc sample with **dependency-layer caching** to
+- [x] Add a root `Dockerfile`. Improve on the infra-doc sample with **dependency-layer caching** to
       protect the 500 build-minutes/mo budget, and guard the gradlew exec bit:
 
 ```dockerfile
@@ -281,27 +283,32 @@ ENTRYPOINT ["java","-jar","app.jar"]
     with "the --mount option requires BuildKit" — enable it with `DOCKER_BUILDKIT=1` or use `docker buildx
     build`. Keep `chmod +x gradlew` and keep copying the gradle wrapper + build files before `src` so layer
     reuse holds.
-- [ ] Add `.dockerignore` (exclude `build/`, `.gradle/`, `.git/`, `.idea/`, `context/`, `*.md`) to keep
+- [x] Add `.dockerignore` (exclude `build/`, `.gradle/`, `.git/`, `.idea/`, `context/`, `*.md`) to keep
       the build context small and avoid shipping stale local build output.
-- [ ] **Edge case — gradlew permission denied** inside the build stage: handled by `chmod +x gradlew`.
-      If it still fails, invoke as `sh ./gradlew ...`.
-- [ ] Local validation before pushing (BuildKit must be on — see caching note above):
+- [x] **Edge case — gradlew permission denied** inside the build stage: handled by `chmod +x gradlew`.
+      If it still fails, invoke as `sh ./gradlew ...`. (No issue hit — `chmod +x gradlew` worked.)
+- [x] Local validation before pushing (BuildKit must be on — see caching note above):
       `DOCKER_BUILDKIT=1 docker build -t nextslope . && docker run -p 8080:10000 -e PORT=10000 nextslope`
       then hit `http://localhost:8080/actuator/health`.
+      (Verified 2026-06-10 on Docker 20.10.17 with `DOCKER_BUILDKIT=1`: image built OK, container started
+      in ~3.2s on port 10000, `/actuator/health`→200 `{"status":"UP"}`, `/`→200, and the JVM logged
+      `Picked up JAVA_TOOL_OPTIONS` with all heap/off-heap caps. BuildKit was required — daemon predates
+      the 23.0 default.)
 
 ## Phase 3 — Provision external Neon Postgres
 
-- [ ] Confirm the Neon project lives in **EU / Frankfurt (eu-central / `aws-eu-central-1`)** (locked in
-      Phase 0) to co-locate with the Render Frankfurt region.
-- [ ] In the Neon Connect widget, enable **Connection pooling** and copy the **POOLED** string for the app
+- [x] Confirm the Neon project lives in **EU / Frankfurt (eu-central / `aws-eu-central-1`)** (locked in
+      Phase 0) to co-locate with the Render Frankfurt region. (Verified 2026-06-10 via `neon projects list`:
+      project `nextslope` / `royal-forest-10506783`, Region Id `aws-eu-central-1`.)
+- [x] In the Neon Connect widget, enable **Connection pooling** and copy the **POOLED** string for the app
       (hostname contains `-pooler`). Neon's pooler is **PgBouncer in TRANSACTION mode**, but
       **protocol-level prepared statements ARE supported** (`max_prepared_statements`), so default
       Hibernate/pgjdbc works with **no `prepareThreshold=0` needed**. Session-level features and any future
       DB migrations must use the **DIRECT (non-pooler)** endpoint.
-- [ ] **No networking config needed.** Neon Free has **no IP allowlist** (that is Scale-tier only; the
+- [x] **No networking config needed.** Neon Free has **no IP allowlist** (that is Scale-tier only; the
       default is `0.0.0.0/0`), so Render Free's dynamic outbound IPs connect freely. `sslmode=require`
-      needs no extra cert config.
-- [ ] **Edge case — reshape the Neon string into a JDBC URL.** Neon hands you
+      needs no extra cert config. (Confirmed — Free plan, no allowlist to configure.)
+- [x] **Edge case — reshape the Neon string into a JDBC URL.** Neon hands you
       `postgresql://user:pass@...-pooler.<region>.aws.neon.tech/db?sslmode=require&channel_binding=require`.
       For Spring/Hikari you need a `jdbc:` URL and credentials supplied separately:
   - `SPRING_DATASOURCE_URL=jdbc:postgresql://ep-...-pooler.<region>.aws.neon.tech/<db>?sslmode=require`
@@ -311,10 +318,12 @@ ENTRYPOINT ["java","-jar","app.jar"]
     not fail — it just falls back); the pgjdbc property is camelCase `channelBinding`. Boot 4.0.6's bundled
     pgjdbc (42.7.x) supports `channelBinding=require`, so appending `&channelBinding=require` is **safe**;
     `sslmode=require` alone is also fine.
-- [ ] **Migrations / seed data (future work).** `ddl-auto=update` is a safe no-op for THIS deploy (the
+- [x] **Migrations / seed data (future work).** `ddl-auto=update` is a safe no-op for THIS deploy (the
       scaffold has no JPA entities yet). For future schema/seed work, Spring Boot 4 needs an explicit
       `spring-boot-starter-flyway` or `spring-boot-starter-liquibase` (not on the classpath today), and
       migrations must run against the **DIRECT** Neon endpoint and stay backward-compatible (no rollback).
+      (Confirmed no-op for this deploy — `ddl-auto=update` already set in `application-prod.properties`;
+      no migration tooling added now, as intended.)
 - [ ] **Commit and push everything to `main` first.** Before launching the Blueprint (Phase 4), push the
       Phase 1-2 app files (`SecurityConfig`, `Dockerfile`, `.dockerignore`, `index.html`, `error.html`),
       the Phase 4 `render.yaml`, AND the Phase 5 `ci.yml` in one push. Reasons: (a) the dashboard Blueprint
@@ -324,7 +333,9 @@ ENTRYPOINT ["java","-jar","app.jar"]
 
 ## Phase 4 — Render Blueprint (`render.yaml`) + secrets
 
-- [ ] Add a root `render.yaml` declaring a Docker web service on the **Free** plan:
+- [x] Add a root `render.yaml` declaring a Docker web service on the **Free** plan:
+      (Created 2026-06-10 and validated: `render blueprints validate render.yaml` → `"valid": true`,
+      1 service `nextslope`.)
 
 ```yaml
 services:
@@ -382,10 +393,12 @@ documented patterns; this plan uses the first:
 
 Steps:
 
-- [ ] Add `.github/workflows/ci.yml`:
-  - [ ] Trigger on PRs to `main` and pushes to `main`.
-  - [ ] `Test` job: `actions/checkout`, set up Temurin 21 (`actions/setup-java`), run `./gradlew test`
-        (uses H2; no DB secrets needed). This job IS the CI check Render waits on.
+- [x] Add `.github/workflows/ci.yml`: (Created 2026-06-10; YAML lint-clean; `gradlew` is mode 100755 in
+      git so the runner can execute it.)
+  - [x] Trigger on PRs to `main` and pushes to `main`.
+  - [x] `Test` job: `actions/checkout@v4`, set up Temurin 21 (`actions/setup-java@v4`, `cache: gradle`),
+        run `./gradlew test --no-daemon` (uses H2; no DB secrets needed). This job IS the CI check Render
+        waits on (the GitHub check name will be `Test`).
 - [ ] Deploy mode is already `autoDeployTrigger: checksPass` from `render.yaml` (Phase 4) — no dashboard
       toggle needed. Just confirm the `Test` check has passed at least once on `main` before relying on the
       gate (otherwise the "zero checks -> won't deploy" gap blocks the first deploy). To switch manually
