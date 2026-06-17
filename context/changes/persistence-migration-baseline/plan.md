@@ -310,9 +310,9 @@ Negligible at MVP scale. Flyway adds a one-time startup cost (history-table chec
 
 #### Automated
 
-- [ ] 3.1 CI run green on the change branch, including the Testcontainers test
+- [x] 3.1 CI run green on the change branch, including the Testcontainers test — a43ea2b
 
 #### Manual
 
-- [x] 3.2 `AGENTS.md` documents naming, forward-only rule, validate posture, DIRECT-endpoint rule, Testcontainers pattern
-- [x] 3.3 A reader can add the S-01 follow-up migration from `AGENTS.md` alone
+- [x] 3.2 `AGENTS.md` documents naming, forward-only rule, validate posture, DIRECT-endpoint rule, Testcontainers pattern — a43ea2b
+- [x] 3.3 A reader can add the S-01 follow-up migration from `AGENTS.md` alone — a43ea2b
