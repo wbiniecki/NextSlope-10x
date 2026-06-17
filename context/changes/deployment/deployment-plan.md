@@ -453,10 +453,16 @@ Steps:
 - [x] **Rollback** (procedure documented — no action needed now) — dashboard Deploys -> Rollback (Free
       retains 5 builds) or `render deploys`. DB migrations do NOT roll back; keep schema changes
       backward-compatible.
-- [x] **Migrations (when schema lands)** — *deferred by design* (no JPA entities yet): add
-      `spring-boot-starter-flyway` or `spring-boot-starter-liquibase` (neither is on the classpath today),
-      run migrations against the **DIRECT** Neon endpoint, and keep every change backward-compatible (no
-      rollback path on Neon).
+- [x] **Migrations (when schema lands)** — Flyway (`spring-boot-starter-flyway` +
+      `flyway-database-postgresql`) wired by change `persistence-migration-baseline`. Migrations run
+      against the **DIRECT** Neon endpoint and every change is backward-compatible (no rollback path on
+      Neon).
+  - [ ] **Pre-deploy secret check (required before every prod deploy that ships a migration):** confirm
+        the Render dashboard secret `SPRING_FLYWAY_URL` is set and points to Neon's **DIRECT
+        (non-pooler)** connection string (hostname does **not** contain `-pooler`). The prod profile has
+        **no fallback** for `spring.flyway.url`, so a missing/misconfigured secret fails startup
+        (placeholder unresolved) or — if pointed at the pooler — breaks Flyway's advisory locks/DDL. CI
+        cannot validate this dashboard value; verify it manually here.
 - [x] **CSRF forethought** (posture set) — CSRF stays enabled (Spring default); no POST forms exist yet.
       *Reactive*: when HTMX/POST forms land (per the AGENTS.md HTMX requirement), they must send the CSRF
       token.

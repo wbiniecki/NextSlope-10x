@@ -285,13 +285,13 @@ Negligible at MVP scale. Flyway adds a one-time startup cost (history-table chec
 
 #### Automated
 
-- [ ] 1.1 Dependencies resolve and project compiles: `./gradlew compileJava compileTestJava --no-daemon`
-- [ ] 1.2 App boots on default profile with Flyway present: `./gradlew test --tests com.nextslope.NextslopeApplicationTests --no-daemon`
+- [x] 1.1 Dependencies resolve and project compiles: `./gradlew compileJava compileTestJava --no-daemon`
+- [x] 1.2 App boots on default profile with Flyway present: `./gradlew test --tests com.nextslope.NextslopeApplicationTests --no-daemon`
 
 #### Manual
 
-- [ ] 1.3 `render.yaml` lists `SPRING_FLYWAY_URL` (`sync: false`) and runbook checklist verifies dashboard secret uses Neon DIRECT endpoint
-- [ ] 1.4 Prod profile no longer contains `ddl-auto=update`
+- [x] 1.3 `render.yaml` lists `SPRING_FLYWAY_URL` (`sync: false`) and runbook checklist verifies dashboard secret uses Neon DIRECT endpoint
+- [x] 1.4 Prod profile no longer contains `ddl-auto=update`
 
 ### Phase 2: First migration, entity/repository convention & dual-engine verification
 

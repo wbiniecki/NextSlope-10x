@@ -16,3 +16,7 @@ services:
         sync: false
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
+      # Required: Neon DIRECT (non-pooler) connection string for Flyway migrations.
+      # App fails to start in prod if unset (no fallback). Runtime stays on the pooled URL above.
+      - key: SPRING_FLYWAY_URL
+        sync: false
