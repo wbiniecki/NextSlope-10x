@@ -297,14 +297,14 @@ Negligible at MVP scale. Flyway adds a one-time startup cost (history-table chec
 
 #### Automated
 
-- [x] 2.1 Full suite passes (both engines): `./gradlew test --no-daemon`
-- [x] 2.2 Postgres migration + repository test passes: `./gradlew test --tests com.nextslope.user.UserRepositoryPostgresTests --no-daemon`
-- [x] 2.3 Hibernate `validate` confirms entity↔schema parity
+- [x] 2.1 Full suite passes (both engines): `./gradlew test --no-daemon` — 3bcfc15
+- [x] 2.2 Postgres migration + repository test passes: `./gradlew test --tests com.nextslope.user.UserRepositoryPostgresTests --no-daemon` — 3bcfc15
+- [x] 2.3 Hibernate `validate` confirms entity↔schema parity — 3bcfc15
 
 #### Manual
 
-- [x] 2.4 `./gradlew bootRun` boots; H2 console shows `users` + `flyway_schema_history` (V1)
-- [x] 2.5 Migration is forward-only and portable (no engine-specific syntax)
+- [x] 2.4 `./gradlew bootRun` boots; H2 console shows `users` + `flyway_schema_history` (V1) — 3bcfc15
+- [x] 2.5 Migration is forward-only and portable (no engine-specific syntax) — 3bcfc15
 
 ### Phase 3: CI verification path & persistence conventions docs
 
@@ -314,5 +314,5 @@ Negligible at MVP scale. Flyway adds a one-time startup cost (history-table chec
 
 #### Manual
 
-- [ ] 3.2 `AGENTS.md` documents naming, forward-only rule, validate posture, DIRECT-endpoint rule, Testcontainers pattern
-- [ ] 3.3 A reader can add the S-01 follow-up migration from `AGENTS.md` alone
+- [x] 3.2 `AGENTS.md` documents naming, forward-only rule, validate posture, DIRECT-endpoint rule, Testcontainers pattern
+- [x] 3.3 A reader can add the S-01 follow-up migration from `AGENTS.md` alone

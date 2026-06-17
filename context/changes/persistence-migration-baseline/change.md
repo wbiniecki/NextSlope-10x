@@ -3,7 +3,7 @@ change_id: persistence-migration-baseline
 title: Persistence & migration baseline (local + production DBs)
 status: implementing
 created: 2026-06-16
-updated: 2026-06-17
+updated: 2026-06-18
 archived_at: null
 ---
 

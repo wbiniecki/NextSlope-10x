@@ -20,5 +20,8 @@ jobs:
           java-version: '21'
           cache: gradle
 
-      - name: Run tests
+      # GitHub-hosted ubuntu-latest ships Docker, so the Testcontainers Postgres
+      # test (UserRepositoryPostgresTests) runs here — this step gates every schema
+      # migration against a real Postgres engine, not just local H2.
+      - name: Run tests (incl. Testcontainers Postgres migration verification)
         run: ./gradlew test --no-daemon
