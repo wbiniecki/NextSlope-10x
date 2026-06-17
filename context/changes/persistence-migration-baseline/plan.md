@@ -285,26 +285,26 @@ Negligible at MVP scale. Flyway adds a one-time startup cost (history-table chec
 
 #### Automated
 
-- [x] 1.1 Dependencies resolve and project compiles: `./gradlew compileJava compileTestJava --no-daemon`
-- [x] 1.2 App boots on default profile with Flyway present: `./gradlew test --tests com.nextslope.NextslopeApplicationTests --no-daemon`
+- [x] 1.1 Dependencies resolve and project compiles: `./gradlew compileJava compileTestJava --no-daemon` — 056b35d
+- [x] 1.2 App boots on default profile with Flyway present: `./gradlew test --tests com.nextslope.NextslopeApplicationTests --no-daemon` — 056b35d
 
 #### Manual
 
-- [x] 1.3 `render.yaml` lists `SPRING_FLYWAY_URL` (`sync: false`) and runbook checklist verifies dashboard secret uses Neon DIRECT endpoint
-- [x] 1.4 Prod profile no longer contains `ddl-auto=update`
+- [x] 1.3 `render.yaml` lists `SPRING_FLYWAY_URL` (`sync: false`) and runbook checklist verifies dashboard secret uses Neon DIRECT endpoint — 056b35d
+- [x] 1.4 Prod profile no longer contains `ddl-auto=update` — 056b35d
 
 ### Phase 2: First migration, entity/repository convention & dual-engine verification
 
 #### Automated
 
-- [ ] 2.1 Full suite passes (both engines): `./gradlew test --no-daemon`
-- [ ] 2.2 Postgres migration + repository test passes: `./gradlew test --tests com.nextslope.user.UserRepositoryPostgresTests --no-daemon`
-- [ ] 2.3 Hibernate `validate` confirms entity↔schema parity
+- [x] 2.1 Full suite passes (both engines): `./gradlew test --no-daemon`
+- [x] 2.2 Postgres migration + repository test passes: `./gradlew test --tests com.nextslope.user.UserRepositoryPostgresTests --no-daemon`
+- [x] 2.3 Hibernate `validate` confirms entity↔schema parity
 
 #### Manual
 
-- [ ] 2.4 `./gradlew bootRun` boots; H2 console shows `users` + `flyway_schema_history` (V1)
-- [ ] 2.5 Migration is forward-only and portable (no engine-specific syntax)
+- [x] 2.4 `./gradlew bootRun` boots; H2 console shows `users` + `flyway_schema_history` (V1)
+- [x] 2.5 Migration is forward-only and portable (no engine-specific syntax)
 
 ### Phase 3: CI verification path & persistence conventions docs
 
