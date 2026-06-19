@@ -3,7 +3,7 @@ change_id: account-authentication
 title: Account authentication
 status: implementing
 created: 2026-06-19
-updated: 2026-06-19
+updated: 2026-06-20
 archived_at: null
 ---
 

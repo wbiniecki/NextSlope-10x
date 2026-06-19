@@ -12,6 +12,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import com.nextslope.config.SecurityConfig;
 import com.nextslope.user.AppUserDetailsService;
+import com.nextslope.user.UserRegistrationService;
 import com.nextslope.user.UserRepository;
 
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -26,6 +27,9 @@ class RouteGatingTests {
 
 	@MockitoBean
 	private UserRepository userRepository;
+
+	@MockitoBean
+	private UserRegistrationService userRegistrationService;
 
 	@Test
 	void anonymousRequestToProtectedPathRedirectsToLogin() throws Exception {

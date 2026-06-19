@@ -458,34 +458,34 @@ no entity mapping changes.
 
 #### Automated
 
-- [x] 1.1 Full build + test suite passes: `./gradlew test`
-- [x] 1.2 Route-gating slice test: anonymous request to a named non-permit-listed path (`GET /whatever`) redirects to `/login`; `@WithMockUser` reaches it
-- [x] 1.3 `AppUserDetailsService` slice test: persisted user → correct username + `ROLE_<role>`; unknown email → `UsernameNotFoundException`; mixed-case lookup resolves the lowercase-stored row
-- [x] 1.4 Full-context persisted-auth test (`@SpringBootTest`): seeded user with real `PasswordEncoder` `POST /login` lands on `/`; bad credentials → `/login?error`
-- [x] 1.5 Full-context `POST /logout` (with CSRF token) invalidates the session and redirects to `/?logout`
-- [x] 1.6 Existing dual-engine context smokes still pass (`NextslopeApplicationTests`, `UserRepositoryPostgresTests`)
+- [x] 1.1 Full build + test suite passes: `./gradlew test` — 76064ab
+- [x] 1.2 Route-gating slice test: anonymous request to a named non-permit-listed path (`GET /whatever`) redirects to `/login`; `@WithMockUser` reaches it — 76064ab
+- [x] 1.3 `AppUserDetailsService` slice test: persisted user → correct username + `ROLE_<role>`; unknown email → `UsernameNotFoundException`; mixed-case lookup resolves the lowercase-stored row — 76064ab
+- [x] 1.4 Full-context persisted-auth test (`@SpringBootTest`): seeded user with real `PasswordEncoder` `POST /login` lands on `/`; bad credentials → `/login?error` — 76064ab
+- [x] 1.5 Full-context `POST /logout` (with CSRF token) invalidates the session and redirects to `/?logout` — 76064ab
+- [x] 1.6 Existing dual-engine context smokes still pass (`NextslopeApplicationTests`, `UserRepositoryPostgresTests`) — 76064ab
 
 #### Manual
 
-- [x] 1.7 Gated URL (`GET /whatever`, any non-permit-listed path) while signed out redirects to `/login`
-- [x] 1.8 Sign-in with a seeded user lands on `/`
-- [x] 1.9 Signed-in landing shows email + working sign-out; sign-out returns to `/?logout` and shows the "You've been signed out." banner
-- [x] 1.10 H2 console still loads locally (`@Order(1)` chain intact)
-- [x] 1.11 Unauthenticated landing (`/`) shows both a "Sign in" and a "Create account" link to `/signup`
+- [x] 1.7 Gated URL (`GET /whatever`, any non-permit-listed path) while signed out redirects to `/login` — 76064ab
+- [x] 1.8 Sign-in with a seeded user lands on `/` — 76064ab
+- [x] 1.9 Signed-in landing shows email + working sign-out; sign-out returns to `/?logout` and shows the "You've been signed out." banner — 76064ab
+- [x] 1.10 H2 console still loads locally (`@Order(1)` chain intact) — 76064ab
+- [x] 1.11 Unauthenticated landing (`/`) shows both a "Sign in" and a "Create account" link to `/signup` — 76064ab
 
 ### Phase 2: Self-service sign-up
 
 #### Automated
 
-- [ ] 2.1 Full build + test suite passes: `./gradlew test`
-- [ ] 2.2 `UserRegistrationService` test: encodes password, assigns `USER`, duplicate raises `EmailAlreadyExistsException`; case-variant duplicate (`Alice@x.com` after `alice@x.com`) also raises it
-- [ ] 2.3 `POST /signup`: invalid re-renders with errors (`@WebMvcTest` slice); valid redirects to `/` with an authenticated session (`@SpringBootTest` + `MockMvc`, assert `authenticated()`)
+- [x] 2.1 Full build + test suite passes: `./gradlew test`
+- [x] 2.2 `UserRegistrationService` test: encodes password, assigns `USER`, duplicate raises `EmailAlreadyExistsException`; case-variant duplicate (`Alice@x.com` after `alice@x.com`) also raises it
+- [x] 2.3 `POST /signup`: invalid re-renders with errors (`@WebMvcTest` slice); valid redirects to `/` with an authenticated session (`@SpringBootTest` + `MockMvc`, assert `authenticated()`)
 
 #### Manual
 
-- [ ] 2.4 `/signup` with a new email lands on `/` already signed in
-- [ ] 2.5 Too-short password / malformed email re-renders with a clear message
-- [ ] 2.6 Already-registered email shows a duplicate-email field error (no 500)
+- [x] 2.4 `/signup` with a new email lands on `/` already signed in
+- [x] 2.5 Too-short password / malformed email re-renders with a clear message
+- [x] 2.6 Already-registered email shows a duplicate-email field error (no 500)
 
 ### Phase 3: First-admin bootstrap
 
