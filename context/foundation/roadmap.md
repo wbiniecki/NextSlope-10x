@@ -3,7 +3,7 @@ project: "NextSlope"
 version: 1
 status: draft
 created: 2026-06-12
-updated: 2026-06-16
+updated: 2026-06-19
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -29,7 +29,7 @@ An avid skier or snowboarder planning the upcoming season drowns in scattered, m
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-01 | persistence-migration-baseline | (foundation) schema migrations + persistence conventions wired and verified on the local and production databases | — | Access Control, NFR (determinism, privacy) | ready |
+| F-01 | persistence-migration-baseline | (foundation) schema migrations + persistence conventions wired and verified on the local and production databases | — | Access Control, NFR (determinism, privacy) | done |
 | S-01 | account-authentication | sign up, sign in, and sign out with a real user + role model behind gated routes | F-01 | US-01, FR-001, FR-002, FR-003 | proposed |
 | S-02 | preference-profile | create and edit a preference profile (experience, difficulty mix, region, novelty) | S-01 | US-01, FR-004 | proposed |
 | S-03 | resort-catalog-browse | browse the resort list with key facts and open a single resort's detail view | S-01 | FR-006, FR-007 | proposed |
@@ -74,7 +74,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequenced first because every slice persists data and an ad-hoc per-slice schema choice would fragment the local/production database story. Kept minimal (tooling + conventions + one verifying migration), not a full data-layer build — S-01 immediately exercises it through real sign-up.
-- **Status:** ready
+- **Status:** done
 
 ## Slices
 
@@ -201,4 +201,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Done
 
-(Empty on first generation. `/10x-archive` appends entries here — and flips an item's `Status` to `done` — when a change whose `Change ID` matches the item is archived.)
+- **F-01: (foundation) schema migrations + persistence conventions wired and verified on the local and production databases** — Archived 2026-06-19 → `context/archive/2026-06-16-persistence-migration-baseline/`. Lesson: —.
