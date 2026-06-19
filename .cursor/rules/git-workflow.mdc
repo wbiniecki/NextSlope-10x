@@ -1,0 +1,29 @@
+---
+description: One branch per change; never commit feature work directly to main
+alwaysApply: true
+---
+
+# Git Workflow — branch per change
+
+`main` is protected, always deployable, and auto-deploys to Render on merge. **Never commit
+feature work directly to `main`.**
+
+## Branch per change
+
+- Every change (one roadmap slice = one Linear issue) gets its own branch, cut from an
+  up-to-date `main`. Name it from the Linear-suggested branch (e.g. `lasjak/10x-6-s-01-...`)
+  so the PR auto-links to the issue.
+- Do the whole change on that branch — including all phases.
+
+## Within the branch
+
+- Follow `/10x-implement`'s phase workflow as defined by that skill: implement phase-by-phase,
+  commit per phase, and append the commit SHA to the plan's Progress rows. Do not invent a
+  different per-phase branching or PR scheme.
+
+## Finishing a change
+
+- When the change is complete and works end-to-end, open one PR from the change branch → `main`
+  (`gh pr create` with a HEREDOC Summary + Test plan). CI must be green before merge.
+- Merging to `main` is the deploy event, so only a complete, user-working slice should land there.
+- Never push or force-push directly to `main`.

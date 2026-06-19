@@ -1,0 +1,37 @@
+---
+description: Keep the Linear issue status in sync when starting, reviewing, and finishing work
+alwaysApply: true
+---
+
+# Linear Status Sync
+
+Every roadmap change maps to a Linear issue (project **NextSlope MVP**, team **10xNextSlope**).
+Always reflect real progress in Linear — update status at these transitions, then tell the user
+which issue moved and to what state.
+
+## When to update (use the `linear` MCP `save_issue` tool)
+
+| Trigger | Move issue to |
+|---|---|
+| Starting work on a change (first phase begins) | **In Progress** |
+| Whole branch finished — final review before merge to `main` (PR open) | **In Review** |
+| Change finished / archived via `/10x-archive` | **Done** |
+
+**In Review is the final review gate only.** Enter it once the *entire* change branch is complete
+(all phases done) and is up for its final pre-merge review on the PR to `main` — never during
+intermediate phase work. While phases are still being implemented, the issue stays **In Progress**.
+
+## How
+
+- Find the issue by its Roadmap ID / Change ID (e.g. search "S-01" or `account-authentication`).
+  The issue description carries both `Roadmap ID:` and `Change ID:`.
+- Read `mcps/plugin-linear-linear/tools/save_issue.json` for the schema before calling.
+- If no matching issue exists, tell the user rather than guessing or creating one unprompted.
+- If the issue is already in the target state, do nothing (don't churn status).
+
+## Discipline
+
+- Update status as a side effect of the work actually happening — not in advance. Move to
+  In Progress when you genuinely start, to Done only after the change is archived.
+- A status change in Linear is a claim about reality; never mark Done a change whose final PR
+  to `main` has not merged.
