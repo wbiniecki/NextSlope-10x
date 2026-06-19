@@ -63,6 +63,14 @@ public class AuthController {
 			return "signup";
 		}
 
+		// Rotate the session ID on privilege change to prevent session fixation —
+		// programmatic auto-login bypasses Spring's default SessionAuthenticationStrategy.
+		// Only an existing (pre-auth) session can be fixed; if none exists yet, saveContext
+		// will mint a fresh authenticated one below.
+		if (request.getSession(false) != null) {
+			request.changeSessionId();
+		}
+
 		String normalizedEmail = EmailNormalizer.normalize(registrationForm.getEmail());
 		UserDetails userDetails = appUserDetailsService.loadUserByUsername(normalizedEmail);
 		UsernamePasswordAuthenticationToken auth = UsernamePasswordAuthenticationToken.authenticated(

@@ -20,7 +20,7 @@
 					<div class="card-body">
 						<div class="mb-3">
 							<label for="email" class="form-label">Email</label>
-							<input type="text" inputmode="email" class="form-control" id="email" th:field="*{email}"
+							<input type="email" class="form-control" id="email" th:field="*{email}"
 								   autocomplete="username" required
 								   th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'">
 							<div th:if="${#fields.hasErrors('email')}" class="invalid-feedback d-block"

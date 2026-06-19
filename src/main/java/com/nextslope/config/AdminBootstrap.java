@@ -3,6 +3,7 @@ package com.nextslope.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,7 +56,13 @@ public class AdminBootstrap implements ApplicationRunner {
 				.passwordHash(passwordEncoder.encode(adminPassword))
 				.role(User.Role.ADMIN)
 				.build();
-		userRepository.save(admin);
-		log.info("admin bootstrap created ADMIN account for {}", normalizedEmail);
+		try {
+			userRepository.save(admin);
+			log.info("admin bootstrap created ADMIN account for {}", normalizedEmail);
+		} catch (DataIntegrityViolationException ex) {
+			// Lost the race past the pre-check (concurrent boot or signup on the same email) —
+			// the UNIQUE(email) backstop held; treat as already-present rather than failing startup.
+			log.info("admin bootstrap skipped — account already exists for {}", normalizedEmail);
+		}
 	}
 }
