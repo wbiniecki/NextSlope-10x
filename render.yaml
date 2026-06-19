@@ -20,3 +20,7 @@ services:
       # App fails to start in prod if unset (no fallback). Runtime stays on the pooled URL above.
       - key: SPRING_FLYWAY_URL
         sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

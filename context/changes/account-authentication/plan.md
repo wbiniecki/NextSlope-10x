@@ -477,26 +477,26 @@ no entity mapping changes.
 
 #### Automated
 
-- [x] 2.1 Full build + test suite passes: `./gradlew test`
-- [x] 2.2 `UserRegistrationService` test: encodes password, assigns `USER`, duplicate raises `EmailAlreadyExistsException`; case-variant duplicate (`Alice@x.com` after `alice@x.com`) also raises it
-- [x] 2.3 `POST /signup`: invalid re-renders with errors (`@WebMvcTest` slice); valid redirects to `/` with an authenticated session (`@SpringBootTest` + `MockMvc`, assert `authenticated()`)
+- [x] 2.1 Full build + test suite passes: `./gradlew test` — 3f71419
+- [x] 2.2 `UserRegistrationService` test: encodes password, assigns `USER`, duplicate raises `EmailAlreadyExistsException`; case-variant duplicate (`Alice@x.com` after `alice@x.com`) also raises it — 3f71419
+- [x] 2.3 `POST /signup`: invalid re-renders with errors (`@WebMvcTest` slice); valid redirects to `/` with an authenticated session (`@SpringBootTest` + `MockMvc`, assert `authenticated()`) — 3f71419
 
 #### Manual
 
-- [x] 2.4 `/signup` with a new email lands on `/` already signed in
-- [x] 2.5 Too-short password / malformed email re-renders with a clear message
-- [x] 2.6 Already-registered email shows a duplicate-email field error (no 500)
+- [x] 2.4 `/signup` with a new email lands on `/` already signed in — 3f71419
+- [x] 2.5 Too-short password / malformed email re-renders with a clear message — 3f71419
+- [x] 2.6 Already-registered email shows a duplicate-email field error (no 500) — 3f71419
 
 ### Phase 3: First-admin bootstrap
 
 #### Automated
 
-- [ ] 3.1 Full build + test suite passes: `./gradlew test`
-- [ ] 3.2 Bootstrap test: creates one ADMIN when configured + idempotent; no-op + no throw when unset; pre-existing `USER` at `ADMIN_EMAIL` stays `USER` (no promotion/duplicate)
-- [ ] 3.3 Context loads without admin env vars (`NextslopeApplicationTests` passes)
+- [x] 3.1 Full build + test suite passes: `./gradlew test`
+- [x] 3.2 Bootstrap test: creates one ADMIN when configured + idempotent; no-op + no throw when unset; pre-existing `USER` at `ADMIN_EMAIL` stays `USER` (no promotion/duplicate)
+- [x] 3.3 Context loads without admin env vars (`NextslopeApplicationTests` passes)
 
 #### Manual
 
-- [ ] 3.4 Boot with admin env vars set creates a sign-in-able ADMIN; reboot does not duplicate/error
-- [ ] 3.5 Boot without the vars set starts cleanly and creates no admin row
-- [ ] 3.6 `render.yaml` shows both secrets as `sync: false`
+- [x] 3.4 Boot with admin env vars set creates a sign-in-able ADMIN; reboot does not duplicate/error
+- [x] 3.5 Boot without the vars set starts cleanly and creates no admin row
+- [x] 3.6 `render.yaml` shows both secrets as `sync: false`
