@@ -4,10 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -29,13 +32,33 @@ public class SecurityConfig {
 	}
 
 	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	SecurityContextRepository securityContextRepository() {
+		return new HttpSessionSecurityContextRepository();
+	}
+
+	@Bean
 	@Order(2)
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	SecurityFilterChain filterChain(HttpSecurity http, SecurityContextRepository securityContextRepository)
+			throws Exception {
 		http
+			.securityContext(sc -> sc.securityContextRepository(securityContextRepository))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/index", "/actuator/health", "/css/**", "/js/**", "/webjars/**").permitAll()
+				.requestMatchers("/", "/index", "/login", "/signup", "/actuator/health", "/css/**", "/js/**",
+						"/webjars/**")
+				.permitAll()
 				.anyRequest().authenticated())
-			.formLogin(Customizer.withDefaults());
+			.formLogin(form -> form
+				.loginPage("/login")
+				.defaultSuccessUrl("/", true)
+				.permitAll())
+			.logout(logout -> logout
+				.logoutSuccessUrl("/?logout")
+				.permitAll());
 		return http.build();
 	}
 }
