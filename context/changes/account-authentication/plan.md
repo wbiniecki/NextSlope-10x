@@ -491,12 +491,12 @@ no entity mapping changes.
 
 #### Automated
 
-- [x] 3.1 Full build + test suite passes: `./gradlew test`
-- [x] 3.2 Bootstrap test: creates one ADMIN when configured + idempotent; no-op + no throw when unset; pre-existing `USER` at `ADMIN_EMAIL` stays `USER` (no promotion/duplicate)
-- [x] 3.3 Context loads without admin env vars (`NextslopeApplicationTests` passes)
+- [x] 3.1 Full build + test suite passes: `./gradlew test` — 536dbe1
+- [x] 3.2 Bootstrap test: creates one ADMIN when configured + idempotent; no-op + no throw when unset; pre-existing `USER` at `ADMIN_EMAIL` stays `USER` (no promotion/duplicate) — 536dbe1
+- [x] 3.3 Context loads without admin env vars (`NextslopeApplicationTests` passes) — 536dbe1
 
 #### Manual
 
-- [x] 3.4 Boot with admin env vars set creates a sign-in-able ADMIN; reboot does not duplicate/error
-- [x] 3.5 Boot without the vars set starts cleanly and creates no admin row
-- [x] 3.6 `render.yaml` shows both secrets as `sync: false`
+- [x] 3.4 Boot with admin env vars set creates a sign-in-able ADMIN; reboot does not duplicate/error — 536dbe1
+- [x] 3.5 Boot without the vars set starts cleanly and creates no admin row — 536dbe1
+- [x] 3.6 `render.yaml` shows both secrets as `sync: false` — 536dbe1
