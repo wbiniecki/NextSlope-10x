@@ -3,7 +3,7 @@ project: "NextSlope"
 version: 1
 status: draft
 created: 2026-06-12
-updated: 2026-06-19
+updated: 2026-06-21
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -30,7 +30,7 @@ An avid skier or snowboarder planning the upcoming season drowns in scattered, m
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | persistence-migration-baseline | (foundation) schema migrations + persistence conventions wired and verified on the local and production databases | — | Access Control, NFR (determinism, privacy) | done |
-| S-01 | account-authentication | sign up, sign in, and sign out with a real user + role model behind gated routes | F-01 | US-01, FR-001, FR-002, FR-003 | proposed |
+| S-01 | account-authentication | sign up, sign in, and sign out with a real user + role model behind gated routes | F-01 | US-01, FR-001, FR-002, FR-003 | done |
 | S-02 | preference-profile | create and edit a preference profile (experience, difficulty mix, region, novelty) | S-01 | US-01, FR-004 | proposed |
 | S-03 | resort-catalog-browse | browse the resort list with key facts and open a single resort's detail view | S-01 | FR-006, FR-007 | proposed |
 | S-04 | mark-visited | mark and unmark resorts as visited from the browse list, privately | S-01, S-03 | US-02, FR-005 | proposed |
@@ -89,7 +89,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Session persistence / "remember me" behavior — Owner: TBD. Block: no. (PRD calls it an implementation choice.)
 - **Risk:** First vertical slice; also the natural home for the shared page layout and base UI assets every later view reuses. The user/admin role distinction is modeled here even though admin enforcement arrives in S-06, so the model isn't reworked later. North-star prerequisite — kept lean to unblock the chain fast.
-- **Status:** proposed
+- **Status:** done
 
 ### S-02: Preference profile
 
@@ -202,3 +202,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 ## Done
 
 - **F-01: (foundation) schema migrations + persistence conventions wired and verified on the local and production databases** — Archived 2026-06-19 → `context/archive/2026-06-16-persistence-migration-baseline/`. Lesson: —.
+- **S-01: A visitor can sign up with email + password, sign in, and sign out; gated routes are enforced against a real persisted user and role model, replacing the default-user scaffold.** — Archived 2026-06-21 → `context/archive/2026-06-19-account-authentication/`. Lesson: —.
