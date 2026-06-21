@@ -1,10 +1,10 @@
 ---
 change_id: account-authentication
 title: Account authentication
-status: impl_reviewed
+status: archived
 created: 2026-06-19
-updated: 2026-06-20
-archived_at: null
+updated: 2026-06-21
+archived_at: 2026-06-21T10:19:37Z
 ---
 
 ## Notes
