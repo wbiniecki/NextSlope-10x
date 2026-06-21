@@ -31,3 +31,27 @@ feature work directly to `main`.**
   (`gh pr create` with a HEREDOC Summary + Test plan). CI must be green before merge.
 - Merging to `main` is the deploy event, so only a complete, user-working slice should land there.
 - Never push or force-push directly to `main`.
+
+## Merging the PR to `main`
+
+- **Gate on green CI.** Only merge once checks pass and the PR is mergeable — confirm with
+  `gh pr checks <n>` and `gh pr view <n> --json state,mergeable,mergeStateStatus`
+  (`MERGEABLE` + `CLEAN`).
+- **Use a merge commit, never squash.** Merge with `gh pr merge <n> --merge --delete-branch`.
+  Squash collapses the per-phase commits into one and **orphans the commit SHAs recorded in the
+  plan's `## Progress` rows** (written by `/10x-implement`); a merge commit preserves those exact
+  SHAs so the plan's traceability stays valid. Rebase rewrites them — also avoid it for change PRs.
+- **Merging is a high-impact, shared-state action — get explicit user approval first.** Don't merge
+  autonomously; the user must have asked for the merge (or approve the prompt).
+- **Sync local `main` after merge.** The merge happens on the remote, so local `main` is stale:
+  `git fetch origin` then `git merge --ff-only origin/main`. Don't rebase-pull with a dirty working
+  tree — fast-forward only.
+
+## Landing the archive on `main`
+
+`/10x-archive` commits the folder move + `change.md` stamp + roadmap close **locally only** (it
+never pushes), and that commit lands on whatever branch is checked out — typically the change
+branch, which is already merged. Don't leave it stranded there: cut a fresh `chore/<issue-id>-archive-<slug>`
+branch at that commit and open a small PR → `main` (docs/context only, so CI is a formality), then
+merge it per the rules above. Only after that PR merges is `main` the full source of truth (code +
+archived change + closed roadmap item).
