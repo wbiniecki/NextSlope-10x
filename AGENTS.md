@@ -39,6 +39,7 @@ NextSlope is a Spring Boot 4 + Thymeleaf web app that recommends three ski resor
 
 - JUnit 5 is enabled via `useJUnitPlatform()` in `@build.gradle`. Per-domain Spring Boot test starters (`*-data-jpa-test`, `*-security-test`, `*-webmvc-test`, etc.) are on the classpath — pick the slice that matches the unit rather than booting the full context.
 - Routine repository/domain tests should use the lightest viable slice (`@DataJpaTest`); reserve full-context `@SpringBootTest @Testcontainers` tests for cross-engine migration proof or full-wiring checks. `UserRepositoryPostgresTests` is the canonical prod-engine (real Postgres) verification example.
+- Access-control / IDOR / role tests use the shared scaffolding in `src/test/java/com/nextslope/support/` (`UserFixtures`, `TwoUserIntegrationTestBase`, `AccessControlAssertions`) — extend it, don't re-derive security setup. Recipe + reference tests: `@context/foundation/test-plan.md` §6.4.
 
 ## Persistence & Migrations
 
