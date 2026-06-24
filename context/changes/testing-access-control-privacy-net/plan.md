@@ -409,27 +409,27 @@ or sole gating coverage.
 
 #### Automated
 
-- [x] 1.1 Support package compiles: `./gradlew compileTestJava`
-- [x] 1.2 Full suite still green: `./gradlew test`
+- [x] 1.1 Support package compiles: `./gradlew compileTestJava` — a2d5c0c
+- [x] 1.2 Full suite still green: `./gradlew test` — a2d5c0c
 
 #### Manual
 
-- [x] 1.3 `UserFixtures` users are distinct and admin carries `Role.ADMIN`
-- [x] 1.4 Base class isolates state between tests
-- [x] 1.5 Helper names read as the §6.4 vocabulary
+- [x] 1.3 `UserFixtures` users are distinct and admin carries `Role.ADMIN` — a2d5c0c
+- [x] 1.4 Base class isolates state between tests — a2d5c0c
+- [x] 1.5 Helper names read as the §6.4 vocabulary — a2d5c0c
 
 ### Phase 2: Permit-List Lock & Gating Regression Net
 
 #### Automated
 
-- [ ] 2.1 All Phase 2 web-slice tests pass: `./gradlew test --tests com.nextslope.PermitListLockTests --tests com.nextslope.CsrfEnforcedTests --tests com.nextslope.H2ConsoleProfileTests`
-- [ ] 2.2 Full suite green: `./gradlew test`
+- [x] 2.1 All Phase 2 web-slice tests pass: `./gradlew test --tests com.nextslope.PermitListLockTests --tests com.nextslope.CsrfEnforcedTests --tests com.nextslope.H2ConsoleProfileTests`
+- [x] 2.2 Full suite green: `./gradlew test`
 
 #### Manual
 
-- [ ] 2.3 Adding a path to `permitAll()` makes the lock test fail
-- [ ] 2.4 Removing `.with(csrf())` from a real POST flow is caught
-- [ ] 2.5 H2 prod-absence assertion fails if the `@Profile("!prod")` guard is removed
+- [x] 2.3 Adding a path to `permitAll()` makes the lock test fail
+- [x] 2.4 Removing `.with(csrf())` from a real POST flow is caught
+- [x] 2.5 H2 prod-absence assertion fails if the `@Profile("!prod")` guard is removed
 
 ### Phase 3: IDOR & Admin-Authz Pattern Seed + Cookbook
 
