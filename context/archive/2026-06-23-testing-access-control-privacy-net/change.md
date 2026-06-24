@@ -1,10 +1,10 @@
 ---
 change_id: testing-access-control-privacy-net
 title: Access-control & privacy regression net (test-plan rollout Phase 1)
-status: impl_reviewed
+status: archived
 created: 2026-06-23
 updated: 2026-06-24
-archived_at: null
+archived_at: 2026-06-24T22:30:32Z
 ---
 
 ## Notes
