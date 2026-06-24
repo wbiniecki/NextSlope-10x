@@ -147,8 +147,8 @@ S-01 patterns carry a real reference test; the rest read
 
 - **Type**: `@WebMvcTest` + `@Import(SecurityConfig.class)`, collaborators as `@MockitoBean`.
 - **Pattern**: drive `MockMvc`, assert status/redirect/fragment; use `@WithMockUser` for the authenticated case and a plain request for anonymous.
-- **Reference test**: `src/test/java/com/nextslope/RouteGatingTests.java`, `.../SignupWebMvcTests.java`.
-- **Run locally**: `./gradlew test --tests com.nextslope.RouteGatingTests`.
+- **Reference test**: `src/test/java/com/nextslope/PermitListLockTests.java`, `.../SignupWebMvcTests.java`.
+- **Run locally**: `./gradlew test --tests com.nextslope.PermitListLockTests`.
 
 ### 6.3 Adding a data-slice / prod-engine test
 

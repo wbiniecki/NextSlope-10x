@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.ResultActions;
 
 /**
@@ -27,9 +28,12 @@ public final class AccessControlAssertions {
 	/**
 	 * authenticated → NOT redirected to {@code /login} (the request passed the
 	 * security filter and reached a real handler). Asserts the absence of the login
-	 * redirect rather than a specific status, since the reached handler's status is
-	 * an implementation detail (see plan Critical Implementation Details for the
-	 * {@code /error} case).
+	 * redirect rather than a specific success status, since the reached handler's
+	 * status is an implementation detail (see plan Critical Implementation Details
+	 * for the {@code /error} case). A {@code 401}/{@code 403} denial is rejected,
+	 * though: a denied request has a {@code null} redirect and would otherwise slip
+	 * past the "not redirected to /login" check — the opposite of "reached past
+	 * security" — which matters once later slices reuse this helper standalone.
 	 */
 	public static ResultActions assertReachedPastSecurity(ResultActions actions) throws Exception {
 		return actions.andExpect(result -> {
@@ -37,6 +41,9 @@ public final class AccessControlAssertions {
 			assertThat(redirectedUrl)
 					.as("authenticated request should not be redirected to the login page")
 					.isNotEqualTo("/login");
+			assertThat(result.getResponse().getStatus())
+					.as("authenticated request should reach a handler, not be denied (401/403)")
+					.isNotIn(HttpStatus.UNAUTHORIZED.value(), HttpStatus.FORBIDDEN.value());
 		});
 	}
 
