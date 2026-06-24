@@ -158,7 +158,36 @@ S-01 patterns carry a real reference test; the rest read
 
 ### 6.4 Adding an access-control / IDOR test (per new gated route)
 
-- TBD — see §3 Phase 1. Will establish the reusable two-user + role pattern for asserting anonymous→redirect, wrong-role→denied, and cross-user→denied on every new user-scoped route.
+- **Harness** (`src/test/java/com/nextslope/support/`): `UserFixtures` (two distinct
+  `USER`s + one `ADMIN`, with plaintext passwords for `formLogin`),
+  `TwoUserIntegrationTestBase` (`@SpringBootTest @AutoConfigureMockMvc`; persists the
+  fixture set per test, cleans up, exposes `loginAsUserA/B/Admin()` →
+  `MockHttpSession`), and `AccessControlAssertions` (the vocabulary:
+  `assertRedirectedToLogin`, `assertReachedPastSecurity`, `assertForbidden`,
+  `assertWrongOwnerDenied`).
+- **Anonymous + permit-list gating** (web-slice): `@WebMvcTest` +
+  `@Import(SecurityConfig.class)`. For each new route assert anonymous →
+  `assertRedirectedToLogin`. Add the route to the must-stay-gated sample set in
+  `PermitListLockTests` (the sample-based permit-list lock — see reference below).
+- **Wrong-role → 403** (web-slice): copy `RoleGatingPatternTests` — import production
+  `SecurityConfig` and gate the role test-locally via a `@TestConfiguration`
+  (`@EnableMethodSecurity`) + `@PreAuthorize("hasRole('ADMIN')")` demo handler. Assert
+  anonymous → `/login`, `@WithMockUser(roles="USER")` → 403,
+  `@WithMockUser(roles="ADMIN")` → 200. When S-06 lands, swap the demo handler for the
+  real admin route and note whether enforcement is method-security or URL
+  authorization.
+- **Cross-user / IDOR → denied** (integration): extend `TwoUserIntegrationTestBase`
+  (see `OwnershipPatternIntegrationTests`). Log in as user B, request user A's owned
+  resource, assert `AccessControlAssertions.assertWrongOwnerDenied`. This assertion is
+  a documented placeholder today (no owned resource exists); S-02 (profile) / S-04
+  (visited) specialize it against the first real owned route.
+- **Reference tests**: `PermitListLockTests` (permit-list lock + real gated `/error`
+  route + `/whatever` canary), `RoleGatingPatternTests` (anonymous/USER/ADMIN
+  vocabulary), `OwnershipPatternIntegrationTests` (two-user ownership shape),
+  `CsrfEnforcedTests`, `H2ConsoleProfileTests`.
+- **Run locally**: `./gradlew test --tests "com.nextslope.support.*" --tests com.nextslope.PermitListLockTests`.
+- **Extend, don't re-derive**: every later slice (S-02/S-04/S-06) plugs its
+  route-specific assertions into this harness instead of inlining new security setup.
 
 ### 6.5 Adding a recommender correctness test
 

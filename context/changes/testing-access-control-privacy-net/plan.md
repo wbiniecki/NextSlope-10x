@@ -422,24 +422,24 @@ or sole gating coverage.
 
 #### Automated
 
-- [x] 2.1 All Phase 2 web-slice tests pass: `./gradlew test --tests com.nextslope.PermitListLockTests --tests com.nextslope.CsrfEnforcedTests --tests com.nextslope.H2ConsoleProfileTests`
-- [x] 2.2 Full suite green: `./gradlew test`
+- [x] 2.1 All Phase 2 web-slice tests pass: `./gradlew test --tests com.nextslope.PermitListLockTests --tests com.nextslope.CsrfEnforcedTests --tests com.nextslope.H2ConsoleProfileTests` — cd24bd7
+- [x] 2.2 Full suite green: `./gradlew test` — cd24bd7
 
 #### Manual
 
-- [x] 2.3 Adding a path to `permitAll()` makes the lock test fail
-- [x] 2.4 Removing `.with(csrf())` from a real POST flow is caught
-- [x] 2.5 H2 prod-absence assertion fails if the `@Profile("!prod")` guard is removed
+- [x] 2.3 Adding a path to `permitAll()` makes the lock test fail — cd24bd7
+- [x] 2.4 Removing `.with(csrf())` from a real POST flow is caught — cd24bd7
+- [x] 2.5 H2 prod-absence assertion fails if the `@Profile("!prod")` guard is removed — cd24bd7
 
 ### Phase 3: IDOR & Admin-Authz Pattern Seed + Cookbook
 
 #### Automated
 
-- [ ] 3.1 Pattern tests pass: `./gradlew test --tests "com.nextslope.support.*"`
-- [ ] 3.2 Full suite green: `./gradlew test`
+- [x] 3.1 Pattern tests pass: `./gradlew test --tests "com.nextslope.support.*"`
+- [x] 3.2 Full suite green: `./gradlew test`
 
 #### Manual
 
-- [ ] 3.3 Demo-route test shows anonymous/USER/ADMIN outcomes green
-- [ ] 3.4 Cookbook §6.4 reads as a complete recipe (no "TBD")
-- [ ] 3.5 `test-plan.md` §5 access-control gate satisfied for the surface that exists today; per-route IDOR/wrong-owner obligations documented as deferred to S-02/S-04/S-06
+- [x] 3.3 Demo-route test shows anonymous/USER/ADMIN outcomes green
+- [x] 3.4 Cookbook §6.4 reads as a complete recipe (no "TBD")
+- [x] 3.5 `test-plan.md` §5 access-control gate satisfied for the surface that exists today; per-route IDOR/wrong-owner obligations documented as deferred to S-02/S-04/S-06
