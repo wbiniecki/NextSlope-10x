@@ -435,11 +435,11 @@ or sole gating coverage.
 
 #### Automated
 
-- [x] 3.1 Pattern tests pass: `./gradlew test --tests "com.nextslope.support.*"`
-- [x] 3.2 Full suite green: `./gradlew test`
+- [x] 3.1 Pattern tests pass: `./gradlew test --tests "com.nextslope.support.*"` — 462e94f
+- [x] 3.2 Full suite green: `./gradlew test` — 462e94f
 
 #### Manual
 
-- [x] 3.3 Demo-route test shows anonymous/USER/ADMIN outcomes green
-- [x] 3.4 Cookbook §6.4 reads as a complete recipe (no "TBD")
-- [x] 3.5 `test-plan.md` §5 access-control gate satisfied for the surface that exists today; per-route IDOR/wrong-owner obligations documented as deferred to S-02/S-04/S-06
+- [x] 3.3 Demo-route test shows anonymous/USER/ADMIN outcomes green — 462e94f
+- [x] 3.4 Cookbook §6.4 reads as a complete recipe (no "TBD") — 462e94f
+- [x] 3.5 `test-plan.md` §5 access-control gate satisfied for the surface that exists today; per-route IDOR/wrong-owner obligations documented as deferred to S-02/S-04/S-06 — 462e94f
