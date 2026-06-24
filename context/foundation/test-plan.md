@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-22 (Phase 1 change opened)
+> Last updated: 2026-06-24 (Phase 1 complete + archived)
 
 ## 1. Strategy
 
@@ -82,7 +82,7 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | Access-control & privacy regression net | Lock the current auth surface and ship a reusable per-route gating + ownership/IDOR + admin-authz test pattern every later slice extends | #4, #5 | web-slice + integration | change opened | context/changes/testing-access-control-privacy-net/ |
+| 1 | Access-control & privacy regression net | Lock the current auth surface and ship a reusable per-route gating + ownership/IDOR + admin-authz test pattern every later slice extends | #4, #5 | web-slice + integration | complete | context/archive/2026-06-23-testing-access-control-privacy-net/ |
 | 2 | Recommender correctness suite | Prove all-axes matching, the visited/new-only hard filter, and a truthful rationale for the north-star recommendation flow (gated on S-05 shipping) | #1, #2, #3 | unit + integration | not started | — |
 | 3 | End-to-end user-flow coverage | Walk the real journeys (signup → profile → browse → mark-visited → recommend; admin-create → appears in browse) with `MockMvc`/integration, no browser (gated on S-02/03/04 shipping) | #1–#5 (flow-level) | integration | not started | — |
 
