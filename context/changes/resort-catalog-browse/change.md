@@ -1,9 +1,9 @@
 ---
 change_id: resort-catalog-browse
 title: Resort catalog & browsing
-status: new
+status: implementing
 created: 2026-06-21
-updated: 2026-06-21
+updated: 2026-06-25
 archived_at: null
 ---
 
