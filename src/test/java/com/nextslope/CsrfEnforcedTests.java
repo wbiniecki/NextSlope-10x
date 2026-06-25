@@ -36,6 +36,9 @@ class CsrfEnforcedTests {
 	@MockitoBean
 	private UserRegistrationService userRegistrationService;
 
+	@MockitoBean
+	private com.nextslope.resort.ResortRepository resortRepository;
+
 	@Test
 	void stateChangingPostWithoutCsrfTokenIsForbidden() throws Exception {
 		mockMvc.perform(post("/logout"))

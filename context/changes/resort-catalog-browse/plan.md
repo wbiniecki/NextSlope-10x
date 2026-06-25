@@ -454,31 +454,31 @@ Seed is a one-shot `saveAll` of 40 rows guarded by a `count()`.
 
 #### Automated
 
-- [x] 2.1 Full suite passes: `./gradlew test`
-- [x] 2.2 Seed test asserts exactly 40 resorts after boot against empty DB
-- [x] 2.3 Idempotency test: second run inserts nothing, no throw
-- [x] 2.4 Parse test: Tignes quoted-comma season preserved + accented name round-trips
-- [x] 2.5 Boolean mapping test: `Yes`/`No` → `true`/`false`
+- [x] 2.1 Full suite passes: `./gradlew test` — 8763087
+- [x] 2.2 Seed test asserts exactly 40 resorts after boot against empty DB — 8763087
+- [x] 2.3 Idempotency test: second run inserts nothing, no throw — 8763087
+- [x] 2.4 Parse test: Tignes quoted-comma season preserved + accented name round-trips — 8763087
+- [x] 2.5 Boolean mapping test: `Yes`/`No` → `true`/`false` — 8763087
 
 #### Manual
 
-- [ ] 2.6 `bootRun` logs seed count; restart re-seeds wiped H2 without error
-- [ ] 2.7 H2 console shows 40 rows with correct names, seasons, `external_id`
+- [x] 2.6 `bootRun` logs seed count; restart re-seeds wiped H2 without error — 8763087
+- [x] 2.7 H2 console shows 40 rows with correct names, seasons, `external_id` — 8763087
 
 ### Phase 3: Browse list & detail UI
 
 #### Automated
 
-- [ ] 3.1 Full suite passes: `./gradlew test`
-- [ ] 3.2 Unauthenticated `/resorts` and `/resorts/{id}` redirect to `/login`
-- [ ] 3.3 Authenticated `/resorts` 200 + view `resorts/list` + facts present
-- [ ] 3.4 Authenticated `/resorts/{id}` 200 + `resorts/detail`; unknown id 404
-- [ ] 3.5 Render assertion: `external_id` absent from list and detail HTML
-- [ ] 3.6 `PermitListLockTests` includes `/resorts` in must-stay-gated samples and passes
+- [x] 3.1 Full suite passes: `./gradlew test`
+- [x] 3.2 Unauthenticated `/resorts` and `/resorts/{id}` redirect to `/login`
+- [x] 3.3 Authenticated `/resorts` 200 + view `resorts/list` + facts present
+- [x] 3.4 Authenticated `/resorts/{id}` 200 + `resorts/detail`; unknown id 404
+- [x] 3.5 Render assertion: `external_id` absent from list and detail HTML
+- [x] 3.6 `PermitListLockTests` includes `/resorts` in must-stay-gated samples and passes
 
 #### Manual
 
-- [ ] 3.7 `/resorts` shows 40 resorts sorted country-then-name, links work
-- [ ] 3.8 Detail shows full facts + back link; nav/layout/sign-out render correctly
-- [ ] 3.9 Signed out, `/resorts` redirects to login
-- [ ] 3.10 Responsive: table/detail usable at mobile width
+- [x] 3.7 `/resorts` shows 40 resorts sorted country-then-name, links work
+- [x] 3.8 Detail shows full facts + back link; nav/layout/sign-out render correctly
+- [x] 3.9 Signed out, `/resorts` redirects to login
+- [x] 3.10 Responsive: table/detail usable at mobile width

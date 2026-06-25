@@ -30,6 +30,7 @@
 					<p class="text-secondary mb-3">
 						Signed in as <span sec:authentication="name">user</span>
 					</p>
+					<a class="btn btn-primary btn-lg me-2" th:href="@{/resorts}" href="/resorts">Browse resorts</a>
 					<form th:action="@{/logout}" method="post" class="d-inline">
 						<button type="submit" class="btn btn-outline-secondary btn-lg">Sign out</button>
 					</form>
