@@ -195,15 +195,15 @@ None — additive prose edits to one guide file. No applied artifacts, schema, o
 
 #### Automated
 
-- [x] 1.1 `info.solidsoft.pitest` appears in `context/foundation/test-plan.md`
-- [x] 1.2 §6.5 TBD placeholder removed
-- [x] 1.3 Freshness stamp `2026-06-25` matches header + §8
-- [x] 1.4 §7 "Repo-wide mutation testing" exclusion bullet exists
-- [x] 1.5 No build/CI files changed (`git status --porcelain build.gradle .github/workflows/ci.yml` empty)
+- [x] 1.1 `info.solidsoft.pitest` appears in `context/foundation/test-plan.md` — cb7e2cb
+- [x] 1.2 §6.5 TBD placeholder removed — cb7e2cb
+- [x] 1.3 Freshness stamp `2026-06-25` matches header + §8 — cb7e2cb
+- [x] 1.4 §7 "Repo-wide mutation testing" exclusion bullet exists — cb7e2cb
+- [x] 1.5 No build/CI files changed (`git status --porcelain build.gradle .github/workflows/ci.yml` empty) — cb7e2cb
 
 #### Manual
 
-- [x] 1.6 Six sections read coherently, preserve table shapes + status vocabulary
-- [x] 1.7 §4 says Gradle 9.4.1 with both verify-at-wiring caveats
-- [x] 1.8 Amendment consistently frames PIT wiring as deferred-until-S-05
-- [x] 1.9 §6.5 carries the oracle guard
+- [x] 1.6 Six sections read coherently, preserve table shapes + status vocabulary — cb7e2cb
+- [x] 1.7 §4 says Gradle 9.4.1 with both verify-at-wiring caveats — cb7e2cb
+- [x] 1.8 Amendment consistently frames PIT wiring as deferred-until-S-05 — cb7e2cb
+- [x] 1.9 §6.5 carries the oracle guard — cb7e2cb
