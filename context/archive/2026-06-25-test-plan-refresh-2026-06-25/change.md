@@ -1,10 +1,10 @@
 ---
 change_id: test-plan-refresh-2026-06-25
 title: Refresh test plan with scoped PIT gate for Phase 2
-status: impl_reviewed
+status: archived
 created: 2026-06-25
 updated: 2026-06-25
-archived_at: null
+archived_at: 2026-06-25T11:03:29Z
 ---
 
 ## Notes
