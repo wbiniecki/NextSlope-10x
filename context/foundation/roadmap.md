@@ -3,7 +3,7 @@ project: "NextSlope"
 version: 1
 status: draft
 created: 2026-06-12
-updated: 2026-06-21
+updated: 2026-06-25
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -112,8 +112,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** S-01
 - **Parallel with:** S-02
 - **Blockers:** —
-- **Unknowns:** — (PRD Open Questions 1 & 2 resolved 2026-06-16: a Europe dataset of 20–40 resorts randomly selected from a larger set, hand-entered manually)
-- **Risk:** First slice to need the resort data model, so it establishes that model and a small seed mechanism. Built against sample data so it isn't gated on the dataset decision; flat list is correct at 20–40 entries (search/filter only needed past ~100).
+- **Unknowns:** — (PRD Open Questions 1 & 2 resolved 2026-06-16, seed refined 2026-06-25: v1 ships a curated 40-resort Europe subset drawn from a ready ~500-resort worldwide set; the full set is parked, not in v1)
+- **Risk:** First slice to need the resort data model, so it establishes that model (Flyway migration, schema only) and a CSV-fed seed (data only — never DDL). Seed must be idempotent and must not clobber later admin edits (S-06 writes the same table), so it seeds only when the table is empty rather than upserting every boot. Flat list stays correct at 40 entries (search/filter only needed past ~100); going worldwide later would re-open that.
 - **Status:** proposed
 
 ### S-04: Mark resorts as visited
@@ -172,7 +172,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | F-01 | persistence-migration-baseline | Wire schema migrations + persistence conventions (local + production DBs) | yes | Run `/10x-plan persistence-migration-baseline` |
 | S-01 | account-authentication | Email/password sign-up, sign-in, sign-out with role model | no | Needs F-01 done |
 | S-02 | preference-profile | Create & edit preference profile | no | Needs S-01 done |
-| S-03 | resort-catalog-browse | Resort data model + browse list + detail view | no | Needs S-01 done; sample seed ok |
+| S-03 | resort-catalog-browse | Resort data model + browse list + detail view | no | Needs S-01 done; owns the CSV-fed seed (curated 40-resort Europe subset; idempotent, dev-on-startup / prod-once) |
 | S-04 | mark-visited | Mark/unmark visited (in-place update, private) | no | Needs S-01, S-03 done |
 | S-05 | three-resort-recommendation | Recommend three ranked resorts with rationale | no | Needs S-02, S-03, S-04 done |
 | S-06 | admin-resort-management | Admin create/edit/deactivate resorts | no | Needs S-01, S-03 done; heaviest slice — if too broad, split admin create/edit vs deactivate (never by layer) |
@@ -181,7 +181,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 ## Open Roadmap Questions
 
 1. **Which region and which 20–40 resorts seed the v1 dataset?** — Owner: user. **Resolved 2026-06-16:** region is Europe; the 20–40 resorts are randomly selected from a larger European set — the exact selection does not matter for the MVP.
-2. **What is the source of truth for resort facts, and how is the seed produced (hand-typed, one-off scrape, or compiled)?** — Owner: user. **Resolved 2026-06-16:** resort facts are compiled and entered manually (hand-typed seed); no scraping or automated import.
+2. **What is the source of truth for resort facts, and how is the seed produced (hand-typed, one-off scrape, or compiled)?** — Owner: user. **Resolved 2026-06-16, refined 2026-06-25:** resort facts are compiled into CSV (no scraping). v1 loads a curated 40-resort Europe subset programmatically — dev re-seeds the wiped in-memory DB on every startup; the persistent prod DB is seeded once via an idempotent empty-table guard. The loader mechanism and the CSV's shipped (classpath) location are S-03 plan-level decisions.
 3. **Which language / locale ships in v1?** — Owner: user. **Resolved 2026-06-16:** v1 ships in English only.
 4. **Account deletion: undo window before permanent, or immediate?** — Owner: user. **Resolved 2026-06-16:** deletion is immediate — no undo window.
 
@@ -189,6 +189,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 - **Booking / reservation integration** — Why parked: PRD §Non-Goals — NextSlope recommends, it does not transact.
 - **Global resort coverage** — Why parked: §Non-Goals — v1 is a single region of 20–40 resorts.
+- **Worldwide resort dataset (~500 resorts) + browse search/filter/pagination** — Why parked: v1 deliberately ships a curated 40-resort Europe subset to hold the "single region, 20–40" PRD scope (`prd.md` Vision + Non-Goals) and keep S-03 a flat list. The full worldwide dataset is ready behind the subset; expanding is a loader-filter change plus a new filtering/pagination slice.
 - **Live weather / snow conditions** — Why parked: §Non-Goals — resort facts are static, admin-maintained.
 - **Social features (sharing, comments, follows, leaderboards)** — Why parked: §Non-Goals.
 - **User-generated reviews or ratings** — Why parked: §Non-Goals — preferences → facts → recommendation, not a review site.
