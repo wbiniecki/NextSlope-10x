@@ -469,16 +469,16 @@ Seed is a one-shot `saveAll` of 40 rows guarded by a `count()`.
 
 #### Automated
 
-- [x] 3.1 Full suite passes: `./gradlew test`
-- [x] 3.2 Unauthenticated `/resorts` and `/resorts/{id}` redirect to `/login`
-- [x] 3.3 Authenticated `/resorts` 200 + view `resorts/list` + facts present
-- [x] 3.4 Authenticated `/resorts/{id}` 200 + `resorts/detail`; unknown id 404
-- [x] 3.5 Render assertion: `external_id` absent from list and detail HTML
-- [x] 3.6 `PermitListLockTests` includes `/resorts` in must-stay-gated samples and passes
+- [x] 3.1 Full suite passes: `./gradlew test` — 07bcefc
+- [x] 3.2 Unauthenticated `/resorts` and `/resorts/{id}` redirect to `/login` — 07bcefc
+- [x] 3.3 Authenticated `/resorts` 200 + view `resorts/list` + facts present — 07bcefc
+- [x] 3.4 Authenticated `/resorts/{id}` 200 + `resorts/detail`; unknown id 404 — 07bcefc
+- [x] 3.5 Render assertion: `external_id` absent from list and detail HTML — 07bcefc
+- [x] 3.6 `PermitListLockTests` includes `/resorts` in must-stay-gated samples and passes — 07bcefc
 
 #### Manual
 
-- [x] 3.7 `/resorts` shows 40 resorts sorted country-then-name, links work
-- [x] 3.8 Detail shows full facts + back link; nav/layout/sign-out render correctly
-- [x] 3.9 Signed out, `/resorts` redirects to login
-- [x] 3.10 Responsive: table/detail usable at mobile width
+- [x] 3.7 `/resorts` shows 40 resorts sorted country-then-name, links work — 07bcefc
+- [x] 3.8 Detail shows full facts + back link; nav/layout/sign-out render correctly — 07bcefc
+- [x] 3.9 Signed out, `/resorts` redirects to login — 07bcefc
+- [x] 3.10 Responsive: table/detail usable at mobile width — 07bcefc
