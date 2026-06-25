@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": ".cursor/hooks/protect-immutable-paths.sh",
+        "failClosed": true
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/protect-main-branch.sh",
+        "matcher": "git",
+        "failClosed": true
+      },
+      {
+        "command": ".cursor/hooks/protect-immutable-paths-shell.sh",
+        "failClosed": true
+      }
+    ]
+  }
+}
