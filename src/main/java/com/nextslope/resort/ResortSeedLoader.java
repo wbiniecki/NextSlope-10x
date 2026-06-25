@@ -75,27 +75,27 @@ public class ResortSeedLoader implements ApplicationRunner {
 
 	private Resort toResort(CSVRecord record) {
 		return Resort.builder()
-				.externalId(parseLong(record.get("ID")))
+				.externalId(parseLong(record, "ID"))
 				.name(trim(record.get("Resort")))
 				.country(trim(record.get("Country")))
 				.continent(trim(record.get("Continent")))
-				.latitude(parseDouble(record.get("Latitude")))
-				.longitude(parseDouble(record.get("Longitude")))
-				.price(parseInt(record.get("Price")))
+				.latitude(parseDouble(record, "Latitude"))
+				.longitude(parseDouble(record, "Longitude"))
+				.price(parseInt(record, "Price"))
 				.season(trim(record.get("Season")))
-				.highestPoint(parseInt(record.get("Highest point")))
-				.lowestPoint(parseInt(record.get("Lowest point")))
-				.beginnerSlopes(parseInt(record.get("Beginner slopes")))
-				.intermediateSlopes(parseInt(record.get("Intermediate slopes")))
-				.difficultSlopes(parseInt(record.get("Difficult slopes")))
-				.totalSlopes(parseInt(record.get("Total slopes")))
-				.longestRun(parseInt(record.get("Longest run")))
-				.snowCannons(parseInt(record.get("Snow cannons")))
-				.surfaceLifts(parseInt(record.get("Surface lifts")))
-				.chairLifts(parseInt(record.get("Chair lifts")))
-				.gondolaLifts(parseInt(record.get("Gondola lifts")))
-				.totalLifts(parseInt(record.get("Total lifts")))
-				.liftCapacity(parseInt(record.get("Lift capacity")))
+				.highestPoint(parseInt(record, "Highest point"))
+				.lowestPoint(parseInt(record, "Lowest point"))
+				.beginnerSlopes(parseInt(record, "Beginner slopes"))
+				.intermediateSlopes(parseInt(record, "Intermediate slopes"))
+				.difficultSlopes(parseInt(record, "Difficult slopes"))
+				.totalSlopes(parseInt(record, "Total slopes"))
+				.longestRun(parseInt(record, "Longest run"))
+				.snowCannons(parseInt(record, "Snow cannons"))
+				.surfaceLifts(parseInt(record, "Surface lifts"))
+				.chairLifts(parseInt(record, "Chair lifts"))
+				.gondolaLifts(parseInt(record, "Gondola lifts"))
+				.totalLifts(parseInt(record, "Total lifts"))
+				.liftCapacity(parseInt(record, "Lift capacity"))
 				.childFriendly(parseYesNo(record.get("Child friendly")))
 				.snowparks(parseYesNo(record.get("Snowparks")))
 				.nightskiing(parseYesNo(record.get("Nightskiing")))
@@ -112,18 +112,46 @@ public class ResortSeedLoader implements ApplicationRunner {
 		return "Yes".equalsIgnoreCase(trim(value));
 	}
 
-	private static Long parseLong(String value) {
-		String trimmed = trim(value);
-		return (trimmed == null || trimmed.isEmpty()) ? null : Long.valueOf(trimmed);
+	private static Long parseLong(CSVRecord record, String column) {
+		String trimmed = trim(record.get(column));
+		if (trimmed == null || trimmed.isEmpty()) {
+			return null;
+		}
+		try {
+			return Long.valueOf(trimmed);
+		} catch (NumberFormatException ex) {
+			throw malformedCell(record, column, trimmed, ex);
+		}
 	}
 
-	private static Integer parseInt(String value) {
-		String trimmed = trim(value);
-		return (trimmed == null || trimmed.isEmpty()) ? null : Integer.valueOf(trimmed);
+	private static Integer parseInt(CSVRecord record, String column) {
+		String trimmed = trim(record.get(column));
+		if (trimmed == null || trimmed.isEmpty()) {
+			return null;
+		}
+		try {
+			return Integer.valueOf(trimmed);
+		} catch (NumberFormatException ex) {
+			throw malformedCell(record, column, trimmed, ex);
+		}
 	}
 
-	private static Double parseDouble(String value) {
-		String trimmed = trim(value);
-		return (trimmed == null || trimmed.isEmpty()) ? null : Double.valueOf(trimmed);
+	private static Double parseDouble(CSVRecord record, String column) {
+		String trimmed = trim(record.get(column));
+		if (trimmed == null || trimmed.isEmpty()) {
+			return null;
+		}
+		try {
+			return Double.valueOf(trimmed);
+		} catch (NumberFormatException ex) {
+			throw malformedCell(record, column, trimmed, ex);
+		}
+	}
+
+	private static IllegalStateException malformedCell(CSVRecord record, String column, String value, NumberFormatException cause) {
+		return new IllegalStateException(
+				"Malformed numeric cell in resort seed CSV " + CSV_PATH
+						+ " (row " + record.getRecordNumber() + ", column \"" + column + "\"): \"" + value + "\"",
+				cause);
 	}
 }
