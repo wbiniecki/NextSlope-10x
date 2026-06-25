@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-24 (Phase 1 complete + archived)
+> Last updated: 2026-06-25 (PIT mutation gate folded into Phase 2)
 
 ## 1. Strategy
 
@@ -83,7 +83,7 @@ orchestrator updates Status as artifacts appear on disk.
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
 | 1 | Access-control & privacy regression net | Lock the current auth surface and ship a reusable per-route gating + ownership/IDOR + admin-authz test pattern every later slice extends | #4, #5 | web-slice + integration | complete | context/archive/2026-06-23-testing-access-control-privacy-net/ |
-| 2 | Recommender correctness suite | Prove all-axes matching, the visited/new-only hard filter, and a truthful rationale for the north-star recommendation flow (gated on S-05 shipping) | #1, #2, #3 | unit + integration | not started | — |
+| 2 | Recommender correctness suite | Prove all-axes matching, the visited/new-only hard filter, and a truthful rationale for the north-star recommendation flow, plus a recommender-scoped mutation-testing gate (gated on S-05 shipping) | #1, #2, #3 | unit + integration + mutation (PIT, recommender packages only) | not started | — |
 | 3 | End-to-end user-flow coverage | Walk the real journeys (signup → profile → browse → mark-visited → recommend; admin-create → appears in browse) with `MockMvc`/integration, no browser (gated on S-02/03/04 shipping) | #1–#5 (flow-level) | integration | not started | — |
 
 **Status vocabulary** (fixed — parser literals): `not started` →
@@ -109,12 +109,14 @@ The classic test base for this project. Recommendations are grounded in
 | data slice | `@DataJpaTest` + H2 (PostgreSQL mode) | (BOM) | Repository/entity mapping against local engine |
 | prod-engine integration | `@SpringBootTest @Testcontainers` Postgres 16 | (BOM) | Dual-engine migration proof; CI gate (AGENTS.md mandate) |
 | e2e / browser | none — flows via `MockMvc`/integration | n/a | Server-rendered Thymeleaf+HTMX; no SPA tier, no browser MCP in session |
+| mutation testing (recommender only) | `info.solidsoft.pitest` Gradle plugin + `pitest-junit5-plugin` | plugin 1.19.0 / `junit5PluginVersion` 1.2.3 | Java 21 ✓ (plugin needs 17+); Gradle 9.4.1 ✓ (≥ plugin min 8.4, but plugin's Gradle-9 support is "initial"/smoke-tested vs 9.0 at release → smoke-verify `./gradlew pitest` once at S-05 wiring). `pitest-junit5-plugin` documents JUnit-Platform support to 1.10 "and probably above"; Spring Boot 4 ships a newer platform → verify at wiring. **Not wired today** — deferred to S-05 (`three-resort-recommendation`); scoped to recommender packages only, never repo-wide |
 
 **Stack grounding tools (current session):**
 - Docs: **Context7** — can validate Spring Boot 4 / Thymeleaf / spring-security-test APIs and HTMX fragment patterns when wiring Phase 2/3 tests; checked: 2026-06-22
 - Search: **none** in session — fall back to Context7 + local config; checked: 2026-06-22
 - Runtime/browser: **none** (no Playwright/browser MCP) — Phase 3 flows use `MockMvc`, not a browser; checked: 2026-06-22
 - Provider/platform: **Linear** — issue tracking; possible quality-gate relevance (CI/issue status), not used as a test surface; checked: 2026-06-22
+- Mutation: **`info.solidsoft.pitest` 1.19.0 + `pitest-junit5-plugin` 1.2.3** — version contract grounded against the Java 21 / Gradle 9.4.1 / Spring Boot 4.0.6 stack; wiring deferred to S-05 (smoke-verify on Gradle 9.4.1 + confirm JUnit-Platform compat at that time); checked: 2026-06-25
 
 ## 5. Quality Gates
 
@@ -128,6 +130,7 @@ phase lands; before that, the gate is `planned`.
 | dual-engine migration check (Testcontainers Postgres) | CI on push/PR | required (AGENTS.md mandate) | H2↔Postgres DDL drift, entity↔schema mismatch |
 | access-control + IDOR suite | local + CI | required after §3 Phase 1 | unprotected new routes, cross-user data exposure |
 | recommender correctness suite | local + CI | required after §3 Phase 2 | guardrail violations (untruthful rationale, dropped axis, visited leak) |
+| recommender mutation-score gate (PIT, scoped to recommender packages) | local + CI | required after §3 Phase 2 | surviving mutants in scorer/filter/rationale logic (weak/tautological assertions). Threshold: a high package-scoped mutation score, exact % calibrated when S-05 lands — never repo-wide |
 | user-flow integration | CI on PR | required after §3 Phase 3 | broken end-to-end journeys |
 
 ## 6. Cookbook Patterns
@@ -191,7 +194,29 @@ S-01 patterns carry a real reference test; the rest read
 
 ### 6.5 Adding a recommender correctness test
 
-- TBD — see §3 Phase 2. Will cover the all-axes differential pattern, the visited/new-only hard filter, and the rationale-truthfulness oracle (expected axis derived from user input, never from the generator).
+- **All-axes differential pattern**: change exactly one preference axis (region / novelty /
+  difficulty / experience) in isolation and assert the candidate set or ordering changes —
+  proves every axis is actually wired into scoring (Risk #2). Avoid asserting exact score
+  numbers copied from the scorer; avoid over-mocking so an axis never executes.
+- **Visited / new-only hard filter**: a `new-only` user with a visited resort never sees it in
+  the result; a `revisit-okay` user still can. Cover the empty/all-visited edge, not just the
+  revisit-okay happy path (Risk #3).
+- **Rationale-truthfulness oracle**: assert the "why this matched you" line names a preference
+  axis the user actually set **and** corresponds to the matched resort's real scoring reasons
+  (Risk #1). Derive the expected axis from the user's input — **never** from the rationale
+  generator's own output (that is the oracle problem / a tautology).
+- **Mutation gate** (the package-scoped PIT run, §5): wire `info.solidsoft.pitest` to kill
+  surviving mutants in the recommender scorer/filter/rationale logic. Scope `targetClasses` to
+  `com.nextslope.recommendation.*` (the `.filter` / `.scorer` / `.rationale` subpackages) with
+  `targetTests` mirroring the same packages; **exclude** `user` / `config` / `web` / `support`
+  and the root app. PIT earns signal only if the assertions encode an independent oracle
+  (expected values from user input, never the generator) — a tautological assertion lets
+  mutants survive silently. Keep recommender unit tests plain JUnit 5 + AssertJ (no full Spring
+  context) so mutants are killed fast.
+- **Deferred to S-05**: the gate is **not wired today**. The `pitest {}` block, the exact
+  `mutationThreshold` %, the final recommender package names, the CI cadence, and the Gradle
+  9.4.1 smoke check are all resolved in the S-05 (`three-resort-recommendation`) plan when the
+  recommender code exists. Extend that scaffolding then; don't re-derive it.
 
 ### 6.6 Adding an end-to-end user-flow test
 
@@ -206,12 +231,14 @@ contributors should respect these unless the underlying assumption changes.
 - **Third-party CDN/library behavior (Bootstrap, HTMX)** — that is the library's job, not ours. (Source: interview Q5.)
 - **Exhaustive admin-form permutations** — one trusted admin, low blast radius; minimal validation tests (percentages sum to 100, non-negative ints) live inside the S-06 slice's own tests, not a dedicated phase. (Source: interview Q5; PRD US-03 AC.)
 - **Standalone configuration / infrastructure tests** — not a budget line. Exception: the existing dual-engine Flyway/Postgres migration check stays in CI (AGENTS.md mandate, not new budget). (Source: interview Q5.)
+- **Repo-wide mutation testing** — PIT is deliberately scoped to the recommender (scorer/filter/rationale) only; the auth/web/config surfaces are guarded by cheaper slice tests where a surviving mutant is near-zero signal. (Source: cost × signal, §1 principle #1; test-plan-refresh-2026-06-25.)
 
 ## 8. Freshness Ledger
 
 - Strategy (§1–§5) last reviewed: 2026-06-22
 - Stack versions last verified: 2026-06-22
 - AI-native tool references last verified: 2026-06-22
+- PIT/mutation tooling grounded: 2026-06-25
 
 Refresh (`/10x-test-plan --refresh`) when:
 
