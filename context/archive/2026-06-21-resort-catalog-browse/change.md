@@ -1,10 +1,10 @@
 ---
 change_id: resort-catalog-browse
 title: Resort catalog & browsing
-status: impl_reviewed
+status: archived
 created: 2026-06-21
 updated: 2026-06-25
-archived_at: null
+archived_at: 2026-06-25T20:12:42Z
 ---
 
 ## Notes

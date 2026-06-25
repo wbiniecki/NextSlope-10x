@@ -32,7 +32,7 @@ An avid skier or snowboarder planning the upcoming season drowns in scattered, m
 | F-01 | persistence-migration-baseline | (foundation) schema migrations + persistence conventions wired and verified on the local and production databases | — | Access Control, NFR (determinism, privacy) | done |
 | S-01 | account-authentication | sign up, sign in, and sign out with a real user + role model behind gated routes | F-01 | US-01, FR-001, FR-002, FR-003 | done |
 | S-02 | preference-profile | create and edit a preference profile (experience, difficulty mix, region, novelty) | S-01 | US-01, FR-004 | proposed |
-| S-03 | resort-catalog-browse | browse the resort list with key facts and open a single resort's detail view | S-01 | FR-006, FR-007 | proposed |
+| S-03 | resort-catalog-browse | browse the resort list with key facts and open a single resort's detail view | S-01 | FR-006, FR-007 | done |
 | S-04 | mark-visited | mark and unmark resorts as visited from the browse list, privately | S-01, S-03 | US-02, FR-005 | proposed |
 | S-05 | three-resort-recommendation | click "Recommend resorts" and get exactly three ranked picks with a truthful rationale | S-02, S-03, S-04 | US-01, FR-008, FR-009 | proposed |
 | S-06 | admin-resort-management | (admin) create, edit, and deactivate resort entries from an admin-only view | S-01, S-03 | US-03, FR-010, FR-011, FR-012, FR-013 | proposed |
@@ -114,7 +114,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** — (PRD Open Questions 1 & 2 resolved 2026-06-16, seed refined 2026-06-25: v1 ships a curated 40-resort Europe subset drawn from a ready ~500-resort worldwide set; the full set is parked, not in v1)
 - **Risk:** First slice to need the resort data model, so it establishes that model (Flyway migration, schema only) and a CSV-fed seed (data only — never DDL). Seed must be idempotent and must not clobber later admin edits (S-06 writes the same table), so it seeds only when the table is empty rather than upserting every boot. Flat list stays correct at 40 entries (search/filter only needed past ~100); going worldwide later would re-open that.
-- **Status:** proposed
+- **Status:** done
 
 ### S-04: Mark resorts as visited
 
@@ -204,3 +204,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 - **F-01: (foundation) schema migrations + persistence conventions wired and verified on the local and production databases** — Archived 2026-06-19 → `context/archive/2026-06-16-persistence-migration-baseline/`. Lesson: —.
 - **S-01: A visitor can sign up with email + password, sign in, and sign out; gated routes are enforced against a real persisted user and role model, replacing the default-user scaffold.** — Archived 2026-06-21 → `context/archive/2026-06-19-account-authentication/`. Lesson: —.
+- **S-03: A signed-in user can browse the full resort list with key facts visible (name, location, top lift height, slopes, lifts, difficulty mix) and open a single resort's detail view.** — Archived 2026-06-25 → `context/archive/2026-06-21-resort-catalog-browse/`. Lesson: —.
