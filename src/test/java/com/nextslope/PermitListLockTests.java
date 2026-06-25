@@ -45,6 +45,9 @@ class PermitListLockTests {
 	@MockitoBean
 	private UserRegistrationService userRegistrationService;
 
+	@MockitoBean
+	private com.nextslope.resort.ResortRepository resortRepository;
+
 	@ParameterizedTest
 	@ValueSource(strings = {"/", "/index", "/login", "/signup", "/actuator/health", "/css/app.css",
 			"/js/app.js", "/webjars/x"})
@@ -59,7 +62,7 @@ class PermitListLockTests {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {"/error", "/profile", "/visited", "/recommend", "/admin"})
+	@ValueSource(strings = {"/error", "/profile", "/visited", "/recommend", "/admin", "/resorts", "/resorts/1"})
 	void mustStayGatedPathsRedirectAnonymousToLogin(String path) throws Exception {
 		// Permit-list lock: if a future permitAll() edit widens the public set to
 		// include one of these high-value samples (a real route today, /error, plus

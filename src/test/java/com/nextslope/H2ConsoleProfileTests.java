@@ -45,6 +45,9 @@ class H2ConsoleProfileTests {
 		@MockitoBean
 		private UserRegistrationService userRegistrationService;
 
+		@MockitoBean
+		private com.nextslope.resort.ResortRepository resortRepository;
+
 		@Test
 		void h2ConsoleIsPublicUnderNonProdProfile() throws Exception {
 			mockMvc.perform(get("/h2-console/"))
@@ -68,6 +71,9 @@ class H2ConsoleProfileTests {
 
 		@MockitoBean
 		private UserRegistrationService userRegistrationService;
+
+		@MockitoBean
+		private com.nextslope.resort.ResortRepository resortRepository;
 
 		@Test
 		void h2ConsoleChainAbsentUnderProdProfileFallsThroughToAuthenticated() throws Exception {

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${resort.name} + ' — NextSlope')}"></head>
+<body class="bg-light">
+	<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+	<main class="container py-4">
+		<a th:href="@{/resorts}" href="/resorts" class="btn btn-link px-0 mb-3">&larr; Back to all resorts</a>
+
+		<h1 class="h3 mb-1" th:text="${resort.name}">Resort</h1>
+		<p class="text-muted mb-4">
+			<span th:text="${resort.country}">Country</span>
+			<span th:if="${resort.continent}" th:text="' · ' + ${resort.continent}"> · Continent</span>
+		</p>
+
+		<div class="row g-4">
+			<div class="col-md-6">
+				<div class="card h-100">
+					<div class="card-body">
+						<h2 class="h5 card-title">Overview</h2>
+						<dl class="row mb-0">
+							<dt class="col-6">Season</dt>
+							<dd class="col-6" th:text="${resort.season}">—</dd>
+							<dt class="col-6">Price</dt>
+							<dd class="col-6" th:text="${resort.price}">—</dd>
+							<dt class="col-6">Highest point (m)</dt>
+							<dd class="col-6" th:text="${resort.highestPoint}">—</dd>
+							<dt class="col-6">Lowest point (m)</dt>
+							<dd class="col-6" th:text="${resort.lowestPoint}">—</dd>
+							<dt class="col-6">Longest run (km)</dt>
+							<dd class="col-6" th:text="${resort.longestRun}">—</dd>
+							<dt class="col-6">Snow cannons</dt>
+							<dd class="col-6" th:text="${resort.snowCannons}">—</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="card h-100">
+					<div class="card-body">
+						<h2 class="h5 card-title">Slopes</h2>
+						<dl class="row mb-3">
+							<dt class="col-6">Beginner slopes</dt>
+							<dd class="col-6" th:text="${resort.beginnerSlopes}">—</dd>
+							<dt class="col-6">Intermediate slopes</dt>
+							<dd class="col-6" th:text="${resort.intermediateSlopes}">—</dd>
+							<dt class="col-6">Difficult slopes</dt>
+							<dd class="col-6" th:text="${resort.difficultSlopes}">—</dd>
+							<dt class="col-6">Total slopes</dt>
+							<dd class="col-6" th:text="${resort.totalSlopes}">—</dd>
+						</dl>
+						<p class="mb-0">
+							<span class="badge text-bg-success" th:text="'Easy ' + ${resort.difficultyMix.easy()} + '%'">Easy</span>
+							<span class="badge text-bg-primary" th:text="'Medium ' + ${resort.difficultyMix.medium()} + '%'">Medium</span>
+							<span class="badge text-bg-dark" th:text="'Hard ' + ${resort.difficultyMix.hard()} + '%'">Hard</span>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="card h-100">
+					<div class="card-body">
+						<h2 class="h5 card-title">Lifts</h2>
+						<dl class="row mb-0">
+							<dt class="col-6">Surface lifts</dt>
+							<dd class="col-6" th:text="${resort.surfaceLifts}">—</dd>
+							<dt class="col-6">Chair lifts</dt>
+							<dd class="col-6" th:text="${resort.chairLifts}">—</dd>
+							<dt class="col-6">Gondola lifts</dt>
+							<dd class="col-6" th:text="${resort.gondolaLifts}">—</dd>
+							<dt class="col-6">Total lifts</dt>
+							<dd class="col-6" th:text="${resort.totalLifts}">—</dd>
+							<dt class="col-6">Lift capacity (per hour)</dt>
+							<dd class="col-6" th:text="${resort.liftCapacity}">—</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="card h-100">
+					<div class="card-body">
+						<h2 class="h5 card-title">Amenities</h2>
+						<dl class="row mb-0">
+							<dt class="col-6">Child friendly</dt>
+							<dd class="col-6" th:text="${resort.childFriendly} ? 'Yes' : 'No'">—</dd>
+							<dt class="col-6">Snowparks</dt>
+							<dd class="col-6" th:text="${resort.snowparks} ? 'Yes' : 'No'">—</dd>
+							<dt class="col-6">Night skiing</dt>
+							<dd class="col-6" th:text="${resort.nightskiing} ? 'Yes' : 'No'">—</dd>
+							<dt class="col-6">Summer skiing</dt>
+							<dd class="col-6" th:text="${resort.summerSkiing} ? 'Yes' : 'No'">—</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -64,6 +64,9 @@ class RoleGatingPatternTests {
 	@MockitoBean
 	private UserRegistrationService userRegistrationService;
 
+	@MockitoBean
+	private com.nextslope.resort.ResortRepository resortRepository;
+
 	@Test
 	void anonymousIsRedirectedToLogin() throws Exception {
 		assertRedirectedToLogin(mockMvc.perform(get(ADMIN_ONLY_PATH)));
