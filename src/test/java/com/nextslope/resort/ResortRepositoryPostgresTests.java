@@ -27,8 +27,10 @@ class ResortRepositoryPostgresTests {
 
 	@Test
 	void migrationAppliesAndMappingValidatesOnRealPostgres() {
+		// External id is chosen outside the seeded CSV range (max seed id 380) so this
+		// fixture does not collide with ResortSeedLoader, which runs on this full context.
 		Resort saved = resortRepository.save(Resort.builder()
-				.externalId(57L)
+				.externalId(900057L)
 				.name("Tignes - Val d'Isère")
 				.country("France")
 				.continent("Europe")
@@ -44,7 +46,7 @@ class ResortRepositoryPostgresTests {
 		assertThat(found).isPresent();
 		assertThat(found.get().getId()).isNotNull();
 		assertThat(found.get().getName()).isEqualTo("Tignes - Val d'Isère");
-		assertThat(found.get().getExternalId()).isEqualTo(57L);
+		assertThat(found.get().getExternalId()).isEqualTo(900057L);
 		assertThat(found.get().getCreatedAt()).isNotNull();
 		assertThat(found.get().getUpdatedAt()).isNotNull();
 

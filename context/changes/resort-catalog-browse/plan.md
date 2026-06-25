@@ -440,25 +440,25 @@ Seed is a one-shot `saveAll` of 40 rows guarded by a `count()`.
 
 #### Automated
 
-- [x] 1.1 Build + full suite passes: `./gradlew test`
-- [x] 1.2 App context boots with the new migration on H2
-- [x] 1.3 `@DataJpaTest` resort repository slice passes (ordering + active-only lookup)
-- [x] 1.4 Testcontainers Postgres resort repository test passes
+- [x] 1.1 Build + full suite passes: `./gradlew test` — f92ef30
+- [x] 1.2 App context boots with the new migration on H2 — f92ef30
+- [x] 1.3 `@DataJpaTest` resort repository slice passes (ordering + active-only lookup) — f92ef30
+- [x] 1.4 Testcontainers Postgres resort repository test passes — f92ef30
 
 #### Manual
 
-- [x] 1.5 H2 console shows `resorts` table with all columns + `uq_resorts_external_id`
-- [x] 1.6 `external_id` accepts NULL and rejects a duplicate non-null value
+- [x] 1.5 H2 console shows `resorts` table with all columns + `uq_resorts_external_id` — f92ef30
+- [x] 1.6 `external_id` accepts NULL and rejects a duplicate non-null value — f92ef30
 
 ### Phase 2: CSV seed loader
 
 #### Automated
 
-- [ ] 2.1 Full suite passes: `./gradlew test`
-- [ ] 2.2 Seed test asserts exactly 40 resorts after boot against empty DB
-- [ ] 2.3 Idempotency test: second run inserts nothing, no throw
-- [ ] 2.4 Parse test: Tignes quoted-comma season preserved + accented name round-trips
-- [ ] 2.5 Boolean mapping test: `Yes`/`No` → `true`/`false`
+- [x] 2.1 Full suite passes: `./gradlew test`
+- [x] 2.2 Seed test asserts exactly 40 resorts after boot against empty DB
+- [x] 2.3 Idempotency test: second run inserts nothing, no throw
+- [x] 2.4 Parse test: Tignes quoted-comma season preserved + accented name round-trips
+- [x] 2.5 Boolean mapping test: `Yes`/`No` → `true`/`false`
 
 #### Manual
 
