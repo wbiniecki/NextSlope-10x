@@ -1,7 +1,7 @@
 ---
 change_id: preference-profile
 title: Create and edit a preference profile
-status: implementing
+status: implemented
 created: 2026-06-21
 updated: 2026-06-26
 archived_at: null

@@ -466,16 +466,16 @@ context start; verified on both engines.
 
 #### Automated
 
-- [x] 3.1 Controller `@WebMvcTest` gating/view tests pass
-- [x] 3.2 Owner-isolation integration test passes
-- [x] 3.3 Updated signup redirect test passes
-- [x] 3.4 `PermitListLockTests` still green (`/profile` gated)
-- [x] 3.5 Full suite green
+- [x] 3.1 Controller `@WebMvcTest` gating/view tests pass — 4df52d6
+- [x] 3.2 Owner-isolation integration test passes — 4df52d6
+- [x] 3.3 Updated signup redirect test passes — 4df52d6
+- [x] 3.4 `PermitListLockTests` still green (`/profile` gated) — 4df52d6
+- [x] 3.5 Full suite green — 4df52d6
 
 #### Manual
 
-- [ ] 3.6 New signup auto-redirects to `/profile` with defaults-filled form
-- [ ] 3.7 Navbar "Profile" link opens `/profile` while signed in
-- [ ] 3.8 Values persist across sign-out / sign-in; edits persist
-- [ ] 3.9 Missing required axis shows a field error and does not save
-- [ ] 3.10 Signed-out `/profile` redirects to login
+- [x] 3.6 New signup auto-redirects to `/profile` with defaults-filled form
+- [x] 3.7 Navbar "Profile" link opens `/profile` while signed in
+- [x] 3.8 Values persist across sign-out / sign-in; edits persist
+- [x] 3.9 Missing required axis shows a field error and does not save
+- [x] 3.10 Signed-out `/profile` redirects to login
