@@ -443,22 +443,22 @@ context start; verified on both engines.
 
 #### Automated
 
-- [x] 1.1 Build compiles (`./gradlew compileJava`)
-- [x] 1.2 `DifficultyBand.toMix()` returns the canonical triple summing to 100 for each band
-- [x] 1.3 `@DataJpaTest` repository/entity tests pass
-- [x] 1.4 Testcontainers Postgres migration proof passes (V3 applies, entity validates)
-- [x] 1.5 Full suite green (no schema-validation boot failures)
+- [x] 1.1 Build compiles (`./gradlew compileJava`) — b7cb28e
+- [x] 1.2 `DifficultyBand.toMix()` returns the canonical triple summing to 100 for each band — b7cb28e
+- [x] 1.3 `@DataJpaTest` repository/entity tests pass — b7cb28e
+- [x] 1.4 Testcontainers Postgres migration proof passes (V3 applies, entity validates) — b7cb28e
+- [x] 1.5 Full suite green (no schema-validation boot failures) — b7cb28e
 
 #### Manual
 
-- [ ] 1.6 App boots locally via `./gradlew bootRun` (H2 path)
+- [x] 1.6 App boots locally via `./gradlew bootRun` (H2 path)
 
 ### Phase 2: Service & Form
 
 #### Automated
 
-- [ ] 2.1 Form validation + service unit tests pass
-- [ ] 2.2 Full suite green
+- [x] 2.1 Form validation + service unit tests pass
+- [x] 2.2 Full suite green
 
 ### Phase 3: Controller, View, Navigation & Gating
 
