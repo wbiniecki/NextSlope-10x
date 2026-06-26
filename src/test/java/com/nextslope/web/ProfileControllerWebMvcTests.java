@@ -1,6 +1,9 @@
 package com.nextslope.web;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -8,6 +11,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -15,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -48,6 +53,11 @@ class ProfileControllerWebMvcTests {
 	@MockitoBean
 	private UserRepository userRepository;
 
+	@BeforeEach
+	void mockUserExists() {
+		when(userRepository.existsByEmail(anyString())).thenReturn(true);
+	}
+
 	@Test
 	void anonymousGetRedirectsToLogin() throws Exception {
 		mockMvc.perform(get("/profile"))
@@ -74,6 +84,32 @@ class ProfileControllerWebMvcTests {
 				.andExpect(view().name("profile/form"))
 				.andExpect(model().attributeExists("profileForm"))
 				.andExpect(model().attribute("availableCountries", List.of("Austria", "France")));
+	}
+
+	@Test
+	@WithMockUser(username = "user")
+	void firstTimeUserDoesNotSeeBackToResortsLink() throws Exception {
+		when(currentUserService.requireUserId(any(UserDetails.class))).thenReturn(1L);
+		when(preferenceProfileService.loadFormForUser(1L)).thenReturn(PreferenceProfileForm.defaults());
+		when(preferenceProfileService.availableCountries()).thenReturn(List.of("Austria", "France"));
+		when(preferenceProfileService.hasProfile(1L)).thenReturn(false);
+
+		mockMvc.perform(get("/profile"))
+				.andExpect(status().isOk())
+				.andExpect(content().string(not(containsString("Back to resorts"))));
+	}
+
+	@Test
+	@WithMockUser(username = "user")
+	void returningUserSeesBackToResortsLink() throws Exception {
+		when(currentUserService.requireUserId(any(UserDetails.class))).thenReturn(1L);
+		when(preferenceProfileService.loadFormForUser(1L)).thenReturn(PreferenceProfileForm.defaults());
+		when(preferenceProfileService.availableCountries()).thenReturn(List.of("Austria", "France"));
+		when(preferenceProfileService.hasProfile(1L)).thenReturn(true);
+
+		mockMvc.perform(get("/profile"))
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString("Back to resorts")));
 	}
 
 	@Test

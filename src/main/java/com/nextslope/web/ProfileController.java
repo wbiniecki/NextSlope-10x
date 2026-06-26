@@ -35,6 +35,7 @@ public class ProfileController {
 		Long userId = currentUserService.requireUserId(principal);
 		model.addAttribute("profileForm", preferenceProfileService.loadFormForUser(userId));
 		model.addAttribute("availableCountries", preferenceProfileService.availableCountries());
+		model.addAttribute("profileExists", preferenceProfileService.hasProfile(userId));
 		return "profile/form";
 	}
 
@@ -45,6 +46,7 @@ public class ProfileController {
 			Model model,
 			RedirectAttributes redirectAttributes) {
 		Long userId = currentUserService.requireUserId(principal);
+		model.addAttribute("profileExists", preferenceProfileService.hasProfile(userId));
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("availableCountries", preferenceProfileService.availableCountries());
