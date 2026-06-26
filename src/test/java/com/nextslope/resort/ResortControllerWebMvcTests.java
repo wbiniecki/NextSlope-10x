@@ -2,6 +2,8 @@ package com.nextslope.resort;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -11,19 +13,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.nextslope.config.SecurityConfig;
 import com.nextslope.user.AppUserDetailsService;
+import com.nextslope.user.CurrentUserService;
 import com.nextslope.user.UserRegistrationService;
 import com.nextslope.user.UserRepository;
+import com.nextslope.visited.VisitedResortService;
 import com.nextslope.web.ResortController;
 
 @WebMvcTest(controllers = ResortController.class)
@@ -44,6 +51,17 @@ class ResortControllerWebMvcTests {
 
 	@MockitoBean
 	private UserRegistrationService userRegistrationService;
+
+	@MockitoBean
+	private CurrentUserService currentUserService;
+
+	@MockitoBean
+	private VisitedResortService visitedResortService;
+
+	@BeforeEach
+	void mockUserExists() {
+		when(userRepository.existsByEmail(anyString())).thenReturn(true);
+	}
 
 	private static Resort sampleResort() {
 		return Resort.builder()
@@ -110,6 +128,33 @@ class ResortControllerWebMvcTests {
 
 		mockMvc.perform(get("/resorts"))
 				.andExpect(content().string(not(containsString(String.valueOf(EXTERNAL_ID_SENTINEL)))));
+	}
+
+	@Test
+	@WithMockUser
+	void browseRendersMarkVisitedControlForUnvisitedResort() throws Exception {
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc())
+				.thenReturn(List.of(sampleResort()));
+		when(currentUserService.requireUserId(any(UserDetails.class))).thenReturn(7L);
+		when(visitedResortService.visitedResortIds(7L)).thenReturn(Set.of());
+
+		mockMvc.perform(get("/resorts"))
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString("Mark visited")))
+				.andExpect(content().string(containsString("/resorts/7/visited")));
+	}
+
+	@Test
+	@WithMockUser
+	void browseRendersVisitedStateForAlreadyVisitedResort() throws Exception {
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc())
+				.thenReturn(List.of(sampleResort()));
+		when(currentUserService.requireUserId(any(UserDetails.class))).thenReturn(7L);
+		when(visitedResortService.visitedResortIds(7L)).thenReturn(Set.of(7L));
+
+		mockMvc.perform(get("/resorts"))
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString("Visited \u2713")));
 	}
 
 	@Test
