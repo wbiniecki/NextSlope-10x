@@ -1,10 +1,10 @@
 ---
 change_id: preference-profile
 title: Create and edit a preference profile
-status: impl_reviewed
+status: archived
 created: 2026-06-21
 updated: 2026-06-26
-archived_at: null
+archived_at: 2026-06-26T10:20:42Z
 ---
 
 ## Notes
