@@ -9,8 +9,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+
+import com.nextslope.user.UserRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -43,8 +46,8 @@ public class SecurityConfig {
 
 	@Bean
 	@Order(2)
-	SecurityFilterChain filterChain(HttpSecurity http, SecurityContextRepository securityContextRepository)
-			throws Exception {
+	SecurityFilterChain filterChain(HttpSecurity http, SecurityContextRepository securityContextRepository,
+			UserRepository userRepository) throws Exception {
 		http
 			.securityContext(sc -> sc.securityContextRepository(securityContextRepository))
 			.authorizeHttpRequests(auth -> auth
@@ -52,6 +55,7 @@ public class SecurityConfig {
 						"/webjars/**")
 				.permitAll()
 				.anyRequest().authenticated())
+			.addFilterBefore(new StaleAuthenticatedSessionFilter(userRepository), AuthorizationFilter.class)
 			.formLogin(form -> form
 				.loginPage("/login")
 				.defaultSuccessUrl("/", true)

@@ -2,6 +2,7 @@ package com.nextslope.web;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -42,6 +44,11 @@ class VisitedControllerWebMvcTests {
 
 	@MockitoBean
 	private UserRepository userRepository;
+
+	@BeforeEach
+	void mockUserExists() {
+		when(userRepository.existsByEmail(anyString())).thenReturn(true);
+	}
 
 	@Test
 	void anonymousPostRedirectsToLogin() throws Exception {

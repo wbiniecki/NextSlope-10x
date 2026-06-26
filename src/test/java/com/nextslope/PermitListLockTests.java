@@ -1,10 +1,13 @@
 package com.nextslope;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -59,6 +62,11 @@ class PermitListLockTests {
 
 	@MockitoBean
 	private CurrentUserService currentUserService;
+
+	@BeforeEach
+	void mockUserExists() {
+		when(userRepository.existsByEmail(anyString())).thenReturn(true);
+	}
 
 	@ParameterizedTest
 	@ValueSource(strings = {"/", "/index", "/login", "/signup", "/actuator/health", "/css/app.css",

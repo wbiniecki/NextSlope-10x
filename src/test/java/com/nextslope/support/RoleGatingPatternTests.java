@@ -3,10 +3,13 @@ package com.nextslope.support;
 import static com.nextslope.support.AccessControlAssertions.assertForbidden;
 import static com.nextslope.support.AccessControlAssertions.assertReachedPastSecurity;
 import static com.nextslope.support.AccessControlAssertions.assertRedirectedToLogin;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -78,6 +81,11 @@ class RoleGatingPatternTests {
 
 	@MockitoBean
 	private CurrentUserService currentUserService;
+
+	@BeforeEach
+	void mockUserExists() {
+		when(userRepository.existsByEmail(anyString())).thenReturn(true);
+	}
 
 	@Test
 	void anonymousIsRedirectedToLogin() throws Exception {
