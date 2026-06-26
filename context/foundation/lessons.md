@@ -15,3 +15,10 @@
 - **Problem**: Screens get built but are unreachable for the user — it is possible to reach them only by entering a direct path
 - **Rule**: When a plan adds a new screen, it must specify the navigation path to it (entry point, link/route, and where it's surfaced in existing UI)
 - **Applies to**: plan, plan-review, implement, impl-review
+
+## Verify file listings live before correctness-critical decisions
+
+- **Context**: Any time Glob/file-index results feed a correctness-critical decision.
+- **Problem**: The Glob/file-index can be stale (miss recently committed files); planning a duplicate Flyway version (e.g. two `V3__`) makes Flyway fail on boot.
+- **Rule**: Before choosing the next sequential migration version (or relying on a file listing for a correctness decision), confirm the live filesystem with `ls`/`git ls-files` — never trust Glob/index alone.
+- **Applies to**: all
