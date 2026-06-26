@@ -48,9 +48,11 @@
 				}
 				// In-place visited-row highlight: when a toggle button swaps in, derive its row's
 				// highlight from the button's own data-visited (single source of truth) — never by
-				// replacing the <tr>, which would wipe its cells.
+				// replacing the <tr>, which would wipe its cells. Read evt.target (the freshly
+				// swapped-in button the event is dispatched on); evt.detail.target is the original
+				// pre-swap button, which outerHTML detaches from the DOM — its closest('tr') is null.
 				document.body.addEventListener('htmx:afterSwap', function (evt) {
-					var button = evt.detail.target;
+					var button = evt.target;
 					if (button && button.classList && button.classList.contains('visited-toggle')) {
 						var row = button.closest('tr');
 						if (row) {
