@@ -609,8 +609,8 @@ Account-deletion cascade of these rows is S-07's responsibility, not this slice'
 
 #### Automated
 
-- [x] 3.1 Updated controller test passes (`ResortControllerWebMvcTests`)
-- [x] 3.2 Full suite green (`./gradlew test`)
+- [x] 3.1 Updated controller test passes (`ResortControllerWebMvcTests`) — 905aaee
+- [x] 3.2 Full suite green (`./gradlew test`) — 905aaee
 
 #### Manual
 
