@@ -348,20 +348,25 @@ the POST response, so mark/unmark renders identically in both paths.
 **Contract**: A `th:fragment="visitedToggle(resortId, visited)"` rendering a
 button that POSTs to `/resorts/{id}/visited` via HTMX (`hx-post`,
 `hx-swap="outerHTML"`, targeting itself), showing "Visited ✓" vs "Mark visited"
-and a state class driven by `visited`. (Initial-render wiring into the table
-lands in Phase 3; the fragment itself is defined here because it is the
-endpoint's return contract.)
+and a state class driven by `visited`. The button also carries
+`data-visited="${visited}"` so the row highlight can be derived from the button's
+own state (single source of truth). (Initial-render wiring into the table lands
+in Phase 3; the fragment itself is defined here because it is the endpoint's
+return contract.)
 
-**Row highlight via out-of-band swap.** The control swap only replaces the
-button, so the in-place row highlight is driven by a **second, out-of-band
-element** in the same response: a tiny `th:fragment="visitedRowState(resortId,
-visited)"` rendering the row's `<tr>` opening (or an empty placeholder element)
-carrying `hx-swap-oob="true"` and a **stable id** `id="resort-row-${resortId}"`,
-with the visited state class (`table-active`) applied iff `visited`. HTMX swaps
-this OOB element by id independently of the targeted button, so a single POST
-response updates both the button *and* the row highlight in place — no full
-reload. The endpoint returns both fragments (see Phase 2 §3); the table in Phase
-3 gives each `<tr>` the matching `id="resort-row-${r.id}"`.
+**Row highlight driven from the button (no row-replacing OOB).** The toggle
+response returns **only** the button — it must NOT also return an out-of-band
+`<tr>` element. An `hx-swap-oob="true"` element matched by id replaces the
+matched node's *entire* `outerHTML`, so an empty (or partial) `<tr
+id="resort-row-…">` would wipe all of the row's cells (name, country, stats, and
+the button itself). Instead, the in-place row highlight is applied client-side in
+Phase 3: a small global `htmx:afterSwap` listener (added to the layout `scripts`
+fragment alongside the CSRF wiring) finds the swapped-in `.visited-toggle`
+button, reads its `data-visited`, and toggles the `table-active` class on the
+button's `closest('tr')` — updating the highlight in place without ever replacing
+the row. The table in Phase 3 gives each `<tr>` a stable
+`id="resort-row-${r.id}"` for clarity and applies `table-active` at initial
+render when visited.
 
 #### 5. Controller test
 
@@ -448,7 +453,11 @@ pinned. This is the canonical wiring S-05 inherits.
 `name="_csrf"` `th:content="${_csrf.token}"` and `name="_csrf_header"`
 `th:content="${_csrf.headerName}"`. In the `scripts` fragment, add a small inline
 script registering a `htmx:configRequest` listener that reads the two metas and
-sets `evt.detail.headers[headerName] = token`. No change to `SecurityConfig`.
+sets `evt.detail.headers[headerName] = token`. In the same script, register a
+`htmx:afterSwap` listener that, when the swapped-in content is a `.visited-toggle`
+button, toggles `table-active` on the button's `closest('tr')` from its
+`data-visited` attribute (the in-place row highlight — see Phase 2 §4; no
+row-replacing OOB). No change to `SecurityConfig`.
 
 #### 2. List table: visited column + initial render
 
@@ -458,13 +467,14 @@ sets `evt.detail.headers[headerName] = token`. No change to `SecurityConfig`.
 its correct initial state, and a row highlight when visited.
 
 **Contract**: Add a "Visited" `<th>` (update the empty-state `colspan` from 6 to
-7). Give each `th:each` row a stable `id="resort-row-${r.id}"` so the
-`visitedRowState` out-of-band swap can target it. Render
+7). Give each `th:each` row a stable `id="resort-row-${r.id}"`. Render
 `visitedToggle(r.id, visitedIds.contains(r.id))` in the row's action cell and
-apply the `table-active` row class when `visitedIds.contains(r.id)`. On toggle,
-the control's `hx-swap="outerHTML"` replaces just the button while the response's
-`hx-swap-oob` `visitedRowState` element (matched to `resort-row-${r.id}`) updates
-the row highlight in place — both without a full reload.
+apply the `table-active` row class when `visitedIds.contains(r.id)` at initial
+render. On toggle, the control's `hx-swap="outerHTML"` replaces just the button;
+the global `htmx:afterSwap` listener (§1) then reads the swapped-in button's
+`data-visited` and toggles `table-active` on its `closest('tr')` — updating the
+row highlight in place without replacing (and wiping) the row, and without a full
+reload.
 
 #### 3. Pass visited ids to the list view
 
@@ -586,14 +596,14 @@ Account-deletion cascade of these rows is S-07's responsibility, not this slice'
 
 #### Automated
 
-- [x] 2.1 Controller test passes (`VisitedControllerWebMvcTests`)
-- [x] 2.2 Isolation test passes (`VisitedResortOwnershipIntegrationTests`)
-- [x] 2.3 CSRF stays enforced (`CsrfEnforcedTests`)
-- [x] 2.4 Full suite green (`./gradlew test`)
+- [x] 2.1 Controller test passes (`VisitedControllerWebMvcTests`) — 3791793
+- [x] 2.2 Isolation test passes (`VisitedResortOwnershipIntegrationTests`) — 3791793
+- [x] 2.3 CSRF stays enforced (`CsrfEnforcedTests`) — 3791793
+- [x] 2.4 Full suite green (`./gradlew test`) — 3791793
 
 #### Manual
 
-- [x] 2.5 POST `/resorts/{id}/visited` returns the toggle fragment; second toggle flips it back
+- [x] 2.5 POST `/resorts/{id}/visited` returns the toggle fragment; second toggle flips it back — 3791793
 
 ### Phase 3: Browse-list UI + HTMX wiring
 

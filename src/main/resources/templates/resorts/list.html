@@ -48,24 +48,20 @@
 	</main>
 
 	<!--
-		Reusable visited fragments. Defined here because this is the toggle endpoint's return
-		contract; the table wiring that renders them on initial load lands in Phase 3. Wrapped in a
-		never-true block so they are not emitted on a full page render — they are only reachable as
-		named fragments (`resorts/list :: visitedToggle(...)` / `:: visitedRowState(...)`).
+		Reusable visited control. Defined here because this is the toggle endpoint's return contract;
+		the table wiring that renders it on initial load lands in Phase 3. Wrapped in a never-true
+		block so it is not emitted on a full page render — it is only reachable as the named fragment
+		`resorts/list :: visitedToggle(...)`. The button carries data-visited so Phase 3 can highlight
+		the containing row from a single source of truth without replacing (and wiping) the row.
 	-->
 	<th:block th:if="${false}">
 		<button th:fragment="visitedToggle(resortId, visited)"
 				type="button"
 				class="btn btn-sm visited-toggle"
 				th:classappend="${visited} ? 'btn-success' : 'btn-outline-secondary'"
-				th:attr="hx-post=@{/resorts/{id}/visited(id=${resortId})}"
+				th:attr="hx-post=@{/resorts/{id}/visited(id=${resortId})}, data-visited=${visited}"
 				hx-swap="outerHTML"
 				th:text="${visited} ? 'Visited ✓' : 'Mark visited'">Mark visited</button>
-
-		<tr th:fragment="visitedRowState(resortId, visited)"
-			th:id="'resort-row-' + ${resortId}"
-			th:classappend="${visited} ? 'table-active' : ''"
-			hx-swap-oob="true"></tr>
 	</th:block>
 
 	<th:block th:replace="~{fragments/layout :: scripts}"></th:block>

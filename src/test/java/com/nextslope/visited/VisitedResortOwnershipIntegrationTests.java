@@ -79,7 +79,7 @@ class VisitedResortOwnershipIntegrationTests extends TwoUserIntegrationTestBase 
 						.with(csrf()))
 				.andExpect(status().isOk());
 
-		// B unmarking the same resort id is a no-op against B's (empty) list — A's mark is untouched.
+		// B toggling the same resort id creates B's own independent mark — A's mark is untouched.
 		MockHttpSession sessionB = loginAsUserB();
 		mockMvc.perform(post("/resorts/{id}/visited", resortXId)
 						.session(sessionB)
