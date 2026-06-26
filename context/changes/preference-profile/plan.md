@@ -457,8 +457,8 @@ context start; verified on both engines.
 
 #### Automated
 
-- [x] 2.1 Form validation + service unit tests pass
-- [x] 2.2 Full suite green
+- [x] 2.1 Form validation + service unit tests pass — 6cb1a81
+- [x] 2.2 Full suite green — 6cb1a81
 
 ### Phase 3: Controller, View, Navigation & Gating
 

@@ -128,6 +128,21 @@ class PreferenceProfileServiceTests {
 	}
 
 	@Test
+	void saveNormalizesEmptyRegionListToEmptySetEvenWhenAnyRegionFalse() {
+		when(preferenceProfileRepository.findByUserId(1L)).thenReturn(Optional.empty());
+
+		PreferenceProfileForm form = PreferenceProfileForm.defaults();
+		form.setAnyRegion(false);
+		form.setRegionCountries(List.of());
+
+		service.save(1L, form);
+
+		ArgumentCaptor<PreferenceProfile> captor = ArgumentCaptor.forClass(PreferenceProfile.class);
+		verify(preferenceProfileRepository).save(captor.capture());
+		assertThat(captor.getValue().getRegionCountries()).isEmpty();
+	}
+
+	@Test
 	void savePersistsSelectedCountriesWithinVocabulary() {
 		when(preferenceProfileRepository.findByUserId(1L)).thenReturn(Optional.empty());
 		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc())
