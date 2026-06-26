@@ -619,8 +619,8 @@ Account-deletion cascade of these rows is S-07's responsibility, not this slice'
 
 #### Manual
 
-- [ ] 3.3 Mark on `/resorts` flips button + highlights row with no full reload
-- [ ] 3.4 Unmark reverts in place
-- [ ] 3.5 Marked state survives a hard refresh
-- [ ] 3.6 Second user sees none of the first user's marks
-- [ ] 3.7 No CSRF 403 in the network tab on toggle
+- [x] 3.3 Mark on `/resorts` flips button + highlights row with no full reload
+- [x] 3.4 Unmark reverts in place
+- [x] 3.5 Marked state survives a hard refresh
+- [x] 3.6 Second user sees none of the first user's marks
+- [x] 3.7 No CSRF 403 in the network tab on toggle
