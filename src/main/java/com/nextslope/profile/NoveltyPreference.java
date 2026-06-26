@@ -5,6 +5,17 @@ package com.nextslope.profile;
  * {@code NEW_ONLY} as a hard filter against the user's visited list.
  */
 public enum NoveltyPreference {
-	NEW_ONLY,
-	REVISIT_OKAY
+
+	NEW_ONLY("New resorts only"),
+	REVISIT_OKAY("Revisiting is fine");
+
+	private final String label;
+
+	NoveltyPreference(String label) {
+		this.label = label;
+	}
+
+	public String getLabel() {
+		return label;
+	}
 }

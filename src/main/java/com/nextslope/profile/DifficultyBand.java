@@ -8,14 +8,20 @@ import com.nextslope.resort.DifficultyMix;
  */
 public enum DifficultyBand {
 
-	MOSTLY_EASY(new DifficultyMix(60, 30, 10)),
-	BALANCED(new DifficultyMix(34, 33, 33)),
-	MOSTLY_HARD(new DifficultyMix(10, 30, 60));
+	MOSTLY_EASY("Mostly easy runs", new DifficultyMix(60, 30, 10)),
+	BALANCED("Balanced mix", new DifficultyMix(34, 33, 33)),
+	MOSTLY_HARD("Mostly hard runs", new DifficultyMix(10, 30, 60));
 
+	private final String label;
 	private final DifficultyMix mix;
 
-	DifficultyBand(DifficultyMix mix) {
+	DifficultyBand(String label, DifficultyMix mix) {
+		this.label = label;
 		this.mix = mix;
+	}
+
+	public String getLabel() {
+		return label;
 	}
 
 	public DifficultyMix toMix() {

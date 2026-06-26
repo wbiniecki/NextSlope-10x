@@ -1,5 +1,6 @@
 package com.nextslope.web;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -59,6 +60,13 @@ public class ProfileController {
 		} catch (UnknownRegionCountryException ex) {
 			bindingResult.rejectValue("regionCountries", "regionCountries.unknown",
 					"One or more selected regions are not available");
+			model.addAttribute("availableCountries", preferenceProfileService.availableCountries());
+			return "profile/form";
+		} catch (DataIntegrityViolationException ex) {
+			// Concurrent double-submit before the profile row exists: the UNIQUE(user_id)
+			// constraint rejects the second insert. Re-render so the user can retry (now an update).
+			bindingResult.reject("profile.saveConflict",
+					"Could not save your profile, please try again");
 			model.addAttribute("availableCountries", preferenceProfileService.availableCountries());
 			return "profile/form";
 		}

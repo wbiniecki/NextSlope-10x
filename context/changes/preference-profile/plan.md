@@ -360,8 +360,8 @@ reflect the profile destination).
 
 **Contract**: Unauthenticated GET/POST `/profile` → redirect to login (`assertRedirectedToLogin`);
 authenticated GET returns `profile/form` with `profileForm` + `availableCountries`; POST missing a
-required axis re-renders `profile/form` (200) with errors; valid POST redirects to `/profile`. Mock the
-service + `UserRepository` with `@MockitoBean`.
+required axis re-renders `profile/form` (200) with errors; valid POST redirects to `/resorts` (per the
+post-manual-review UX change in §1). Mock the service + `UserRepository` with `@MockitoBean`.
 
 #### 7. Owner-isolation integration test
 
