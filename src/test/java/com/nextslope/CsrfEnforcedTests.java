@@ -13,6 +13,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.nextslope.config.SecurityConfig;
+import com.nextslope.profile.PreferenceProfileService;
 import com.nextslope.user.AppUserDetailsService;
 import com.nextslope.user.UserRegistrationService;
 import com.nextslope.user.UserRepository;
@@ -38,6 +39,9 @@ class CsrfEnforcedTests {
 
 	@MockitoBean
 	private com.nextslope.resort.ResortRepository resortRepository;
+
+	@MockitoBean
+	private PreferenceProfileService preferenceProfileService;
 
 	@Test
 	void stateChangingPostWithoutCsrfTokenIsForbidden() throws Exception {

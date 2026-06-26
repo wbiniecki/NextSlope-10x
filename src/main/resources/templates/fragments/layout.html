@@ -15,6 +15,7 @@
 		<div class="container">
 			<a class="navbar-brand fw-bold" th:href="@{/resorts}" href="/resorts">NextSlope</a>
 			<div class="d-flex align-items-center" sec:authorize="isAuthenticated()">
+				<a class="btn btn-outline-light btn-sm me-3" th:href="@{/profile}" href="/profile">Profile</a>
 				<span class="navbar-text me-3">
 					Signed in as <span sec:authentication="name">user</span>
 				</span>

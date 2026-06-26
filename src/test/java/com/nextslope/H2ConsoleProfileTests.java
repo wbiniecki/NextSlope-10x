@@ -15,6 +15,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.nextslope.config.SecurityConfig;
+import com.nextslope.profile.PreferenceProfileService;
 import com.nextslope.user.AppUserDetailsService;
 import com.nextslope.user.UserRegistrationService;
 import com.nextslope.user.UserRepository;
@@ -48,6 +49,9 @@ class H2ConsoleProfileTests {
 		@MockitoBean
 		private com.nextslope.resort.ResortRepository resortRepository;
 
+		@MockitoBean
+		private PreferenceProfileService preferenceProfileService;
+
 		@Test
 		void h2ConsoleIsPublicUnderNonProdProfile() throws Exception {
 			mockMvc.perform(get("/h2-console/"))
@@ -74,6 +78,9 @@ class H2ConsoleProfileTests {
 
 		@MockitoBean
 		private com.nextslope.resort.ResortRepository resortRepository;
+
+		@MockitoBean
+		private PreferenceProfileService preferenceProfileService;
 
 		@Test
 		void h2ConsoleChainAbsentUnderProdProfileFallsThroughToAuthenticated() throws Exception {

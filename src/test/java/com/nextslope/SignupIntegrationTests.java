@@ -33,14 +33,14 @@ class SignupIntegrationTests {
 	}
 
 	@Test
-	void postSignupWithValidInputRedirectsToHomeWithAuthenticatedSession() throws Exception {
+	void postSignupWithValidInputRedirectsToProfileWithAuthenticatedSession() throws Exception {
 		mockMvc.perform(post("/signup")
 						.with(csrf())
 						.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 						.param("email", "newskier@example.com")
 						.param("password", "secret123"))
 				.andExpect(status().is3xxRedirection())
-				.andExpect(redirectedUrl("/"))
+				.andExpect(redirectedUrl("/profile"))
 				.andExpect(authenticated());
 	}
 }

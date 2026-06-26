@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nextslope.config.SecurityConfig;
+import com.nextslope.profile.PreferenceProfileService;
 import com.nextslope.user.AppUserDetailsService;
 import com.nextslope.user.UserRegistrationService;
 import com.nextslope.user.UserRepository;
@@ -66,6 +67,9 @@ class RoleGatingPatternTests {
 
 	@MockitoBean
 	private com.nextslope.resort.ResortRepository resortRepository;
+
+	@MockitoBean
+	private PreferenceProfileService preferenceProfileService;
 
 	@Test
 	void anonymousIsRedirectedToLogin() throws Exception {

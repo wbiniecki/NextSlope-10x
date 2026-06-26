@@ -303,7 +303,9 @@ UserDetails` → `userRepository.findByEmail(...)`; add `profileForm` (from `loa
 them via `T(...).values()` SpEL (see §2), so they need no re-adding on the error path. `@PostMapping("/profile")` — `@Valid
 @ModelAttribute("profileForm") + BindingResult`; re-render `profile/form` (200) on errors (re-add
 `availableCountries`); on the out-of-vocabulary-country exception, `bindingResult.rejectValue(...)`; on
-success `redirect:/profile` with a flash "saved" message.
+success `redirect:/resorts` with a flash "profileSaved" confirmation (rendered on the resorts page).
+(Post-manual-review UX change: success lands the user on the browse page so a freshly-onboarded user
+has a clear path into the app, rather than staying on `/profile`.)
 
 #### 2. Profile view
 
@@ -464,11 +466,11 @@ context start; verified on both engines.
 
 #### Automated
 
-- [ ] 3.1 Controller `@WebMvcTest` gating/view tests pass
-- [ ] 3.2 Owner-isolation integration test passes
-- [ ] 3.3 Updated signup redirect test passes
-- [ ] 3.4 `PermitListLockTests` still green (`/profile` gated)
-- [ ] 3.5 Full suite green
+- [x] 3.1 Controller `@WebMvcTest` gating/view tests pass
+- [x] 3.2 Owner-isolation integration test passes
+- [x] 3.3 Updated signup redirect test passes
+- [x] 3.4 `PermitListLockTests` still green (`/profile` gated)
+- [x] 3.5 Full suite green
 
 #### Manual
 
