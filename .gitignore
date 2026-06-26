@@ -45,3 +45,6 @@ out/
 ### Neon CLI ###
 .neon
 /ski-resorts-data/
+
+### Local file-backed H2 (application-local profile) ###
+/data/
