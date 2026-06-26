@@ -3,7 +3,7 @@ project: "NextSlope"
 version: 1
 status: draft
 created: 2026-06-12
-updated: 2026-06-25
+updated: 2026-06-26
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -31,7 +31,7 @@ An avid skier or snowboarder planning the upcoming season drowns in scattered, m
 |---|---|---|---|---|---|
 | F-01 | persistence-migration-baseline | (foundation) schema migrations + persistence conventions wired and verified on the local and production databases | — | Access Control, NFR (determinism, privacy) | done |
 | S-01 | account-authentication | sign up, sign in, and sign out with a real user + role model behind gated routes | F-01 | US-01, FR-001, FR-002, FR-003 | done |
-| S-02 | preference-profile | create and edit a preference profile (experience, difficulty mix, region, novelty) | S-01 | US-01, FR-004 | proposed |
+| S-02 | preference-profile | create and edit a preference profile (experience, difficulty mix, region, novelty) | S-01 | US-01, FR-004 | done |
 | S-03 | resort-catalog-browse | browse the resort list with key facts and open a single resort's detail view | S-01 | FR-006, FR-007 | done |
 | S-04 | mark-visited | mark and unmark resorts as visited from the browse list, privately | S-01, S-03 | US-02, FR-005 | proposed |
 | S-05 | three-resort-recommendation | click "Recommend resorts" and get exactly three ranked picks with a truthful rationale | S-02, S-03, S-04 | US-01, FR-008, FR-009 | proposed |
@@ -102,7 +102,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Exact shape of the difficulty-mix input (three percentages vs. preset bands) — Owner: TBD. Block: no.
 - **Risk:** Edit (not just create) is mandatory because the Secondary success outcome — tweak a preference and re-run — depends on it. North-star prerequisite; independent of resort data, so it runs alongside S-03.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Resort catalog & browsing
 
@@ -205,3 +205,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **F-01: (foundation) schema migrations + persistence conventions wired and verified on the local and production databases** — Archived 2026-06-19 → `context/archive/2026-06-16-persistence-migration-baseline/`. Lesson: —.
 - **S-01: A visitor can sign up with email + password, sign in, and sign out; gated routes are enforced against a real persisted user and role model, replacing the default-user scaffold.** — Archived 2026-06-21 → `context/archive/2026-06-19-account-authentication/`. Lesson: —.
 - **S-03: A signed-in user can browse the full resort list with key facts visible (name, location, top lift height, slopes, lifts, difficulty mix) and open a single resort's detail view.** — Archived 2026-06-25 → `context/archive/2026-06-21-resort-catalog-browse/`. Lesson: —.
+- **S-02: A signed-in user can create and edit their preference profile — experience level, preferred difficulty mix, location/region, and novelty preference — and the edits persist across sessions.** — Archived 2026-06-26 → `context/archive/2026-06-21-preference-profile/`. Lesson: —.
