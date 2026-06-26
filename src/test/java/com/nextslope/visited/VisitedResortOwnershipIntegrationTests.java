@@ -90,4 +90,33 @@ class VisitedResortOwnershipIntegrationTests extends TwoUserIntegrationTestBase 
 		assertThat(visitedResortRepository.findResortIdsByUserId(userIdB)).containsExactly(resortXId);
 		assertThat(visitedResortRepository.existsByUserIdAndResortId(userIdA, resortXId)).isTrue();
 	}
+
+	/**
+	 * FR-013: a mark on a resort that is later deactivated must still be clearable. Mark while active,
+	 * deactivate the resort, then toggle again — the unmark path must not run the active-resort check,
+	 * so the mark is removed end-to-end (not just at the service layer).
+	 */
+	@Test
+	void aMarkOnALaterDeactivatedResortCanStillBeUnmarked() throws Exception {
+		Long userIdA = userRepository.findByEmail(UserFixtures.USER_A_EMAIL).orElseThrow().getId();
+
+		MockHttpSession sessionA = loginAsUserA();
+		mockMvc.perform(post("/resorts/{id}/visited", resortXId)
+						.session(sessionA)
+						.with(csrf()))
+				.andExpect(status().isOk());
+		assertThat(visitedResortRepository.existsByUserIdAndResortId(userIdA, resortXId)).isTrue();
+
+		Resort resortX = resortRepository.findById(resortXId).orElseThrow();
+		resortX.setActive(false);
+		resortRepository.save(resortX);
+
+		mockMvc.perform(post("/resorts/{id}/visited", resortXId)
+						.session(sessionA)
+						.with(csrf()))
+				.andExpect(status().isOk());
+
+		assertThat(visitedResortRepository.existsByUserIdAndResortId(userIdA, resortXId)).isFalse();
+		assertThat(visitedResortRepository.findResortIdsByUserId(userIdA)).isEmpty();
+	}
 }

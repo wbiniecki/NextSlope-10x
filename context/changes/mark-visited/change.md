@@ -1,7 +1,7 @@
 ---
 change_id: mark-visited
 title: Mark resorts as visited
-status: implemented
+status: impl_reviewed
 roadmap_id: S-04
 created: 2026-06-26
 updated: 2026-06-26

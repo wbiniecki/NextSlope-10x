@@ -64,6 +64,7 @@
 				th:classappend="${visited} ? 'btn-success' : 'btn-outline-secondary'"
 				th:attr="hx-post=@{/resorts/{id}/visited(id=${resortId})}, data-visited=${visited}"
 				hx-swap="outerHTML"
+				hx-disabled-elt="this"
 				th:text="${visited} ? 'Visited ✓' : 'Mark visited'">Mark visited</button>
 	</th:block>
 

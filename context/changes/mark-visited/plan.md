@@ -329,13 +329,18 @@ names that **exactly match the fragment parameters** — `resortId` and `visited
 (a parameterized fragment returned by name binds its parameters from context
 variables of the same name, so an attribute named `id` would leave `resortId`
 unbound). Alternatively pass them as explicit fragment args
-(`visitedToggle(resortId, visited)`). Return a view that renders **both** the
-`visitedToggle` control fragment **and** the `visitedRowState` out-of-band
-row-highlight fragment (e.g. a thin `resorts/visited-toggle-response` template
-that includes both fragments with explicit args, or a multi-fragment selector),
-so one POST updates the button and the row highlight together. The route is
+(`visitedToggle(resortId, visited)`). Return a view that renders the
+`visitedToggle` control fragment (a thin `resorts/visited-toggle-response`
+template that includes it with explicit args). The route is
 authenticated automatically by the existing security chain (no `SecurityConfig`
 change) and must accept a CSRF token.
+
+> **Superseded (phase-2 impl-review F1):** the original wording here returned a
+> second out-of-band `visitedRowState` fragment so one POST updated both the
+> button and the row highlight. That was dropped — an `hx-swap-oob` `<tr>` would
+> wipe the row's cells. The endpoint now returns **only** the button; the row
+> highlight is applied client-side via the `htmx:afterSwap` listener. See §4
+> ("Row highlight driven from the button") and Phase 3 §1.
 
 #### 4. Toggle control fragment
 
