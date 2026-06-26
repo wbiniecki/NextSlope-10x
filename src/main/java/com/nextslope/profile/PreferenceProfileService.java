@@ -33,6 +33,12 @@ public class PreferenceProfileService {
 				.orElseGet(PreferenceProfileForm::defaults);
 	}
 
+	/** Whether the user has already saved a preference profile (false during first-ever setup). */
+	@Transactional(readOnly = true)
+	public boolean hasProfile(Long userId) {
+		return preferenceProfileRepository.findByUserId(userId).isPresent();
+	}
+
 	/** Upsert the authenticated user's profile from the submitted form. */
 	@Transactional
 	public void save(Long userId, PreferenceProfileForm form) {

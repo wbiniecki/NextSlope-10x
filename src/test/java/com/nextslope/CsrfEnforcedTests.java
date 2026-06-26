@@ -15,8 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.nextslope.config.SecurityConfig;
 import com.nextslope.profile.PreferenceProfileService;
 import com.nextslope.user.AppUserDetailsService;
+import com.nextslope.user.CurrentUserService;
 import com.nextslope.user.UserRegistrationService;
 import com.nextslope.user.UserRepository;
+import com.nextslope.visited.VisitedResortService;
 
 /**
  * Pins that CSRF protection stays enabled on the main chain: a state-changing POST
@@ -42,6 +44,12 @@ class CsrfEnforcedTests {
 
 	@MockitoBean
 	private PreferenceProfileService preferenceProfileService;
+
+	@MockitoBean
+	private VisitedResortService visitedResortService;
+
+	@MockitoBean
+	private CurrentUserService currentUserService;
 
 	@Test
 	void stateChangingPostWithoutCsrfTokenIsForbidden() throws Exception {

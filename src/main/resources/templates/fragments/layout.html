@@ -4,6 +4,8 @@
 <head th:fragment="head(title)">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="_csrf" th:content="${_csrf.token}">
+	<meta name="_csrf_header" th:content="${_csrf.headerName}">
 	<title th:text="${title} ?: 'NextSlope'">NextSlope</title>
 	<link rel="stylesheet"
 		  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -33,6 +35,31 @@
 		<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.4/dist/htmx.min.js"
 				integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
 				crossorigin="anonymous"></script>
+		<script>
+			// Spring CSRF is enabled and pinned; HTMX sends no token by default. Copy the token
+			// (published as <meta> tags) into every HTMX request's headers. Canonical wiring reused by S-05.
+			(function () {
+				var tokenMeta = document.querySelector('meta[name="_csrf"]');
+				var headerMeta = document.querySelector('meta[name="_csrf_header"]');
+				if (tokenMeta && headerMeta) {
+					document.body.addEventListener('htmx:configRequest', function (evt) {
+						evt.detail.headers[headerMeta.content] = tokenMeta.content;
+					});
+				}
+				// In-place visited-row highlight: when a toggle button swaps in, derive its row's
+				// highlight from the button's own data-visited (single source of truth) — never by
+				// replacing the <tr>, which would wipe its cells.
+				document.body.addEventListener('htmx:afterSwap', function (evt) {
+					var button = evt.detail.target;
+					if (button && button.classList && button.classList.contains('visited-toggle')) {
+						var row = button.closest('tr');
+						if (row) {
+							row.classList.toggle('table-active', button.dataset.visited === 'true');
+						}
+					}
+				});
+			})();
+		</script>
 	</th:block>
 </body>
 </html>

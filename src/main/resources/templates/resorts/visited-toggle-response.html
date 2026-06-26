@@ -1,0 +1,6 @@
+<!--
+	HTMX response for a visited toggle: just the updated button, swapped into the targeting
+	element via outerHTML. The in-place row highlight is applied client-side (Phase 3) from the
+	button's data-visited state — never by replacing the row, which would wipe its cells.
+-->
+<th:block th:replace="~{resorts/list :: visitedToggle(${resortId}, ${visited})}"></th:block>

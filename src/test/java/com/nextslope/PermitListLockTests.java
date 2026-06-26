@@ -1,10 +1,13 @@
 package com.nextslope;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -18,8 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.nextslope.config.SecurityConfig;
 import com.nextslope.profile.PreferenceProfileService;
 import com.nextslope.user.AppUserDetailsService;
+import com.nextslope.user.CurrentUserService;
 import com.nextslope.user.UserRegistrationService;
 import com.nextslope.user.UserRepository;
+import com.nextslope.visited.VisitedResortService;
 
 /**
  * Risk #4 regression net: pins the public surface and proves a real gated route.
@@ -51,6 +56,17 @@ class PermitListLockTests {
 
 	@MockitoBean
 	private PreferenceProfileService preferenceProfileService;
+
+	@MockitoBean
+	private VisitedResortService visitedResortService;
+
+	@MockitoBean
+	private CurrentUserService currentUserService;
+
+	@BeforeEach
+	void mockUserExists() {
+		when(userRepository.existsByEmail(anyString())).thenReturn(true);
+	}
 
 	@ParameterizedTest
 	@ValueSource(strings = {"/", "/index", "/login", "/signup", "/actuator/health", "/css/app.css",

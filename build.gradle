@@ -51,3 +51,10 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// Local dev runs under the `local` profile so the app uses a file-backed H2
+// (see application-local.properties) and data survives restarts. Override with
+// `-Dspring.profiles.active=...` if needed. Tests/CI use the in-memory default.
+tasks.named('bootRun') {
+	systemProperty 'spring.profiles.active', System.getProperty('spring.profiles.active', 'local')
+}

@@ -1,7 +1,6 @@
 package com.nextslope.web;
 
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,15 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.nextslope.profile.PreferenceProfileForm;
 import com.nextslope.profile.PreferenceProfileService;
 import com.nextslope.profile.UnknownRegionCountryException;
-import com.nextslope.user.EmailNormalizer;
-import com.nextslope.user.User;
-import com.nextslope.user.UserRepository;
+import com.nextslope.user.CurrentUserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,13 +28,14 @@ import lombok.RequiredArgsConstructor;
 public class ProfileController {
 
 	private final PreferenceProfileService preferenceProfileService;
-	private final UserRepository userRepository;
+	private final CurrentUserService currentUserService;
 
 	@GetMapping("/profile")
 	public String form(@AuthenticationPrincipal UserDetails principal, Model model) {
-		Long userId = currentUserId(principal);
+		Long userId = currentUserService.requireUserId(principal);
 		model.addAttribute("profileForm", preferenceProfileService.loadFormForUser(userId));
 		model.addAttribute("availableCountries", preferenceProfileService.availableCountries());
+		model.addAttribute("profileExists", preferenceProfileService.hasProfile(userId));
 		return "profile/form";
 	}
 
@@ -48,7 +45,8 @@ public class ProfileController {
 			BindingResult bindingResult,
 			Model model,
 			RedirectAttributes redirectAttributes) {
-		Long userId = currentUserId(principal);
+		Long userId = currentUserService.requireUserId(principal);
+		model.addAttribute("profileExists", preferenceProfileService.hasProfile(userId));
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("availableCountries", preferenceProfileService.availableCountries());
@@ -73,11 +71,5 @@ public class ProfileController {
 
 		redirectAttributes.addFlashAttribute("profileSaved", true);
 		return "redirect:/resorts";
-	}
-
-	private Long currentUserId(UserDetails principal) {
-		User user = userRepository.findByEmail(EmailNormalizer.normalize(principal.getUsername()))
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
-		return user.getId();
 	}
 }

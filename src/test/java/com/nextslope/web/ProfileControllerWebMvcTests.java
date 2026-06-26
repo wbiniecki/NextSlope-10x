@@ -1,6 +1,9 @@
 package com.nextslope.web;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -8,19 +11,21 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,7 +34,7 @@ import com.nextslope.config.SecurityConfig;
 import com.nextslope.profile.PreferenceProfileForm;
 import com.nextslope.profile.PreferenceProfileService;
 import com.nextslope.user.AppUserDetailsService;
-import com.nextslope.user.User;
+import com.nextslope.user.CurrentUserService;
 import com.nextslope.user.UserRepository;
 
 @WebMvcTest(controllers = ProfileController.class)
@@ -43,10 +48,14 @@ class ProfileControllerWebMvcTests {
 	private PreferenceProfileService preferenceProfileService;
 
 	@MockitoBean
+	private CurrentUserService currentUserService;
+
+	@MockitoBean
 	private UserRepository userRepository;
 
-	private static User userNamed(String email, Long id) {
-		return User.builder().id(id).email(email).passwordHash("x").role(User.Role.USER).build();
+	@BeforeEach
+	void mockUserExists() {
+		when(userRepository.existsByEmail(anyString())).thenReturn(true);
 	}
 
 	@Test
@@ -66,7 +75,7 @@ class ProfileControllerWebMvcTests {
 	@Test
 	@WithMockUser(username = "user")
 	void authenticatedGetReturnsFormWithModelAttributes() throws Exception {
-		when(userRepository.findByEmail("user")).thenReturn(Optional.of(userNamed("user", 1L)));
+		when(currentUserService.requireUserId(any(UserDetails.class))).thenReturn(1L);
 		when(preferenceProfileService.loadFormForUser(1L)).thenReturn(PreferenceProfileForm.defaults());
 		when(preferenceProfileService.availableCountries()).thenReturn(List.of("Austria", "France"));
 
@@ -79,8 +88,34 @@ class ProfileControllerWebMvcTests {
 
 	@Test
 	@WithMockUser(username = "user")
+	void firstTimeUserDoesNotSeeBackToResortsLink() throws Exception {
+		when(currentUserService.requireUserId(any(UserDetails.class))).thenReturn(1L);
+		when(preferenceProfileService.loadFormForUser(1L)).thenReturn(PreferenceProfileForm.defaults());
+		when(preferenceProfileService.availableCountries()).thenReturn(List.of("Austria", "France"));
+		when(preferenceProfileService.hasProfile(1L)).thenReturn(false);
+
+		mockMvc.perform(get("/profile"))
+				.andExpect(status().isOk())
+				.andExpect(content().string(not(containsString("Back to resorts"))));
+	}
+
+	@Test
+	@WithMockUser(username = "user")
+	void returningUserSeesBackToResortsLink() throws Exception {
+		when(currentUserService.requireUserId(any(UserDetails.class))).thenReturn(1L);
+		when(preferenceProfileService.loadFormForUser(1L)).thenReturn(PreferenceProfileForm.defaults());
+		when(preferenceProfileService.availableCountries()).thenReturn(List.of("Austria", "France"));
+		when(preferenceProfileService.hasProfile(1L)).thenReturn(true);
+
+		mockMvc.perform(get("/profile"))
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString("Back to resorts")));
+	}
+
+	@Test
+	@WithMockUser(username = "user")
 	void postWithMissingRequiredAxisReRendersFormWithErrors() throws Exception {
-		when(userRepository.findByEmail("user")).thenReturn(Optional.of(userNamed("user", 1L)));
+		when(currentUserService.requireUserId(any(UserDetails.class))).thenReturn(1L);
 		when(preferenceProfileService.availableCountries()).thenReturn(List.of("Austria", "France"));
 
 		mockMvc.perform(post("/profile")
@@ -100,7 +135,7 @@ class ProfileControllerWebMvcTests {
 	@Test
 	@WithMockUser(username = "user")
 	void validPostSavesAndRedirectsToResorts() throws Exception {
-		when(userRepository.findByEmail("user")).thenReturn(Optional.of(userNamed("user", 1L)));
+		when(currentUserService.requireUserId(any(UserDetails.class))).thenReturn(1L);
 
 		mockMvc.perform(post("/profile")
 						.with(csrf())

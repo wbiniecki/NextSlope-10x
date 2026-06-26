@@ -22,10 +22,12 @@
 						<th scope="col" class="text-end">Total slopes</th>
 						<th scope="col" class="text-end">Total lifts</th>
 						<th scope="col">Difficulty mix (E / M / H)</th>
+						<th scope="col">Visited</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="r : ${resorts}">
+					<tr th:each="r : ${resorts}" th:id="'resort-row-' + ${r.id}"
+						th:classappend="${visitedIds.contains(r.id)} ? 'table-active'">
 						<td>
 							<a th:href="@{/resorts/{id}(id=${r.id})}" th:text="${r.name}">Resort</a>
 						</td>
@@ -34,18 +36,37 @@
 						<td class="text-end" th:text="${r.totalSlopes}">0</td>
 						<td class="text-end" th:text="${r.totalLifts}">0</td>
 						<td>
-							<span class="badge text-bg-success" th:text="${r.difficultyMix.easy()} + '%'">0%</span>
-							<span class="badge text-bg-primary" th:text="${r.difficultyMix.medium()} + '%'">0%</span>
+							<span class="badge text-bg-primary" th:text="${r.difficultyMix.easy()} + '%'">0%</span>
+							<span class="badge text-bg-danger" th:text="${r.difficultyMix.medium()} + '%'">0%</span>
 							<span class="badge text-bg-dark" th:text="${r.difficultyMix.hard()} + '%'">0%</span>
 						</td>
+						<td th:insert="~{resorts/list :: visitedToggle(${r.id}, ${visitedIds.contains(r.id)})}"></td>
 					</tr>
 					<tr th:if="${#lists.isEmpty(resorts)}">
-						<td colspan="6" class="text-center text-muted py-4">No resorts available.</td>
+						<td colspan="7" class="text-center text-muted py-4">No resorts available.</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</main>
+
+	<!--
+		Reusable visited control. Defined here because this is the toggle endpoint's return contract;
+		the table wiring that renders it on initial load lands in Phase 3. Wrapped in a never-true
+		block so it is not emitted on a full page render — it is only reachable as the named fragment
+		`resorts/list :: visitedToggle(...)`. The button carries data-visited so Phase 3 can highlight
+		the containing row from a single source of truth without replacing (and wiping) the row.
+	-->
+	<th:block th:if="${false}">
+		<button th:fragment="visitedToggle(resortId, visited)"
+				type="button"
+				class="btn btn-sm visited-toggle"
+				th:classappend="${visited} ? 'btn-success' : 'btn-outline-secondary'"
+				th:attr="hx-post=@{/resorts/{id}/visited(id=${resortId})}, data-visited=${visited}"
+				hx-swap="outerHTML"
+				hx-disabled-elt="this"
+				th:text="${visited} ? 'Visited ✓' : 'Mark visited'">Mark visited</button>
+	</th:block>
 
 	<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
