@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Your profile — NextSlope')}"></head>
+<body class="bg-light">
+	<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+	<main class="container py-4">
+		<div class="row justify-content-center">
+			<div class="col-lg-8">
+				<h1 class="h3 mb-4">Your preference profile</h1>
+
+				<form th:action="@{/profile}" th:object="${profileForm}" method="post"
+					  class="card shadow-sm" novalidate>
+					<div class="card-body">
+
+						<div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger" role="alert">
+							<p class="mb-0" th:each="err : ${#fields.globalErrors()}" th:text="${err}">Error</p>
+						</div>
+
+
+						<div class="mb-4">
+							<label for="experienceLevel" class="form-label">Experience level</label>
+							<select id="experienceLevel" th:field="*{experienceLevel}"
+									th:classappend="${#fields.hasErrors('experienceLevel')} ? 'is-invalid'"
+									class="form-select">
+								<option th:each="level : ${T(com.nextslope.profile.ExperienceLevel).values()}"
+										th:value="${level}" th:text="${level.label}">Level</option>
+							</select>
+							<div th:if="${#fields.hasErrors('experienceLevel')}" class="invalid-feedback d-block"
+								 th:errors="*{experienceLevel}">Invalid</div>
+						</div>
+
+						<div class="mb-4">
+							<label for="difficultyBand" class="form-label">Preferred difficulty</label>
+							<select id="difficultyBand" th:field="*{difficultyBand}"
+									th:classappend="${#fields.hasErrors('difficultyBand')} ? 'is-invalid'"
+									class="form-select">
+								<option th:each="band : ${T(com.nextslope.profile.DifficultyBand).values()}"
+										th:value="${band}" th:text="${band.label}">Band</option>
+							</select>
+							<div th:if="${#fields.hasErrors('difficultyBand')}" class="invalid-feedback d-block"
+								 th:errors="*{difficultyBand}">Invalid</div>
+						</div>
+
+						<div class="mb-4">
+							<label for="noveltyPreference" class="form-label">Novelty preference</label>
+							<select id="noveltyPreference" th:field="*{noveltyPreference}"
+									th:classappend="${#fields.hasErrors('noveltyPreference')} ? 'is-invalid'"
+									class="form-select">
+								<option th:each="novelty : ${T(com.nextslope.profile.NoveltyPreference).values()}"
+										th:value="${novelty}" th:text="${novelty.label}">Novelty</option>
+							</select>
+							<div th:if="${#fields.hasErrors('noveltyPreference')}" class="invalid-feedback d-block"
+								 th:errors="*{noveltyPreference}">Invalid</div>
+						</div>
+
+						<fieldset class="mb-2">
+							<legend class="form-label">Region preference</legend>
+
+							<div class="form-check mb-2">
+								<input type="checkbox" class="form-check-input" id="anyRegion"
+									   th:field="*{anyRegion}">
+								<label class="form-check-label" for="anyRegion">
+									Any region (recommend from everywhere)
+								</label>
+							</div>
+
+							<div th:if="${#fields.hasErrors('regionCountries')}" class="invalid-feedback d-block"
+								 th:errors="*{regionCountries}">Invalid region</div>
+
+							<div id="regionCountries" class="row row-cols-2 row-cols-md-3 g-2">
+								<div class="col" th:each="country : ${availableCountries}">
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input region-country"
+											   th:field="*{regionCountries}" th:value="${country}"
+											   th:id="${'country-' + country}">
+										<label class="form-check-label" th:for="${'country-' + country}"
+											   th:text="${country}">Country</label>
+									</div>
+								</div>
+							</div>
+						</fieldset>
+
+						<button type="submit" class="btn btn-primary mt-3">Save profile</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+
+	<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+	<script th:inline="javascript">
+		// Server-side normalization is authoritative; this only mirrors it in the UI.
+		// "Any region" and specific countries are mutually exclusive: checking "Any
+		// region" clears the countries, and checking any country clears "Any region".
+		(function () {
+			var anyRegion = document.getElementById('anyRegion');
+			var countries = document.querySelectorAll('.region-country');
+			if (!anyRegion) {
+				return;
+			}
+			anyRegion.addEventListener('change', function () {
+				if (anyRegion.checked) {
+					countries.forEach(function (cb) {
+						cb.checked = false;
+					});
+				}
+			});
+			countries.forEach(function (cb) {
+				cb.addEventListener('change', function () {
+					if (cb.checked) {
+						anyRegion.checked = false;
+					}
+				});
+			});
+		})();
+	</script>
+</body>
+</html>

@@ -6,6 +6,10 @@
 	<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
 	<main class="container py-4">
+		<div th:if="${profileSaved}" class="alert alert-success" role="alert">
+			Your profile has been saved.
+		</div>
+
 		<h1 class="h3 mb-4">Ski resorts</h1>
 
 		<div class="table-responsive">

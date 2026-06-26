@@ -80,6 +80,7 @@ public class AuthController {
 		securityContextHolderStrategy.setContext(context);
 		securityContextRepository.saveContext(context, request, response);
 
-		return "redirect:/";
+		// Onboard brand-new users straight into their preference profile (S-02).
+		return "redirect:/profile";
 	}
 }
