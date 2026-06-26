@@ -25,8 +25,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.nextslope.config.SecurityConfig;
 import com.nextslope.profile.PreferenceProfileService;
 import com.nextslope.user.AppUserDetailsService;
+import com.nextslope.user.CurrentUserService;
 import com.nextslope.user.UserRegistrationService;
 import com.nextslope.user.UserRepository;
+import com.nextslope.visited.VisitedResortService;
 
 /**
  * Risk #5 admin-authz vocabulary, proven green against a TEST-ONLY role-gated route.
@@ -70,6 +72,12 @@ class RoleGatingPatternTests {
 
 	@MockitoBean
 	private PreferenceProfileService preferenceProfileService;
+
+	@MockitoBean
+	private VisitedResortService visitedResortService;
+
+	@MockitoBean
+	private CurrentUserService currentUserService;
 
 	@Test
 	void anonymousIsRedirectedToLogin() throws Exception {

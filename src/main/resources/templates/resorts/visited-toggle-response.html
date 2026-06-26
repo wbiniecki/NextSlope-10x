@@ -1,0 +1,7 @@
+<!--
+	HTMX response for a visited toggle: the updated button (swapped into the targeting element via
+	outerHTML) plus the out-of-band row-highlight element (matched to its `resort-row-{id}` id). No
+	page wrapper — only the two fragments are emitted so HTMX swaps them directly.
+-->
+<th:block th:replace="~{resorts/list :: visitedToggle(${resortId}, ${visited})}"></th:block>
+<th:block th:replace="~{resorts/list :: visitedRowState(${resortId}, ${visited})}"></th:block>

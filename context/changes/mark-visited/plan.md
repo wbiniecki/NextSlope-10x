@@ -573,27 +573,27 @@ Account-deletion cascade of these rows is S-07's responsibility, not this slice'
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly on app/test boot (`./gradlew test`)
-- [x] 1.2 H2 repository slice passes (`VisitedResortRepositoryTests`)
-- [x] 1.3 Postgres repository test passes (`VisitedResortRepositoryPostgresTests`)
-- [x] 1.4 Full context still boots / entity↔schema validate (`NextslopeApplicationTests`)
+- [x] 1.1 Migration applies cleanly on app/test boot (`./gradlew test`) — 078ffad
+- [x] 1.2 H2 repository slice passes (`VisitedResortRepositoryTests`) — 078ffad
+- [x] 1.3 Postgres repository test passes (`VisitedResortRepositoryPostgresTests`) — 078ffad
+- [x] 1.4 Full context still boots / entity↔schema validate (`NextslopeApplicationTests`) — 078ffad
 
 #### Manual
 
-- [ ] 1.5 `visited_resorts` table + unique constraint visible in H2 console
+- [x] 1.5 `visited_resorts` table + unique constraint visible in H2 console
 
 ### Phase 2: Service, toggle endpoint, and privacy guarantee
 
 #### Automated
 
-- [ ] 2.1 Controller test passes (`VisitedControllerWebMvcTests`)
-- [ ] 2.2 Isolation test passes (`VisitedResortOwnershipIntegrationTests`)
-- [ ] 2.3 CSRF stays enforced (`CsrfEnforcedTests`)
-- [ ] 2.4 Full suite green (`./gradlew test`)
+- [x] 2.1 Controller test passes (`VisitedControllerWebMvcTests`)
+- [x] 2.2 Isolation test passes (`VisitedResortOwnershipIntegrationTests`)
+- [x] 2.3 CSRF stays enforced (`CsrfEnforcedTests`)
+- [x] 2.4 Full suite green (`./gradlew test`)
 
 #### Manual
 
-- [ ] 2.5 POST `/resorts/{id}/visited` returns the toggle fragment; second toggle flips it back
+- [x] 2.5 POST `/resorts/{id}/visited` returns the toggle fragment; second toggle flips it back
 
 ### Phase 3: Browse-list UI + HTMX wiring
 

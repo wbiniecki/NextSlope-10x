@@ -18,8 +18,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.nextslope.config.SecurityConfig;
 import com.nextslope.profile.PreferenceProfileService;
 import com.nextslope.user.AppUserDetailsService;
+import com.nextslope.user.CurrentUserService;
 import com.nextslope.user.UserRegistrationService;
 import com.nextslope.user.UserRepository;
+import com.nextslope.visited.VisitedResortService;
 
 /**
  * Risk #4 regression net: pins the public surface and proves a real gated route.
@@ -51,6 +53,12 @@ class PermitListLockTests {
 
 	@MockitoBean
 	private PreferenceProfileService preferenceProfileService;
+
+	@MockitoBean
+	private VisitedResortService visitedResortService;
+
+	@MockitoBean
+	private CurrentUserService currentUserService;
 
 	@ParameterizedTest
 	@ValueSource(strings = {"/", "/index", "/login", "/signup", "/actuator/health", "/css/app.css",
