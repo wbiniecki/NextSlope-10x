@@ -354,11 +354,11 @@ No schema migration. Dataset expansion is data-only (CSV + loader). Already-popu
 
 #### Automated
 
-- [x] 2.1 Recommendation unit tests pass (`com.nextslope.recommendation.*`)
-- [x] 2.2 Determinism test passes
-- [x] 2.3 Sparse-path test passes
-- [x] 2.4 Truthfulness tests pass
-- [x] 2.5 Full suite green (`./gradlew test`)
+- [x] 2.1 Recommendation unit tests pass (`com.nextslope.recommendation.*`) — 7aa1860
+- [x] 2.2 Determinism test passes — 7aa1860
+- [x] 2.3 Sparse-path test passes — 7aa1860
+- [x] 2.4 Truthfulness tests pass — 7aa1860
+- [x] 2.5 Full suite green (`./gradlew test`) — 7aa1860
 
 #### Manual
 

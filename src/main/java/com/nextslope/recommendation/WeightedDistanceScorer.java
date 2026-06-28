@@ -1,5 +1,6 @@
 package com.nextslope.recommendation;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import com.nextslope.profile.ProfileSnapshot;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
  * {@link ScoringConfig}.
  */
 @Component
+@Primary
 @RequiredArgsConstructor
 public class WeightedDistanceScorer implements Scorer {
 

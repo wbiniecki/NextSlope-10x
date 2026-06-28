@@ -30,7 +30,9 @@ public class RationaleBuilder {
 
 		if (profile.hasRegionFilter() && profile.regionCountries().contains(resort.getCountry())) {
 			// A satisfied region hard filter is a perfect, truthful match.
-			best = "a strong fit in " + resort.getCountry() + ", one of your selected regions";
+			best = profile.regionCountries().size() == 1
+					? "a strong fit in your selected region, " + resort.getCountry()
+					: "a strong fit in " + resort.getCountry() + ", one of your selected regions";
 			bestAlignment = 1.0;
 		}
 
