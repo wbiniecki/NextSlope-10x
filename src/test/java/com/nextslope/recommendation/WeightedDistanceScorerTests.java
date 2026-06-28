@@ -44,6 +44,17 @@ class WeightedDistanceScorerTests {
 	}
 
 	@Test
+	void difficultyAlignmentSumsAllThreeMixComponents() {
+		// MOSTLY_EASY (60,30,10) vs (60,10,30): the easy term is 0, so the medium (20) and hard (20)
+		// terms must both contribute — L1 = 0+20+20 = 40; 1 - 40/200 = 0.8.
+		ScoreBreakdown breakdown = scorer.score(
+				new DifficultyMix(60, 10, 30),
+				profile(ExperienceLevel.BEGINNER, DifficultyBand.MOSTLY_EASY));
+
+		assertThat(breakdown.alignDiff()).isEqualTo(0.8, within(EPS));
+	}
+
+	@Test
 	void experienceAlignmentComparesHardnessIndexToPerLevelTarget() {
 		// Resort mix (10,30,60): hardness H = (0.5*30 + 60)/100 = 0.75; ADVANCED target 0.70 → 1 - 0.05 = 0.95.
 		ScoreBreakdown breakdown = scorer.score(

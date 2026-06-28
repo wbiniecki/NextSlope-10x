@@ -201,6 +201,82 @@ class RecommendationServiceTests {
 	}
 
 	@Test
+	void nameTieBreakOrdersResortsWithinTheSameCountryAndScore() {
+		// All three tie on score; only the name tie-break (after country) decides the Austrian pair, and
+		// here name order (Alpbach < Zell) is the reverse of id order — so dropping it would reorder them.
+		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of()));
+		Resort zell = resort(2L, "Zell", "Austria", 60, 30, 10);
+		Resort alpbach = resort(9L, "Alpbach", "Austria", 60, 30, 10);
+		Resort chamonix = resort(5L, "Chamonix", "France", 60, 30, 10);
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc())
+				.thenReturn(List.of(zell, chamonix, alpbach));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(cardIds(result)).containsExactly(9L, 2L, 5L);
+	}
+
+	@Test
+	void idTieBreakIsTheFinalTotalOrderForResortsIdenticalInCountryNameAndScore() {
+		// Same country, same name, same score: only the id tie-break gives a stable total order. Input
+		// order (9 before 2) differs from id order, so dropping the id comparator would leak input order.
+		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of()));
+		Resort alpbachHi = resort(9L, "Alpbach", "Austria", 60, 30, 10);
+		Resort alpbachLo = resort(2L, "Alpbach", "Austria", 60, 30, 10);
+		Resort chamonix = resort(5L, "Chamonix", "France", 60, 30, 10);
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc())
+				.thenReturn(List.of(alpbachHi, chamonix, alpbachLo));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(cardIds(result)).containsExactly(2L, 9L, 5L);
+	}
+
+	@Test
+	void sparseExplanationStatesTheExactSurvivorCount() {
+		// Exactly two survivors (region = Austria) → the message must report "2 resorts", not a generic line.
+		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of("Austria")));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Solden", "Austria", 60, 30, 10),
+				resort(2L, "Ischgl", "Austria", 55, 30, 15),
+				resort(3L, "Chamonix", "France", 40, 30, 30)));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isSparse()).isTrue();
+		assertThat(result.explanation()).contains("2 resorts");
+	}
+
+	@Test
+	void sparseExplanationForZeroSurvivorsSaysNoneMatched() {
+		// Region selects a country absent from the catalog → zero survivors → the "none matched" message.
+		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of("Spain")));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Solden", "Austria", 60, 30, 10),
+				resort(2L, "Chamonix", "France", 40, 30, 30)));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isSparse()).isTrue();
+		assertThat(result.explanation()).contains("couldn't find any");
+	}
+
+	@Test
+	void sparseExplanationSuggestsAllowingRevisitsForNewOnlyUsers() {
+		// A NEW_ONLY user with too few matches gets a suggestion that includes relaxing the novelty filter.
+		givenProfile(profile(NoveltyPreference.NEW_ONLY, Set.of("Andorra")));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Grandvalira", "Andorra", 50, 30, 20),
+				resort(2L, "Solden", "Austria", 60, 30, 10)));
+		when(visitedResortService.visitedResortIds(USER_ID)).thenReturn(Set.of());
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isSparse()).isTrue();
+		assertThat(result.explanation()).contains("allowing revisits");
+	}
+
+	@Test
 	void cardsCarryViewFactsAndATruthfulRationale() {
 		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of()));
 		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(

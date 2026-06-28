@@ -362,9 +362,9 @@ No schema migration. Dataset expansion is data-only (CSV + loader). Already-popu
 
 #### Manual
 
-- [ ] 2.6 Narrow region selection → explicit sparse explanation
-- [ ] 2.7 Broad profile → three sensibly-ordered cards
-- [ ] 2.8 `NEW_ONLY` user never sees a visited resort in the three
+- [x] 2.6 Narrow region selection → explicit sparse explanation — manual 2026-06-28
+- [x] 2.7 Broad profile → three sensibly-ordered cards — manual 2026-06-28
+- [x] 2.8 `NEW_ONLY` user never sees a visited resort in the three — manual 2026-06-28
 
 ### Phase 3: Web layer + navigation entry point
 
@@ -377,20 +377,20 @@ No schema migration. Dataset expansion is data-only (CSV + loader). Already-popu
 
 #### Manual
 
-- [ ] 3.5 Click "Recommend resorts" swaps in result with progress, no reload
-- [ ] 3.6 Unauthenticated `POST /recommend` redirects to login
-- [ ] 3.7 Tweak a preference and re-run updates the result
+- [x] 3.5 Click "Recommend resorts" swaps in result with progress, no reload — manual 2026-06-28
+- [x] 3.6 Unauthenticated `POST /recommend` redirects to login — manual 2026-06-28
+- [x] 3.7 Tweak a preference and re-run updates the result — manual 2026-06-28
 
 ### Phase 4: Mutation gate + refinement handoff
 
 #### Automated
 
-- [ ] 4.1 Smoke-verify `./gradlew pitest` locally on Gradle 9.4.1 before CI wiring
-- [ ] 4.2 Mutation gate runs and passes its threshold
-- [ ] 4.3 CI green including the mutation step
-- [ ] 4.4 Full suite green (`./gradlew test`)
+- [x] 4.1 Smoke-verify `./gradlew pitest` locally on Gradle 9.4.1 before CI wiring
+- [x] 4.2 Mutation gate runs and passes its threshold
+- [x] 4.3 CI green including the mutation step
+- [x] 4.4 Full suite green (`./gradlew test`)
 
 #### Manual
 
-- [ ] 4.5 `refinement-brief.md` lists every tunable with default + guarding test
-- [ ] 4.6 Surviving mutants understood/acceptable, no truthfulness/determinism coverage hole
+- [x] 4.5 `refinement-brief.md` lists every tunable with default + guarding test — manual 2026-06-28
+- [x] 4.6 Surviving mutants understood/acceptable, no truthfulness/determinism coverage hole — manual 2026-06-28
