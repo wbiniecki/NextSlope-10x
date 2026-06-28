@@ -340,15 +340,15 @@ No schema migration. Dataset expansion is data-only (CSV + loader). Already-popu
 
 #### Automated
 
-- [x] 1.1 Seed loader tests pass (`./gradlew test --tests com.nextslope.resort.ResortSeedLoaderTests`)
-- [x] 1.2 Postgres-engine seed test passes (`ResortRepositoryPostgresTests`)
-- [x] 1.3 Full suite green (`./gradlew test`)
+- [x] 1.1 Seed loader tests pass (`./gradlew test --tests com.nextslope.resort.ResortSeedLoaderTests`) — 0042b90
+- [x] 1.2 Postgres-engine seed test passes (`ResortRepositoryPostgresTests`) — 0042b90
+- [x] 1.3 Full suite green (`./gradlew test`) — 0042b90
 
 #### Manual
 
-- [x] 1.4 Fresh local DB seeds the expanded set; list shows the larger catalog
-- [x] 1.5 Resync property updates a populated DB with no loss/dupes
-- [x] 1.6 Every region-selector country has ≥3 resorts
+- [x] 1.4 Fresh local DB seeds the expanded set; list shows the larger catalog — 0042b90
+- [x] 1.5 Resync property updates a populated DB with no loss/dupes — 0042b90
+- [x] 1.6 Every region-selector country has ≥3 resorts — 0042b90
 
 ### Phase 2: Recommendation engine (filters + pluggable scorer + truthful rationale)
 

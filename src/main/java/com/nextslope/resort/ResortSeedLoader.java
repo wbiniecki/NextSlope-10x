@@ -6,7 +6,9 @@ import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -19,6 +21,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ResortSeedLoader implements ApplicationRunner {
@@ -44,6 +47,7 @@ public class ResortSeedLoader implements ApplicationRunner {
 	}
 
 	@Override
+	@Transactional
 	public void run(ApplicationArguments args) {
 		seed();
 	}
@@ -72,19 +76,33 @@ public class ResortSeedLoader implements ApplicationRunner {
 
 	private void resync() {
 		List<Resort> parsed = parseResorts();
+		// Load the current catalog once and index by external_id, so reconciliation is a single
+		// SELECT + one batched saveAll rather than a findByExternalId per CSV row.
+		Map<Long, Resort> existingByExternalId = new HashMap<>();
+		for (Resort existing : resortRepository.findAll()) {
+			if (existing.getExternalId() != null) {
+				existingByExternalId.put(existing.getExternalId(), existing);
+			}
+		}
+		List<Resort> toSave = new ArrayList<>();
 		int updated = 0;
 		int inserted = 0;
 		for (Resort incoming : parsed) {
-			Resort existing = resortRepository.findByExternalId(incoming.getExternalId()).orElse(null);
+			if (incoming.getExternalId() == null) {
+				throw new IllegalStateException(
+						"Cannot resync a resort row with a blank ID — external_id is required to upsert by key.");
+			}
+			Resort existing = existingByExternalId.get(incoming.getExternalId());
 			if (existing == null) {
-				resortRepository.save(incoming);
+				toSave.add(incoming);
 				inserted++;
 			} else {
 				copyFacts(incoming, existing);
-				resortRepository.save(existing);
+				toSave.add(existing);
 				updated++;
 			}
 		}
+		resortRepository.saveAll(toSave);
 		log.info("resort seed resync complete — {} updated, {} inserted", updated, inserted);
 	}
 
