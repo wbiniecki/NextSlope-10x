@@ -13,6 +13,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.ClassPathResource;
@@ -28,8 +29,18 @@ public class ResortSeedLoader implements ApplicationRunner {
 
 	private final ResortRepository resortRepository;
 
-	public ResortSeedLoader(ResortRepository resortRepository) {
+	/**
+	 * When {@code false} (default) the loader only seeds an empty table. When {@code true}
+	 * (opt-in via {@code nextslope.resort-seed.resync}) it reconciles an already-populated
+	 * table to the CSV by upserting each row keyed on {@code external_id}, never deleting
+	 * rows and never touching the {@code active} flag of existing rows.
+	 */
+	private final boolean resync;
+
+	public ResortSeedLoader(ResortRepository resortRepository,
+			@Value("${nextslope.resort-seed.resync:false}") boolean resync) {
 		this.resortRepository = resortRepository;
+		this.resync = resync;
 	}
 
 	@Override
@@ -38,6 +49,11 @@ public class ResortSeedLoader implements ApplicationRunner {
 	}
 
 	void seed() {
+		if (resync) {
+			resync();
+			return;
+		}
+
 		if (resortRepository.count() != 0) {
 			log.info("resort seed skipped — table already populated");
 			return;
@@ -52,6 +68,56 @@ public class ResortSeedLoader implements ApplicationRunner {
 			// UNIQUE(external_id) backstop held; treat as already-seeded rather than failing startup.
 			log.info("resort seed skipped — table already populated (unique constraint backstop)");
 		}
+	}
+
+	private void resync() {
+		List<Resort> parsed = parseResorts();
+		int updated = 0;
+		int inserted = 0;
+		for (Resort incoming : parsed) {
+			Resort existing = resortRepository.findByExternalId(incoming.getExternalId()).orElse(null);
+			if (existing == null) {
+				resortRepository.save(incoming);
+				inserted++;
+			} else {
+				copyFacts(incoming, existing);
+				resortRepository.save(existing);
+				updated++;
+			}
+		}
+		log.info("resort seed resync complete — {} updated, {} inserted", updated, inserted);
+	}
+
+	/**
+	 * Copy the CSV-sourced fact columns from {@code incoming} onto {@code existing}, leaving the
+	 * row's identity ({@code id}, {@code externalId}), audit timestamps, and — critically — the
+	 * {@code active} flag untouched so an admin deactivation survives a resync.
+	 */
+	private static void copyFacts(Resort incoming, Resort existing) {
+		existing.setName(incoming.getName());
+		existing.setCountry(incoming.getCountry());
+		existing.setContinent(incoming.getContinent());
+		existing.setLatitude(incoming.getLatitude());
+		existing.setLongitude(incoming.getLongitude());
+		existing.setPrice(incoming.getPrice());
+		existing.setSeason(incoming.getSeason());
+		existing.setHighestPoint(incoming.getHighestPoint());
+		existing.setLowestPoint(incoming.getLowestPoint());
+		existing.setBeginnerSlopes(incoming.getBeginnerSlopes());
+		existing.setIntermediateSlopes(incoming.getIntermediateSlopes());
+		existing.setDifficultSlopes(incoming.getDifficultSlopes());
+		existing.setTotalSlopes(incoming.getTotalSlopes());
+		existing.setLongestRun(incoming.getLongestRun());
+		existing.setSnowCannons(incoming.getSnowCannons());
+		existing.setSurfaceLifts(incoming.getSurfaceLifts());
+		existing.setChairLifts(incoming.getChairLifts());
+		existing.setGondolaLifts(incoming.getGondolaLifts());
+		existing.setTotalLifts(incoming.getTotalLifts());
+		existing.setLiftCapacity(incoming.getLiftCapacity());
+		existing.setChildFriendly(incoming.getChildFriendly());
+		existing.setSnowparks(incoming.getSnowparks());
+		existing.setNightskiing(incoming.getNightskiing());
+		existing.setSummerSkiing(incoming.getSummerSkiing());
 	}
 
 	private List<Resort> parseResorts() {
