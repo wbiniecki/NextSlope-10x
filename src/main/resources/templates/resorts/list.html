@@ -12,6 +12,28 @@
 
 		<h1 class="h3 mb-4">Ski resorts</h1>
 
+		<!--
+			Recommendation entry point. The button posts to /recommend (HTMX, CSRF wired by the layout
+			scripts), swaps the discriminated result fragment into #recommend-results in place, and shows
+			the htmx-indicator while in flight (satisfies the 2s-progress NFR). No id in the path — the
+			recommendation is always the current user's.
+		-->
+		<section class="mb-4">
+			<button type="button" class="btn btn-primary"
+					th:attr="hx-post=@{/recommend}"
+					hx-target="#recommend-results"
+					hx-swap="innerHTML"
+					hx-indicator="#recommend-indicator"
+					hx-disabled-elt="this">
+				Recommend resorts
+			</button>
+			<span id="recommend-indicator" class="htmx-indicator ms-2 text-muted">
+				<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+				Finding your three picks…
+			</span>
+			<div id="recommend-results" class="mt-3"></div>
+		</section>
+
 		<div class="table-responsive">
 			<table class="table table-hover align-middle">
 				<thead>
@@ -66,6 +88,48 @@
 				hx-swap="outerHTML"
 				hx-disabled-elt="this"
 				th:text="${visited} ? 'Visited ✓' : 'Mark visited'">Mark visited</button>
+	</th:block>
+
+	<!--
+		Recommendation result fragment. Defined here (in a never-true block, like visitedToggle above)
+		because this is the /recommend endpoint's return contract; resorts/recommend-results.html reaches
+		it as the named fragment `resorts/list :: recommendResults(...)`. Renders exactly one of the three
+		discriminated RecommendationResult states: three ranked cards, an explicit sparse explanation, or a
+		set-up-your-profile prompt. ResortCard/RecommendationResult are records, so accessors are called
+		with method syntax (e.g. card.name(), result.cards()).
+	-->
+	<th:block th:if="${false}">
+		<th:block th:fragment="recommendResults(result)">
+			<div th:if="${result.isRecommendations()}" class="row row-cols-1 row-cols-md-3 g-3">
+				<div class="col" th:each="card : ${result.cards()}">
+					<div class="card h-100 shadow-sm">
+						<div class="card-body">
+							<h2 class="h5 card-title mb-1" th:text="${card.name()}">Resort</h2>
+							<p class="text-muted small mb-2" th:text="${card.country()}">Country</p>
+							<ul class="list-unstyled small mb-2">
+								<li>Top lift: <span th:text="${card.topLiftHeight()}">0</span> m</li>
+								<li>Slopes: <span th:text="${card.totalSlopes()}">0</span></li>
+								<li>Lifts: <span th:text="${card.totalLifts()}">0</span></li>
+							</ul>
+							<div class="mb-2">
+								<span class="badge text-bg-primary" th:text="${card.difficultyMix().easy()} + '%'">0%</span>
+								<span class="badge text-bg-danger" th:text="${card.difficultyMix().medium()} + '%'">0%</span>
+								<span class="badge text-bg-dark" th:text="${card.difficultyMix().hard()} + '%'">0%</span>
+							</div>
+							<p class="card-text fst-italic mb-0" th:text="${card.rationale()}">Why this matched you</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div th:if="${result.isSparse()}" class="alert alert-warning" role="alert"
+				 th:text="${result.explanation()}">Not enough matches yet.</div>
+
+			<div th:if="${result.isNoProfile()}" class="alert alert-info" role="alert">
+				<span th:text="${result.explanation()}">Set up your preference profile.</span>
+				<a th:href="@{/profile}" class="alert-link ms-1">Set up your profile</a>
+			</div>
+		</th:block>
 	</th:block>
 
 	<th:block th:replace="~{fragments/layout :: scripts}"></th:block>

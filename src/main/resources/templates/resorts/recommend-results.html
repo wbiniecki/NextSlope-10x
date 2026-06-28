@@ -1,0 +1,6 @@
+<!--
+	HTMX response for a recommendation request: the discriminated result fragment, swapped into the
+	#recommend-results container via innerHTML. The fragment itself lives in resorts/list.html (the
+	page that owns the trigger and container) so the markup has a single source of truth.
+-->
+<th:block th:replace="~{resorts/list :: recommendResults(${result})}"></th:block>

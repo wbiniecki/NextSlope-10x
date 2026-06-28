@@ -61,6 +61,9 @@ class PermitListLockTests {
 	private VisitedResortService visitedResortService;
 
 	@MockitoBean
+	private com.nextslope.recommendation.RecommendationService recommendationService;
+
+	@MockitoBean
 	private CurrentUserService currentUserService;
 
 	@BeforeEach

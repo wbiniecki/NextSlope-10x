@@ -82,6 +82,9 @@ class RoleGatingPatternTests {
 	@MockitoBean
 	private CurrentUserService currentUserService;
 
+	@MockitoBean
+	private com.nextslope.recommendation.RecommendationService recommendationService;
+
 	@BeforeEach
 	void mockUserExists() {
 		when(userRepository.existsByEmail(anyString())).thenReturn(true);
