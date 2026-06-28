@@ -3,6 +3,7 @@ package com.nextslope.profile;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -37,6 +38,20 @@ public class PreferenceProfileService {
 	@Transactional(readOnly = true)
 	public boolean hasProfile(Long userId) {
 		return preferenceProfileRepository.findByUserId(userId).isPresent();
+	}
+
+	/**
+	 * An immutable snapshot of the user's four preference axes for the recommendation engine, or empty
+	 * when no profile exists. Exposes raw axes without leaking the JPA entity or the web form.
+	 */
+	@Transactional(readOnly = true)
+	public Optional<ProfileSnapshot> snapshotForUser(Long userId) {
+		return preferenceProfileRepository.findByUserId(userId)
+				.map(profile -> new ProfileSnapshot(
+						profile.getExperienceLevel(),
+						profile.getDifficultyBand(),
+						profile.getNoveltyPreference(),
+						Set.copyOf(profile.getRegionCountries())));
 	}
 
 	/** Upsert the authenticated user's profile from the submitted form. */

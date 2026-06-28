@@ -1,0 +1,220 @@
+package com.nextslope.recommendation;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.nextslope.profile.DifficultyBand;
+import com.nextslope.profile.ExperienceLevel;
+import com.nextslope.profile.NoveltyPreference;
+import com.nextslope.profile.PreferenceProfileService;
+import com.nextslope.profile.ProfileSnapshot;
+import com.nextslope.resort.Resort;
+import com.nextslope.resort.ResortRepository;
+import com.nextslope.visited.VisitedResortService;
+
+@ExtendWith(MockitoExtension.class)
+class RecommendationServiceTests {
+
+	private static final Long USER_ID = 1L;
+
+	@Mock
+	private PreferenceProfileService preferenceProfileService;
+
+	@Mock
+	private ResortRepository resortRepository;
+
+	@Mock
+	private VisitedResortService visitedResortService;
+
+	private RecommendationService service;
+
+	private RecommendationService service() {
+		if (service == null) {
+			ScoringConfig config = ScoringConfig.defaults();
+			service = new RecommendationService(
+					preferenceProfileService,
+					resortRepository,
+					visitedResortService,
+					new WeightedDistanceScorer(config),
+					new RationaleBuilder(config));
+		}
+		return service;
+	}
+
+	private static Resort resort(long id, String name, String country, int easy, int med, int hard) {
+		return Resort.builder()
+				.id(id)
+				.name(name)
+				.country(country)
+				.active(true)
+				.beginnerSlopes(easy)
+				.intermediateSlopes(med)
+				.difficultSlopes(hard)
+				.totalSlopes(easy + med + hard)
+				.totalLifts(20)
+				.highestPoint(2500)
+				.build();
+	}
+
+	private static ProfileSnapshot profile(NoveltyPreference novelty, Set<String> regions) {
+		return new ProfileSnapshot(ExperienceLevel.BEGINNER, DifficultyBand.MOSTLY_EASY, novelty, regions);
+	}
+
+	private void givenProfile(ProfileSnapshot snapshot) {
+		when(preferenceProfileService.snapshotForUser(USER_ID)).thenReturn(Optional.of(snapshot));
+	}
+
+	private List<Long> cardIds(RecommendationResult result) {
+		return result.cards().stream().map(ResortCard::id).toList();
+	}
+
+	@Test
+	void returnsNoProfileStateWhenTheUserHasNotSetUpAProfile() {
+		when(preferenceProfileService.snapshotForUser(USER_ID)).thenReturn(Optional.empty());
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isNoProfile()).isTrue();
+		assertThat(result.cards()).isEmpty();
+		assertThat(result.explanation()).isNotBlank();
+	}
+
+	@Test
+	void regionFilterKeepsOnlyResortsInTheSelectedCountries() {
+		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of("Austria")));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Solden", "Austria", 60, 30, 10),
+				resort(2L, "Ischgl", "Austria", 50, 30, 20),
+				resort(3L, "Kitzbuhel", "Austria", 70, 20, 10),
+				resort(4L, "Chamonix", "France", 40, 30, 30),
+				resort(5L, "Tignes", "France", 30, 40, 30)));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isRecommendations()).isTrue();
+		assertThat(result.cards()).extracting(ResortCard::country).containsOnly("Austria");
+	}
+
+	@Test
+	void newOnlyNoveltyExcludesVisitedResorts() {
+		givenProfile(profile(NoveltyPreference.NEW_ONLY, Set.of()));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Solden", "Austria", 60, 30, 10),
+				resort(2L, "Ischgl", "Austria", 50, 30, 20),
+				resort(3L, "Kitzbuhel", "Austria", 70, 20, 10),
+				resort(4L, "Chamonix", "France", 40, 30, 30)));
+		when(visitedResortService.visitedResortIds(USER_ID)).thenReturn(Set.of(2L));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isRecommendations()).isTrue();
+		assertThat(cardIds(result)).doesNotContain(2L);
+	}
+
+	@Test
+	void doesNotConsultTheVisitedListWhenRevisitsAreAllowed() {
+		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of()));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Solden", "Austria", 60, 30, 10),
+				resort(2L, "Ischgl", "Austria", 50, 30, 20),
+				resort(3L, "Kitzbuhel", "Austria", 70, 20, 10)));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isRecommendations()).isTrue();
+		// visitedResortService is never stubbed/used — strict Mockito would flag an unused stub.
+	}
+
+	@Test
+	void returnsAnExplicitSparseExplanationWhenFewerThanThreeSurvive() {
+		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of("Andorra")));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Grandvalira", "Andorra", 50, 30, 20),
+				resort(2L, "Solden", "Austria", 60, 30, 10),
+				resort(3L, "Chamonix", "France", 40, 30, 30)));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isSparse()).isTrue();
+		assertThat(result.cards()).isEmpty();
+		assertThat(result.explanation()).isNotBlank();
+	}
+
+	@Test
+	void returnsExactlyThreeCardsWhenMoreThanThreeSurvive() {
+		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of()));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "A", "Austria", 60, 30, 10),
+				resort(2L, "B", "Austria", 55, 30, 15),
+				resort(3L, "C", "France", 50, 30, 20),
+				resort(4L, "D", "France", 45, 35, 20),
+				resort(5L, "E", "Italy", 40, 40, 20)));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.cards()).hasSize(3);
+	}
+
+	@Test
+	void rankingIsDrivenByScoreNotInputOrAlphabeticalOrder() {
+		// Profile MOSTLY_EASY/BEGINNER: the easy-skewed resort scores highest regardless of its country.
+		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of()));
+		Resort perfectEasy = resort(1L, "Best", "Switzerland", 60, 30, 10); // align_diff 1.0 → top score
+		Resort balanced = resort(2L, "Mid", "France", 34, 33, 33);
+		Resort hard = resort(3L, "Steep", "Austria", 10, 30, 60); // worst fit for a beginner
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc())
+				.thenReturn(List.of(hard, balanced, perfectEasy));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(cardIds(result)).containsExactly(1L, 2L, 3L);
+	}
+
+	@Test
+	void tiedScoresBreakDeterministicallyByCountryThenNameThenIdAcrossInputOrders() {
+		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of()));
+		// Identical slope counts → identical scores, so only the (country, name, id) tie-break orders them.
+		Resort zellAustria = resort(3L, "Zell", "Austria", 50, 30, 20);
+		Resort altaAustria = resort(1L, "Alta", "Austria", 50, 30, 20);
+		Resort tignesFrance = resort(2L, "Tignes", "France", 50, 30, 20);
+
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc())
+				.thenReturn(List.of(zellAustria, tignesFrance, altaAustria));
+		List<Long> firstRun = cardIds(service().recommend(USER_ID));
+
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc())
+				.thenReturn(List.of(tignesFrance, altaAustria, zellAustria));
+		List<Long> secondRun = cardIds(service().recommend(USER_ID));
+
+		// Austria/Alta(1) → Austria/Zell(3) → France/Tignes(2), stable regardless of input order.
+		assertThat(firstRun).containsExactly(1L, 3L, 2L);
+		assertThat(secondRun).containsExactly(1L, 3L, 2L);
+	}
+
+	@Test
+	void cardsCarryViewFactsAndATruthfulRationale() {
+		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of()));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Solden", "Austria", 60, 30, 10),
+				resort(2L, "Ischgl", "Austria", 55, 30, 15),
+				resort(3L, "Kitzbuhel", "Austria", 70, 20, 10)));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		ResortCard top = result.cards().get(0);
+		assertThat(top.name()).isNotBlank();
+		assertThat(top.country()).isEqualTo("Austria");
+		assertThat(top.totalLifts()).isEqualTo(20);
+		assertThat(top.difficultyMix()).isNotNull();
+		assertThat(top.rationale()).isNotBlank();
+	}
+}
