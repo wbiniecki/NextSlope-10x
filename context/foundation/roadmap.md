@@ -3,7 +3,7 @@ project: "NextSlope"
 version: 1
 status: draft
 created: 2026-06-12
-updated: 2026-06-26
+updated: 2026-06-28
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -37,6 +37,7 @@ An avid skier or snowboarder planning the upcoming season drowns in scattered, m
 | S-05 | three-resort-recommendation | click "Recommend resorts" and get exactly three ranked picks with a truthful rationale | S-02, S-03, S-04 | US-01, FR-008, FR-009 | proposed |
 | S-06 | admin-resort-management | (admin) create, edit, and deactivate resort entries from an admin-only view | S-01, S-03 | US-03, FR-010, FR-011, FR-012, FR-013 | proposed |
 | S-07 | account-deletion | permanently delete their account, removing profile and visited data everywhere | S-02, S-04 | FR-004, FR-005 | proposed |
+| S-08 | min-top-lift-height-preference | set a minimum top lift height in their profile and have recommendations honor it as a hard filter | S-02, S-05 | (post-MVP — extends FR-004, FR-008) | proposed |
 
 ## Streams
 
@@ -46,7 +47,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 |---|---|---|---|
 | A | Accounts & profile | `F-01` → `S-01` → `S-02` → `S-07` | The must-have spine; `S-07` joins after `S-04` exists (cascade of visited data). |
 | B | Resort discovery | `S-03` → `S-04` | Branches off `S-01`; runs parallel with Stream A's `S-02`. |
-| C | Recommendation (north star) | `S-05` | Joins Stream A at `S-02` and Stream B at `S-04`; the validation milestone. |
+| C | Recommendation (north star) | `S-05` → `S-08` | Joins Stream A at `S-02` and Stream B at `S-04`; the validation milestone. `S-08` is a post-MVP enhancement that extends the engine + profile with a new axis. |
 | D | Admin curation | `S-06` | Joins Stream B at `S-03`; must-have but off the north-star path — parallelizable. |
 
 ## Baseline
@@ -165,6 +166,20 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** Satisfies the account-deletion NFR; FR-004/FR-005 define the cascaded data removed. Depends on both the profile (S-02) and visited (S-04) models existing so deletion can cascade across all the user's data. Privacy-completing slice; small and off the critical path, so it lands late without endangering the deadline.
 - **Status:** proposed
 
+### S-08: Minimum top lift height preference
+
+- **Outcome:** A signed-in user can set a minimum top lift height in their preference profile (blank = no constraint); the recommendation flow then honors it as a **hard filter** — resorts below the minimum are dropped before scoring, so a too-restrictive minimum surfaces the existing explicit sparse explanation rather than padding.
+- **Change ID:** min-top-lift-height-preference
+- **PRD refs:** post-MVP enhancement — extends FR-004 (profile axes) and FR-008 (recommendation hard filters); not in PRD v1.
+- **Prerequisites:** S-02 (profile schema + form to carry the new axis), S-05 (the recommendation engine this filter plugs into).
+- **Parallel with:** S-06, S-07.
+- **Blockers:** —
+- **Unknowns:**
+  - Hard filter vs. soft-scoring nudge — Owner: user. Block: no. (Captured as a hard filter per "minimum" wording; revisit at `/10x-shape`.)
+  - Input unit/validation (metres, sensible upper bound, optional vs. required) — Owner: TBD. Block: no.
+- **Risk:** A genuinely new persisted preference axis, so it crosses three layers: a new `V5__` Flyway migration (nullable column on `preference_profiles`), the profile entity/form/validation/UI (S-02 territory), and the engine's hard-filter stage + `ProfileSnapshot` + tests (S-05 territory). Deliberately **not** folded into S-05, which reads existing tables only and excludes a new migration. Determinism, the sparse branch, and rationale truthfulness must all extend to the new axis. Off the north-star critical path — the MVP recommendation already works without it.
+- **Status:** proposed
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
@@ -177,6 +192,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-05 | three-resort-recommendation | Recommend three ranked resorts with rationale | no | Needs S-02, S-03, S-04 done |
 | S-06 | admin-resort-management | Admin create/edit/deactivate resorts | no | Needs S-01, S-03 done; heaviest slice — if too broad, split admin create/edit vs deactivate (never by layer) |
 | S-07 | account-deletion | Permanently delete account + data | no | Needs S-02, S-04 done |
+| S-08 | min-top-lift-height-preference | Min top lift height profile axis + recommendation hard filter | no | Needs S-02, S-05 done; post-MVP. New `V5__` migration + profile form change + engine filter — start at `/10x-shape` (hard filter vs soft axis is open) |
 
 ## Open Roadmap Questions
 
