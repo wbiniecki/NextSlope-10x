@@ -385,10 +385,10 @@ No schema migration. Dataset expansion is data-only (CSV + loader). Already-popu
 
 #### Automated
 
-- [x] 4.1 Smoke-verify `./gradlew pitest` locally on Gradle 9.4.1 before CI wiring
-- [x] 4.2 Mutation gate runs and passes its threshold
-- [x] 4.3 CI green including the mutation step
-- [x] 4.4 Full suite green (`./gradlew test`)
+- [x] 4.1 Smoke-verify `./gradlew pitest` locally on Gradle 9.4.1 before CI wiring — 3481cc5
+- [x] 4.2 Mutation gate runs and passes its threshold — 3481cc5
+- [x] 4.3 CI green including the mutation step — 3481cc5
+- [x] 4.4 Full suite green (`./gradlew test`) — 3481cc5
 
 #### Manual
 
