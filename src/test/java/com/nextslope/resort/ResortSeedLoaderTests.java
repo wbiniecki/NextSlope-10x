@@ -20,7 +20,7 @@ class ResortSeedLoaderTests {
 	static final long EXPECTED_SEED_COUNT = 150;
 
 	@Autowired
-	private ResortRepository resortRepository;
+	private ResortTestRepository resortRepository;
 
 	@Test
 	void seedsTheCuratedCatalogIntoAnEmptyDatabase() {
