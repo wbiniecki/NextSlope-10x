@@ -223,7 +223,7 @@ Expose the engine via `POST /recommend` returning an HTMX partial swapped into a
 
 #### Automated Verification:
 
-- Controller/security slice tests pass: `./gradlew test --tests com.nextslope.web.RecommendControllerTests` (`@WebMvcTest` + `@Import(SecurityConfig)`).
+- Controller/security slice tests pass: `./gradlew test --tests com.nextslope.web.RecommendControllerWebMvcTests` (`@WebMvcTest` + `@Import(SecurityConfig)`).
 - Permit-list lock still green: `./gradlew test --tests com.nextslope.PermitListLockTests` — its `@WebMvcTest` context will now load `RecommendController`, so add a `@MockitoBean RecommendationService` (and any other deps the controller injects) minimal stub, mirroring the existing `VisitedResortService` mock, or the slice fails to start.
 - Privacy (principal-isolation) integration test passes using `TwoUserIntegrationTestBase`: `/recommend` is principal-scoped (no user id in the path), so this is an isolation assertion, not a 403/IDOR check. Seed distinct profiles for A and B; as B (and as admin) POST `/recommend` and assert the response reflects that principal's own profile (resort names/scores), never A's. Mirror `PreferenceProfileOwnershipIntegrationTests` / `VisitedResortOwnershipIntegrationTests`; do not use `assertWrongOwnerDenied` (placeholder for an id-in-path route shape that doesn't apply here).
 - Full suite green: `./gradlew test`
@@ -370,10 +370,10 @@ No schema migration. Dataset expansion is data-only (CSV + loader). Already-popu
 
 #### Automated
 
-- [ ] 3.1 Controller/security slice tests pass (`RecommendControllerTests`)
-- [ ] 3.2 Permit-list lock still green (`PermitListLockTests`)
-- [ ] 3.3 Privacy (principal-isolation) integration test passes
-- [ ] 3.4 Full suite green (`./gradlew test`)
+- [x] 3.1 Controller/security slice tests pass (`RecommendControllerWebMvcTests`) — 201dba2
+- [x] 3.2 Permit-list lock still green (`PermitListLockTests`) — 201dba2
+- [x] 3.3 Privacy (principal-isolation) integration test passes — 201dba2
+- [x] 3.4 Full suite green (`./gradlew test`) — 201dba2
 
 #### Manual
 
