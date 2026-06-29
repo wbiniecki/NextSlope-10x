@@ -1,41 +1,151 @@
 ID,Resort,Latitude,Longitude,Country,Continent,Price,Season,Highest point,Lowest point,Beginner slopes,Intermediate slopes,Difficult slopes,Total slopes,Longest run,Snow cannons,Surface lifts,Chair lifts,Gondola lifts,Total lifts,Lift capacity,Child friendly,Snowparks,Nightskiing,Summer skiing
-15,Zermatt - Matterhorn,45.96300885,7.715412186,Switzerland,Europe,81,Year-round,3899,1562,75,220,27,322,16,1060,21,22,20,63,93464,Yes,Yes,No,Yes
-17,Val Gardena,46.5766427,11.6444217,Italy,Europe,54,December - April,2518,1236,52,105,18,175,10,630,29,41,14,84,121914,Yes,Yes,No,No
+85,El Tarter – Pas de la Casa/Grau Roig/Soldeu/Canillo/Encamp (Grandvalira),42.5803334,1.6496963,Andorra,Europe,47,November - April,2640,1710,100,77,33,210,0,1032,37,28,7,72,99017,Yes,Yes,Yes,No
+41,Grandvalira – Pas de la Casa/Grau Roig/Soldeu/El Tarter/Canillo/Encamp,42.54115005,1.733382094,Andorra,Europe,47,November - April,2640,1710,100,77,33,210,6,1032,37,28,7,72,99017,Yes,Yes,Yes,No
+156,Soldeu-Pas de la Casa/Grau Roig/El Tarter/Canillo/Encamp (Grandvalira),42.5768944,1.6682694,Andorra,Europe,47,November - April,2640,1710,100,77,33,210,0,1032,37,28,7,72,99017,Yes,Yes,Yes,No
+148,Alpendorf (Ski amedé),47.3225067,13.1954241,Austria,Europe,52,November - April,1980,740,30,81,4,115,0,600,22,16,11,49,75398,Yes,Yes,No,No
+109,Bad Gastein,47.1144954,13.1352653,Austria,Europe,52,November - April,2300,860,30,52,2,84,10,800,10,9,7,26,32699,Yes,Yes,No,No
+184,Bad Kleinkirchheim-St. Oswald,46.8442215,13.7662406,Austria,Europe,47,December - April,2055,1087,18,77,8,103,7,800,17,7,4,28,31186,Yes,Yes,Yes,No
+236,Damuls Mellau,47.314039,9.894201083,Austria,Europe,49,December - April,2050,690,37,39,1,77,7,130,10,13,2,25,37160,Yes,Yes,No,No
+116,Ellmau (SkiWelt Wilder Kaiser-Brixental),47.51927245,12.29224775,Austria,Europe,49,December - April,1957,620,122,129,33,284,7,1700,54,35,16,105,147250,Yes,Yes,Yes,No
+114,Fieberbrunn - Saalbach Hinterglemm Leogang (Skicircus),47.45518755,12.54442426,Austria,Europe,53,November - April,2096,830,140,112,18,270,0,927,21,22,28,71,135104,Yes,Yes,Yes,No
+106,Flachau (Ski amedé),47.3438501,13.3922888,Austria,Europe,52,November - April,1980,740,30,81,4,115,0,600,22,16,11,49,75398,Yes,Yes,No,No
+102,Hochkonig-Maria Alm/Dienten/Muhlbach,47.38650655,12.95641323,Austria,Europe,52,December - April,1900,800,52,41,19,112,9,520,21,9,5,35,49232,Yes,Yes,Yes,No
+108,Ischgl,46.9862824,10.27451769,Austria,Europe,52,November - May,2872,1377,47,142,49,238,11,1200,13,25,7,45,88215,Yes,Yes,No,No
+228,Kaltenbach-Hochzillertal-Hochfugen-SKi-optimal,47.27705405,11.8486795,Austria,Europe,52,November - April,2378,600,28,41,13,82,11,400,22,12,5,39,59933,Yes,Yes,Yes,No
+255,Katschberg,47.0593103,13.615553,Austria,Europe,46,November - April,2220,1066,10,50,10,70,6,750,9,6,2,17,26458,Yes,Yes,Yes,No
+112,Kitzbühel / Kirchberg (KitzSki),47.4463585,12.3911473,Austria,Europe,55,October - April,2000,800,101,61,17,179,8,1102,15,28,11,54,92510,Yes,Yes,Yes,No
+111,Lech (Ski Arlberg),47.18265425,10.14043361,Austria,Europe,53,December - April,2811,1270,130,123,51,304,6,747,53,45,15,113,145127,Yes,Yes,No,No
+103,Mayrhofen-Penken/Ahorn/Rastkogel/Eggalm,47.1672188,11.8638664,Austria,Europe,52,December - April,2500,630,40,66,30,136,10,286,31,17,9,57,82432,Yes,Yes,No,No
+180,Nassfeld-Hermagor,46.58465625,13.24612886,Austria,Europe,46,December - April,2002,600,30,69,11,110,7,483,16,9,5,30,49386,Yes,Yes,Yes,No
+249,Nauders am Reschenpass-Bergkastel,46.87101815,10.53500477,Austria,Europe,42,December - April,2850,1400,24,34,13,71,9,92,11,5,1,17,17651,Yes,Yes,No,No
+47,Obergurgl-Hochgurgl,46.879426,11.0387065,Austria,Europe,50,November - May,3082,1793,35,55,20,110,8,320,13,7,8,28,38861,Yes,Yes,Yes,No
+99,Obertauern,47.2494362,13.5569603,Austria,Europe,46,November - May,2313,1630,61,35,4,100,5,280,11,18,2,31,50797,Yes,Yes,Yes,No
+37,Saalbach Hinterglemm Leogang Fieberbrunn (Skicircus),47.392906,12.636085,Austria,Europe,53,November - April,2096,830,140,112,18,270,7,927,21,22,28,71,135104,Yes,Yes,Yes,No
+115,Schladming (4-Berge-Skischauke),47.3940415,13.6867878,Austria,Europe,52,April,2015,745,46,68,8,122,4,600,16,20,10,46,71842,Yes,Yes,Yes,No
+101,Serfaus-Fiss-Ladis,47.0530324,10.61913705,Austria,Europe,49,December - April,2820,1200,47,123,28,198,10,1250,40,16,12,68,78460,Yes,Yes,Yes,No
+119,Silvretta Montafon,47.03503335,9.976778589,Austria,Europe,53,November - April,2430,700,60,45,8,113,12,330,25,18,10,53,67472,Yes,Yes,No,No
+107,Ski Juwel Alpbachtal Wildschonau,47.395203,11.92651,Austria,Europe,46,December - April,2025,830,25,53,13,91,7,294,32,7,8,47,52789,Yes,Yes,Yes,No
+104,St. Anton (Ski Arlberg),47.18265425,10.14043361,Austria,Europe,53,December - April,2811,1270,130,123,51,304,10,747,53,45,15,113,145127,Yes,Yes,No,No
+123,St. Christoph (Ski Arlberg),47.022264,15.4708255,Austria,Europe,53,December - April,2811,1270,130,123,51,304,0,747,53,45,15,113,145127,Yes,Yes,No,No
+96,Sölden,46.9673961,11.0070193,Austria,Europe,53,September - May,3340,1350,70,44,29,143,15,363,12,16,8,36,70370,Yes,Yes,Yes,No
+121,Söll (SkiWelt Wilder Kaiser-Brixental),47.503178,12.190132,Austria,Europe,49,December - April,1957,620,122,129,33,284,0,1700,54,35,16,105,147250,Yes,Yes,Yes,No
+35,Wagrain (Ski amedé),47.3336293,13.3031532,Austria,Europe,52,November - April,1980,740,30,81,4,115,6,600,22,16,11,49,75398,Yes,Yes,No,No
+118,Westendorf (SkiWelt Wilder Kaiser-Brixental),47.3831879,12.22174856,Austria,Europe,49,December - April,1957,620,122,129,33,284,0,1700,54,35,16,105,147250,Yes,Yes,Yes,No
+240,Zell am See,47.3239636,12.7963165,Austria,Europe,50,December - April,2000,760,30,28,19,77,6,450,9,10,8,27,48407,Yes,Yes,Yes,No
+161,Zillertal Arena-Zell am Ziller-Gerlos-Konigsleiten-Hochkrimml,47.24372605,12.03918599,Austria,Europe,52,December - April,2500,580,43,89,11,143,10,792,22,21,13,56,89415,Yes,Yes,No,No
+120,Zürs (Ski Arlberg),47.194717,10.160198,Austria,Europe,53,December - April,2811,1270,130,123,51,304,0,747,53,45,15,113,145127,Yes,Yes,No,No
+86,Bansko,41.8344086,23.4841698,Bulgaria,Europe,30,December - April,2560,990,20,24,3,47,16,380,7,8,2,17,24233,Yes,Yes,Yes,No
+298,Borovets,42.2668301,23.6074324,Bulgaria,Europe,28,December - April,2560,1300,24,29,5,58,12,160,8,4,2,14,15800,Yes,Yes,Yes,No
+373,Pamporovo,41.64619295,24.67356329,Bulgaria,Europe,28,December - April,1926,1620,17,6,5,28,0,130,6,7,0,13,14266,Yes,Yes,Yes,No
+82,Levi,67.7844055,24.8557289,Finland,Europe,43,November - May,531,206,15,19,2,36,2,267,25,2,2,29,30110,Yes,Yes,Yes,No
+81,Ruka,66.1702656,29.1311291,Finland,Europe,43,October - June,492,291,9,7,2,18,1,70,17,5,0,22,22915,Yes,Yes,Yes,No
+304,Yllas,67.5647092,24.2246252,Finland,Europe,42,November - May,718,200,21,28,6,55,3,36,27,1,1,29,28284,Yes,Yes,Yes,No
+68,Alpe d'Huez,45.092401,6.0699443,France,Europe,51,December - April,3330,1125,70,130,50,250,16,963,27,21,20,68,92097,Yes,Yes,Yes,No
+164,Auron-Saint-Etienne-de-Tinee,44.2262702,6.9309839,France,Europe,34,December - April,1600,1150,60,45,30,135,8,440,7,9,3,19,25030,Yes,Yes,No,No
+61,Avoriaz (Les Portes du Soleil),46.1925439,6.7702857,France,Europe,51,December - April,2466,1000,310,210,60,580,0,1074,89,74,11,174,252280,Yes,Yes,Yes,No
+233,Ax les Thermes,42.7193597,1.8379765,France,Europe,37,December - April,1400,720,40,25,15,80,0,0,11,6,2,19,21320,Yes,Yes,No,No
+213,Chamrousse,45.1171487,5.893161879,France,Europe,34,December - April,2250,1400,45,35,10,90,0,78,8,7,1,16,24398,Yes,Yes,Yes,No
+62,Chatel (Les Portes du Soleil),46.255039,6.843619,France,Europe,51,December - April,2466,1000,310,210,60,580,0,1074,89,74,11,174,252280,Yes,Yes,Yes,No
+66,Courchevel (Les 3 Vallees),45.4140984,6.6349892,France,Europe,61,November - May,3230,1110,312,216,72,600,12,2383,62,63,40,165,250860,Yes,Yes,Yes,No
+189,Devoluy-Superdevoluy-La Joue du Loup,44.68440895,5.898484198,France,Europe,36,December - April,2450,1450,60,30,10,100,0,180,18,5,1,24,27646,Yes,Yes,No,No
+60,Espace Diamant-Les Saisies/Notre-Dame-de-Bellecombe/Praz sur Arly/Flumet/Crest-Voland,45.78908,6.554098,France,Europe,40,December - April,2069,1000,132,49,11,192,7,472,53,30,0,83,90852,Yes,Yes,Yes,No
+20,Espace San Bernardo – La Rosière/La Thuile,45.62647605,6.852962415,France,Europe,43,December - April,2641,1176,55,83,22,160,11,0,21,18,1,40,53669,Yes,Yes,No,No
+171,Espace Villard Correncon-Villard-de-Lans-Correncon-en-Vercors,45.044532,5.559564,France,Europe,36,December - April,2050,1050,50,50,25,125,0,339,18,7,3,28,26600,Yes,Yes,No,No
+160,Galibier Thabor-Valmeinier-Valloire,45.1604887,6.464502618,France,Europe,39,December - April,2594,1430,75,60,15,150,0,400,12,17,2,31,43300,Yes,Yes,Yes,No
+190,Grand Tourmalet-Pic du Midi-La Mongie-Bareges,42.9087613,0.1674113,France,Europe,42,November - April,2500,1250,58,35,7,100,6,0,21,15,2,38,40231,Yes,Yes,No,No
+78,Grands Montets-Argentiere (Chamonix),45.9777193,6.9238925,France,Europe,62,December - May,3275,1252,6,9,14,29,6,0,1,4,4,9,15756,Yes,Yes,No,No
+173,Isola 2000,44.1869246,7.145441205,France,Europe,34,December - April,2603,1800,75,35,10,120,8,430,12,7,3,22,21807,Yes,Yes,Yes,No
+170,La Clusaz-Manigod,45.883562,6.419691113,France,Europe,37,December - April,2477,1040,62,40,23,125,0,223,28,14,7,49,59346,Yes,Yes,Yes,No
+58,La Plagne (Paradiski),45.50429855,6.704912253,France,Europe,50,December - April,3167,1207,139,59,27,225,6,417,56,32,12,100,136733,Yes,Yes,No,No
+69,La Tania-Val Thorens/Les Menuires/Meribel (Les 3 Vallees),45.432169,6.5963993,France,Europe,61,November - May,3230,1110,312,216,72,600,0,2383,62,63,40,165,250860,Yes,Yes,Yes,No
+226,Le Grand Bornand,45.9418675,6.4271457,France,Europe,37,December - April,2100,1000,49,27,8,84,0,233,18,13,2,33,36904,Yes,Yes,Yes,No
+159,Le Grand Domaine-Valmorel-Doucy-Celliers-St Francois Longchamp,48.618833,-2.2673293,France,Europe,44,December - April,2550,1250,115,35,15,165,0,332,36,17,3,56,60248,Yes,Yes,No,No
+152,Le Grand Massif-Flaine-Les Carroz-Morillon-Samoens-Sixt,46.0298218,6.695615648,France,Europe,47,December - April,2476,694,135,95,35,265,14,1100,34,29,9,72,97624,Yes,Yes,No,No
+175,Les 7 Laux-Prapoutel-Le Pleynet-Pipay,45.2602174,6.033591377,France,Europe,36,December - April,2400,1350,46,36,38,120,0,200,15,8,1,24,32232,Yes,Yes,No,No
+71,Les Arcs / Peisey-Vallandry (Paradiski),43.4629097,6.4786269,France,Europe,50,December - April,3226,1200,104,70,26,200,7,793,17,27,8,52,82641,Yes,Yes,Yes,No
+24,Les Contamines-Hauteluce,45.7970821,6.689198693,France,Europe,39,December - April,2437,1164,40,60,20,120,0,0,12,8,4,24,33972,Yes,No,Yes,No
+49,Les Deux alpes,45.0099949,6.1237609,France,Europe,49,"December - April, June - August, October - November",3560,1280,110,56,34,200,16,224,26,21,7,54,72334,Yes,Yes,Yes,Yes
+19,Les Gets (Les Portes du Soleil),46.1550977,6.6633312,France,Europe,51,December - April,2466,1000,310,210,60,580,0,1074,89,74,11,174,252280,Yes,Yes,Yes,No
+150,Les Menuires (Les 3 Vallees),45.322108,6.537697,France,Europe,61,November - May,3230,1110,312,216,72,600,0,2383,62,63,40,165,250860,Yes,Yes,Yes,No
+59,Les Orres,44.5140024,6.5510313,France,Europe,35,December - April,2720,1550,30,60,10,100,0,190,11,9,0,20,21020,Yes,Yes,No,No
+224,Les Portes du Mont-Blanc-Combloux-Megeve le Jaillet-La Giettaz,44.868928,5.594792482,France,Europe,35,December - April,1835,1113,28,50,7,85,0,0,16,8,1,25,29842,Yes,No,No,No
+151,Les Sybelles-Le Corbier-La Toussuire-Les Bottieres-St Colomban des Villards-St Sorlin-St Jean d’Arves,45.25492475,6.248865708,France,Europe,44,December - April,2620,1100,53,239,18,310,7,514,44,28,0,72,83807,Yes,Yes,Yes,No
+153,Megeve-Saint-Gervais,45.845128,6.685666167,France,Europe,46,December - April,2353,850,98,134,31,263,5,888,50,27,9,86,106362,Yes,Yes,Yes,No
+149,Meribel (Les 3 Vallees),45.39139,6.574283,France,Europe,61,November - May,3230,1110,312,216,72,600,0,2383,62,63,40,165,250860,Yes,Yes,Yes,No
+72,Montgenevre (Via Lattea),44.929277,6.729726,France,Europe,48,November - April,2749,1372,96,220,84,400,0,0,29,35,7,71,96433,Yes,No,Yes,No
+188,Orcieres Merlette 1850,44.6972064,6.3235516,France,Europe,34,December - April,2725,1850,55,38,7,100,0,0,20,7,3,30,29605,Yes,Yes,No,No
+244,Puy St. Vincent,44.8279543,6.4926273,France,Europe,34,December - April,2677,1407,28,34,13,75,0,95,4,8,0,12,17155,Yes,Yes,Yes,No
+67,Saint Martin de Belleville (Les 3 Vallees),45.3503871,6.500076137,France,Europe,61,November - May,3230,1110,312,216,72,600,0,2383,62,63,40,165,250860,Yes,Yes,Yes,No
+187,Saint-Lary-Soulan,42.816936,0.3219538,France,Europe,42,December - April,1600,812,60,30,10,100,3,290,17,11,3,31,38733,Yes,Yes,Yes,No
+75,Serre Chevalier-Briancon/Chantemerle/Villeneuve-la-Salle/Le Monetier-les-Bains,44.9107381,6.5500282,France,Europe,49,December - April,2800,1200,138,80,32,250,9,575,33,21,7,61,72066,Yes,Yes,Yes,No
+57,Tignes - Val d'Isere,45.4580331,6.918835739,France,Europe,56,"November - May, June - August",3456,1550,170,78,52,300,6,848,33,42,11,86,145461,Yes,Yes,No,Yes
+172,Val Cenis-Lanslevillard-Lanslebourg-Termignon,45.2768658,6.8170409,France,Europe,36,December - April,2800,1300,73,42,10,125,0,200,13,13,2,28,39824,Yes,Yes,Yes,No
+74,Val Thorens (Les 3 Vallees),45.2979109,6.5822693,France,Europe,61,November - May,3230,1110,312,216,72,600,0,2383,62,63,40,165,250860,Yes,Yes,Yes,No
+214,Valberg-Beuil les Launes,44.0956228,6.9301384,France,Europe,32,December - April,2020,1412,45,35,10,90,0,400,22,7,0,29,25940,Yes,Yes,No,No
+256,Valfrejus,45.162254,6.657267525,France,Europe,29,December - April,2737,1550,40,20,10,70,0,80,5,4,1,10,15800,Yes,Yes,No,No
+158,Vars-Risoul-La Foret Blanche,47.5343201,5.5342065,France,Europe,39,December - April,2750,1650,75,90,20,185,0,0,32,17,2,51,50145,Yes,Yes,Yes,No
+14,Brauneck Lenggries Wegscheid,47.674786,11.554735,Germany,Europe,35,December - April,1712,700,8,22,4,34,3,0,16,4,1,21,19100,Yes,No,Yes,No
+364,Garmisch-Classic-Garmisch-Partenkirchen,47.4596073,11.07616628,Germany,Europe,43,December - April,2050,732,12,18,10,40,8,0,11,4,4,19,21090,Yes,Yes,No,No
+439,Sudelfeld-Bayrischzell,47.6717401,12.04163164,Germany,Europe,33,Unknown,1563,850,5,24,3,32,4,100,10,5,0,15,17477,Yes,Yes,No,No
+167,Alta Badia,46.56467025,11.91021932,Italy,Europe,52,December - April,2550,1324,70,52,8,130,8,391,18,30,11,59,89327,Yes,Yes,No,No
+212,Alto Sangro-Roccaraso-Rivisondoli,41.848167,14.079594,Italy,Europe,41,December - April,2141,1309,37,32,20,89,0,0,11,11,4,26,36602,Yes,No,No,No
+186,Bardonecchia,45.078339,6.703205,Italy,Europe,36,December - April,2694,1312,54,38,8,100,0,0,13,9,1,23,27588,Yes,Yes,No,No
+129,Champoluc (Monterosa Ski),45.8366951,7.731371649,Italy,Europe,43,December - April,3275,1212,23,94,15,132,0,655,9,9,12,30,31984,Yes,Yes,No,No
+232,Civetta-Alleghe-Selva di Cadore-Palafavera-Zoldo,46.358117,12.05748586,Italy,Europe,43,December - April,2100,1000,30,44,6,80,0,100,10,10,3,23,33289,Yes,Yes,Yes,No
+126,Cortina d'Ampezzo,46.5383332,12.1373506,Italy,Europe,52,November - April,2924,1224,45,55,20,120,11,130,8,26,6,40,48089,Yes,Yes,No,No
+246,Folgaria-Fiorentini,45.9149727,11.173015,Italy,Europe,40,December - April,1850,1200,36,32,5,73,3,280,13,17,0,30,35900,Yes,Yes,No,No
+18,Gressoney - La-Trinite (Monterosa Ski),45.8597574,7.752615678,Italy,Europe,43,December - April,3275,1212,23,94,15,132,8,655,9,9,12,30,31984,Yes,Yes,No,No
+130,Kronplatz (Plan de Corones),46.7387791,11.9583111,Italy,Europe,54,November - April,2275,973,52,42,25,119,7,450,6,5,21,32,71205,Yes,Yes,Yes,No
+32,La Thuile / La Rosière - Espace San Bernardo,45.7162875,6.9486119,Italy,Europe,43,December - April,2641,1176,55,83,22,160,0,0,21,18,1,40,53669,Yes,Yes,No,No
 33,Livigno – Carosello/Mottolino,46.5200926,10.1289555,Italy,Europe,46,November - May,2798,1816,30,65,20,115,6,0,25,13,6,44,50850,Yes,Yes,Yes,No
 34,Madonna di Campiglio-Pinzolo-Folgarida-Marilleva,46.2269942,10.8270157,Italy,Europe,50,November - April,2504,770,60,68,22,150,5,0,14,34,17,65,102340,Yes,Yes,Yes,No
-37,Saalbach Hinterglemm Leogang Fieberbrunn (Skicircus),47.392906,12.636085,Austria,Europe,53,November - April,2096,830,140,112,18,270,7,927,21,22,28,71,135104,Yes,Yes,Yes,No
-41,Grandvalira – Pas de la Casa/Grau Roig/Soldeu/El Tarter/Canillo/Encamp,42.54115005,1.733382094,Andorra,Europe,47,November - April,2640,1710,100,77,33,210,6,1032,37,28,7,72,99017,Yes,Yes,Yes,No
-57,Tignes - Val d'Isère,45.4580331,6.918835739,France,Europe,56,"November - May, June - August",3456,1550,170,78,52,300,6,848,33,42,11,86,145461,Yes,Yes,No,Yes
-58,La Plagne (Paradiski),45.50429855,6.704912253,France,Europe,50,December - April,3167,1207,139,59,27,225,6,417,56,32,12,100,136733,Yes,Yes,No,No
-66,Courchevel (Les 3 Vallées),45.4140984,6.6349892,France,Europe,61,November - May,3230,1110,312,216,72,600,12,2383,62,63,40,165,250860,Yes,Yes,Yes,No
-68,Alpe d'Huez,45.092401,6.0699443,France,Europe,51,December - April,3330,1125,70,130,50,250,16,963,27,21,20,68,92097,Yes,Yes,Yes,No
-74,Val Thorens (Les 3 Vallées),45.2979109,6.5822693,France,Europe,61,November - May,3230,1110,312,216,72,600,0,2383,62,63,40,165,250860,Yes,Yes,Yes,No
-75,Serre Chevalier-Briançon/Chantemerle/Villeneuve-la-Salle/Le Monêtier-les-Bains,44.9107381,6.5500282,France,Europe,49,December - April,2800,1200,138,80,32,250,9,575,33,21,7,61,72066,Yes,Yes,Yes,No
-76,Kleine Scheidegg / Männlichen-Grindelwald / Wengen,46.5850987,7.9608968,Switzerland,Europe,55,November - April,2320,944,33,56,13,102,13,0,10,10,6,26,29250,Yes,No,No,No
-78,Grands Montets-Argentière (Chamonix),45.9777193,6.9238925,France,Europe,62,December - May,3275,1252,6,9,14,29,6,0,1,4,4,9,15756,Yes,Yes,No,No
-84,Kranjska Gora,46.485132,13.7843957,Slovenia,Europe,33,December - April,1215,800,10,8,2,20,2,0,15,5,0,20,17774,Yes,Yes,Yes,No
-86,Bansko,41.8344086,23.4841698,Bulgaria,Europe,30,December - April,2560,990,20,24,3,47,16,380,7,8,2,17,24233,Yes,Yes,Yes,No
-96,Sölden,46.9673961,11.0070193,Austria,Europe,53,September - May,3340,1350,70,44,29,143,15,363,12,16,8,36,70370,Yes,Yes,Yes,No
-103,Mayrhofen-Penken/Ahorn/Rastkogel/Eggalm,47.1672188,11.8638664,Austria,Europe,52,December - April,2500,630,40,66,30,136,10,286,31,17,9,57,82432,Yes,Yes,No,No
-104,St. Anton (Ski Arlberg),47.18265425,10.14043361,Austria,Europe,53,December - April,2811,1270,130,123,51,304,10,747,53,45,15,113,145127,Yes,Yes,No,No
-108,Ischgl,46.9862824,10.27451769,Austria,Europe,52,November - May,2872,1377,47,142,49,238,11,1200,13,25,7,45,88215,Yes,Yes,No,No
-111,Lech (Ski Arlberg),47.18265425,10.14043361,Austria,Europe,53,December - April,2811,1270,130,123,51,304,6,747,53,45,15,113,145127,Yes,Yes,No,No
-112,Kitzbühel / Kirchberg (KitzSki),47.4463585,12.3911473,Austria,Europe,55,October - April,2000,800,101,61,17,179,8,1102,15,28,11,54,92510,Yes,Yes,Yes,No
-126,Cortina d'Ampezzo,46.5383332,12.1373506,Italy,Europe,52,November - April,2924,1224,45,55,20,120,11,130,8,26,6,40,48089,Yes,Yes,No,No
-128,Saas-Fee,46.107342,7.9247055,Switzerland,Europe,63,July - April,3573,1800,20,60,20,100,14,102,14,2,9,25,25160,Yes,Yes,No,Yes
-132,Baqueira / Beret,42.6988865,0.9347175,Spain,Europe,50,December - April,2510,1471,79,52,19,150,5,629,14,19,2,35,53997,Yes,Yes,No,No
-137,Crans-Montana,46.3304899,7.526435804,Switzerland,Europe,60,November - April,1510,540,55,70,15,140,12,0,12,6,5,23,29500,Yes,Yes,No,No
-140,Verbier (4 Vallées),46.1003545,7.276506393,Switzerland,Europe,66,December - April,3330,821,107,202,103,412,8,0,39,17,19,75,85022,Yes,Yes,Yes,No
-141,St. Moritz - Corviglia,46.5079945,9.818959,Switzerland,Europe,69,November - April,3057,1720,42,79,34,155,6,170,11,12,5,28,31220,Yes,Yes,No,No
-153,Megève-Saint-Gervais,45.845128,6.685666167,France,Europe,46,December - April,2353,850,98,134,31,263,5,888,50,27,9,86,106362,Yes,Yes,Yes,No
-157,Laax-Flims-Falera,46.849618,9.217180661,Switzerland,Europe,68,October - April,3018,1100,88,81,19,188,14,300,13,9,11,33,46116,Yes,Yes,No,No
-167,Alta Badia,46.56467025,11.91021932,Italy,Europe,52,December - April,2550,1324,70,52,8,130,8,391,18,30,11,59,89327,Yes,Yes,No,No
-210,Åre,63.4010888,13.0822241,Sweden,Europe,45,November - May,1274,380,45,38,8,91,6,0,27,5,4,36,39000,Yes,Yes,Yes,No
-240,Zell am See,47.3239636,12.7963165,Austria,Europe,50,December - April,2000,760,30,28,19,77,6,450,9,10,8,27,48407,Yes,Yes,Yes,No
+182,Mondole Ski-Artesina-Frabosa Soprana-Prato Nevoso,44.249446,7.775081,Italy,Europe,33,Unknown,807,803,42,51,11,104,0,0,19,14,0,33,26068,Yes,Yes,Yes,No
+133,Sauze d’Oulx (Via Lattea),45.0259571,6.8602827,Italy,Europe,48,November - April,2749,1372,96,220,84,400,0,0,29,35,7,71,96433,Yes,No,Yes,No
+38,Sestriere ski resort (Via Lattea),44.954538,6.880658,Italy,Europe,48,November - April,2749,1372,96,220,84,400,7,0,29,35,7,71,96433,Yes,No,Yes,No
+243,Three Peaks Dolomites-Helm-Stiergarten-Rotwand-Kreuzbergpass,46.731048,12.327947,Italy,Europe,51,November - April,2200,1130,17,39,18,74,4,250,20,4,6,30,21535,Yes,Yes,No,No
+17,Val Gardena,46.5766427,11.6444217,Italy,Europe,54,December - April,2518,1236,52,105,18,175,10,630,29,41,14,84,121914,Yes,Yes,No,No
+5,Hafjell,61.2303686,10.52901357,Norway,Europe,45,November - April,1030,195,33,7,4,44,6,150,14,3,1,18,21060,Yes,Yes,Yes,No
+300,Oppdal,62.53517845,9.62330412,Norway,Europe,44,Unknown,1300,585,40,7,9,56,0,0,1,0,0,1,0,Yes,No,No,No
 248,Trysil,61.3561472,12.36702596,Norway,Europe,46,October - May,1100,415,33,18,20,71,5,418,29,7,0,36,36182,Yes,Yes,Yes,No
-331,Bormio-Cima Bianca,46.4397574,10.3924531,Italy,Europe,40,November - April,3012,1225,14,34,2,50,8,240,8,5,2,15,17630,Yes,Yes,Yes,No
-339,Zugspitze,47.421215,10.986297,Germany,Europe,45,May,2000,700,7,13,0,20,2,0,4,2,4,10,13150,Yes,No,No,No
-342,Jasná Nízke Tatry-Chopok,48.966941,19.58101661,Slovakia,Europe,39,December - May,2004,943,19,17,7,43,6,527,19,8,5,32,35225,Yes,Yes,Yes,No
-354,Szczyrk-Skrzyczne,49.7071204,19.0117088,Poland,Europe,20,December - April,1257,524,22,7,4,33,0,0,11,4,1,16,22500,Yes,No,No,No
-364,Garmisch-Classic-Garmisch-Partenkirchen,47.4596073,11.07616628,Germany,Europe,43,December - April,2050,732,12,18,10,40,8,0,11,4,4,19,21090,Yes,Yes,No,No
-380,Špindlerův Mlýn,50.7256448,15.6067567,Czech Republic,Europe,34,December - April,1235,702,8,13,2,23,0,0,17,6,0,23,21638,Yes,Yes,Yes,No
+390,Alpika Service,43.667196,40.246821,Russia,Europe,0,December - April,2228,535,10,10,5,25,0,0,1,1,7,9,18120,Yes,No,No,No
+463,Gornaya Karusel,43.683048,40.266475,Russia,Europe,22,December - April,960,540,4,15,1,20,0,0,3,1,0,4,15740,Yes,No,No,No
+239,Rosa Khutor,43.6709708,40.2970765,Russia,Europe,22,December - April,2320,940,30,26,21,77,7,450,6,11,10,27,49228,Yes,Yes,No,No
+342,Jasna Nizke Tatry-Chopok,48.966941,19.58101661,Slovakia,Europe,39,December - May,2004,943,19,17,7,43,6,527,19,8,5,32,35225,Yes,Yes,Yes,No
+480,Kubinska hola,49.2852625,19.26742095,Slovakia,Europe,26,December - April,1396,720,2,10,2,14,0,60,2,1,2,5,11480,Yes,Yes,No,No
+485,Tatranska Lomnica,49.1655267,20.2791933,Slovakia,Europe,35,December - April,2190,888,5,5,1,11,6,216,3,1,0,4,12480,Yes,No,No,No
+438,Kobla-Bohinj,46.2338617,13.9650643,Slovenia,Europe,22,December - March,1480,540,12,10,1,23,0,30,3,3,0,6,5720,Yes,No,No,No
+84,Kranjska Gora,46.485132,13.7843957,Slovenia,Europe,33,December - April,1215,800,10,8,2,20,2,0,15,5,0,20,17774,Yes,Yes,Yes,No
+355,Mariborsko Pohorje-Maribor,46.5153389,15.5782311,Slovenia,Europe,31,December - March,1327,325,23,13,5,41,0,92,16,5,1,22,23436,Yes,No,Yes,No
+132,Baqueira / Beret,42.6988865,0.9347175,Spain,Europe,50,December - April,2510,1471,79,52,19,150,5,629,14,19,2,35,53997,Yes,Yes,No,No
+241,Cerler,42.5927404,0.5384221,Spain,Europe,42,December - April,2621,1505,35,27,14,76,0,0,10,9,0,19,20670,Yes,Yes,No,No
+131,Formigal,42.7741349,-0.3608611,Spain,Europe,44,November - April,2251,1501,47,70,20,137,6,440,9,11,0,20,29450,Yes,Yes,No,No
+162,La Molina-Masella-Alp2500,42.3427392,1.9562059,Spain,Europe,45,November - April,2531,1616,76,47,18,141,0,1010,19,13,1,33,39750,Yes,Yes,Yes,No
+125,Sierra Nevada-Pradollano,37.0957512,-3.387885004,Spain,Europe,47,November - May,3282,2100,50,49,7,106,0,350,5,14,2,21,59205,Yes,Yes,Yes,No
+341,Lindvallen-Hogfjallet-Salen,61.159705,13.193609,Sweden,Europe,41,November - May,887,579,22,17,3,42,5,0,49,4,0,53,50505,Yes,Yes,Yes,No
+344,Tandadalen-Hundfjallet-Salen,61.1792462,12.9919443,Sweden,Europe,41,November - May,872,572,18,15,12,45,3,0,42,4,0,46,42636,Yes,Yes,Yes,No
+210,Åre,63.4010888,13.0822241,Sweden,Europe,45,November - May,1274,380,45,38,8,91,6,0,27,5,4,36,39000,Yes,Yes,Yes,No
+219,Adelboden-Lenk-Chuenisbargli-Silleren-Hahnenmoos-Metsch,46.4927213,7.5587618,Switzerland,Europe,55,December - April,1260,1072,44,38,6,88,6,500,12,8,6,26,34620,Yes,Yes,Yes,No
+183,Aletsch Arena-Riederalp-Bettmeralp-Fiesch Eggishorn,46.3895305,8.0609271,Switzerland,Europe,53,December - April,1845,759,42,50,12,104,4,258,18,8,12,38,41109,Yes,Yes,Yes,No
+139,Arosa Lenzerheide,46.7548885,9.566024408,Switzerland,Europe,63,October - April,2865,1229,111,87,27,225,4,0,24,18,8,50,63936,Yes,Yes,Yes,No
+134,Cervinia,45.96300885,7.715412186,Switzerland,Europe,81,Year-round,3899,1562,75,220,27,322,0,1060,21,22,20,63,93464,Yes,Yes,No,Yes
+176,Corvatsch-Furtschellas,46.4450516,9.819511761,Switzerland,Europe,69,November - May,3303,1797,13,89,17,119,9,0,5,6,3,14,18510,Yes,Yes,Yes,No
+137,Crans-Montana,46.3304899,7.526435804,Switzerland,Europe,60,November - April,1510,540,55,70,15,140,12,0,12,6,5,23,29500,Yes,Yes,No,No
+230,Grimentz-Zinal,46.1776631,7.5744978,Switzerland,Europe,51,December - April,2900,1570,26,28,26,80,0,96,13,5,3,21,19345,Yes,Yes,No,No
+76,Kleine Scheidegg / Mannlichen-Grindelwald / Wengen,46.5850987,7.9608968,Switzerland,Europe,55,November - April,2320,944,33,56,13,102,13,0,10,10,6,26,29250,Yes,No,No,No
+157,Laax-Flims-Falera,46.849618,9.217180661,Switzerland,Europe,68,October - April,3018,1100,88,81,19,188,14,300,13,9,11,33,46116,Yes,Yes,No,No
+143,Nendaz (4 Vallees),46.1003545,7.276506393,Switzerland,Europe,66,December - April,3330,821,107,202,103,412,8,0,39,17,19,75,85022,Yes,Yes,Yes,No
+174,Obersaxen-Mundaun-Val Lumnezia,46.7487613,9.1022712,Switzerland,Europe,51,December - April,2310,1201,60,40,20,120,15,297,10,9,0,19,20720,Yes,Yes,Yes,No
+201,Parsenn (Davos Klosters),46.842102,9.835342208,Switzerland,Europe,61,November - April,2844,810,20,60,16,96,12,169,4,6,8,18,26795,Yes,Yes,No,No
+220,Rinderberg-Saanerslochgrat-Horneggli-Zweisimmen-Saanenmoser-Schonried-St. Stephan,46.9463748,8.0499977,Switzerland,Europe,54,December - April,2011,948,62,21,4,87,0,0,9,8,4,21,18360,Yes,Yes,Yes,No
+128,Saas-Fee,46.107342,7.9247055,Switzerland,Europe,63,July - April,3573,1800,20,60,20,100,14,102,14,2,9,25,25160,Yes,Yes,No,Yes
+257,Savognin,46.596957,9.5981493,Switzerland,Europe,50,December - April,2713,1200,32,38,0,70,11,100,10,2,1,13,14000,Yes,Yes,Yes,No
+141,St. Moritz - Corviglia,46.5079945,9.818959,Switzerland,Europe,69,November - April,3057,1720,42,79,34,155,6,170,11,12,5,28,31220,Yes,Yes,No,No
+145,Thyon (4 Vallees),46.1003545,7.276506393,Switzerland,Europe,66,December - April,3330,821,107,202,103,412,8,0,39,17,19,75,85022,Yes,Yes,Yes,No
+247,Titlis-Engelberg,46.8228773,8.400657035,Switzerland,Europe,57,October - May,3020,1000,34,26,12,72,12,180,7,6,7,20,23316,Yes,Yes,No,No
+140,Verbier (4 Vallees),46.1003545,7.276506393,Switzerland,Europe,66,December - April,3330,821,107,202,103,412,8,0,39,17,19,75,85022,Yes,Yes,Yes,No
+146,Veysonnaz (4 Vallees),46.1003545,7.276506393,Switzerland,Europe,66,December - April,3330,821,107,202,103,412,8,0,39,17,19,75,85022,Yes,Yes,Yes,No
+144,Villars - Gryon / Les Diablerets,46.3289335,7.1096087,Switzerland,Europe,54,December - April,2120,1224,51,45,4,100,0,0,20,9,4,33,38905,Yes,Yes,No,No
+15,Zermatt - Matterhorn,45.96300885,7.715412186,Switzerland,Europe,81,Year-round,3899,1562,75,220,27,322,16,1060,21,22,20,63,93464,Yes,Yes,No,Yes
+95,Glencoe Mountain,56.68154175,-5.10644312,United Kingdom,Europe,35,December - April,1070,360,7,10,7,24,0,0,6,2,0,8,5800,Yes,No,No,No
+405,Glenshee,56.7410308,-3.3999352,United Kingdom,Europe,33,December - April,900,650,24,10,2,36,0,6,18,3,0,21,16255,Yes,No,No,No
+28,Nevis Range,56.8522081,-4.9987681,United Kingdom,Europe,36,December - April,655,91,7,10,3,20,0,0,8,3,1,12,10350,Yes,No,No,No

@@ -3,7 +3,7 @@ project: "NextSlope"
 version: 1
 status: draft
 created: 2026-06-12
-updated: 2026-06-26
+updated: 2026-06-28
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -37,6 +37,8 @@ An avid skier or snowboarder planning the upcoming season drowns in scattered, m
 | S-05 | three-resort-recommendation | click "Recommend resorts" and get exactly three ranked picks with a truthful rationale | S-02, S-03, S-04 | US-01, FR-008, FR-009 | proposed |
 | S-06 | admin-resort-management | (admin) create, edit, and deactivate resort entries from an admin-only view | S-01, S-03 | US-03, FR-010, FR-011, FR-012, FR-013 | proposed |
 | S-07 | account-deletion | permanently delete their account, removing profile and visited data everywhere | S-02, S-04 | FR-004, FR-005 | proposed |
+| S-08 | min-top-lift-height-preference | set a minimum top lift height in their profile and have recommendations honor it as a hard filter | S-02, S-05 | (post-MVP — extends FR-004, FR-008) | proposed |
+| S-09 | recommendation-scoring-refinement | (no new UI) get recommendations tuned by confirmed scoring values instead of S-05's shipped defaults | S-05 | US-01, FR-008, FR-009 (tuning) | proposed |
 
 ## Streams
 
@@ -46,7 +48,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 |---|---|---|---|
 | A | Accounts & profile | `F-01` → `S-01` → `S-02` → `S-07` | The must-have spine; `S-07` joins after `S-04` exists (cascade of visited data). |
 | B | Resort discovery | `S-03` → `S-04` | Branches off `S-01`; runs parallel with Stream A's `S-02`. |
-| C | Recommendation (north star) | `S-05` | Joins Stream A at `S-02` and Stream B at `S-04`; the validation milestone. |
+| C | Recommendation (north star) | `S-05` → `S-08` | Joins Stream A at `S-02` and Stream B at `S-04`; the validation milestone. `S-08` is a post-MVP enhancement that extends the engine + profile with a new axis. `S-09` is an iterative scoring-tuning follow-up branching off `S-05` (no new user-facing capability). |
 | D | Admin curation | `S-06` | Joins Stream B at `S-03`; must-have but off the north-star path — parallelizable. |
 
 ## Baseline
@@ -165,6 +167,34 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** Satisfies the account-deletion NFR; FR-004/FR-005 define the cascaded data removed. Depends on both the profile (S-02) and visited (S-04) models existing so deletion can cascade across all the user's data. Privacy-completing slice; small and off the critical path, so it lands late without endangering the deadline.
 - **Status:** proposed
 
+### S-08: Minimum top lift height preference
+
+- **Outcome:** A signed-in user can set a minimum top lift height in their preference profile (blank = no constraint); the recommendation flow then honors it as a **hard filter** — resorts below the minimum are dropped before scoring, so a too-restrictive minimum surfaces the existing explicit sparse explanation rather than padding.
+- **Change ID:** min-top-lift-height-preference
+- **PRD refs:** post-MVP enhancement — extends FR-004 (profile axes) and FR-008 (recommendation hard filters); not in PRD v1.
+- **Prerequisites:** S-02 (profile schema + form to carry the new axis), S-05 (the recommendation engine this filter plugs into).
+- **Parallel with:** S-06, S-07.
+- **Blockers:** —
+- **Unknowns:**
+  - Hard filter vs. soft-scoring nudge — Owner: user. Block: no. (Captured as a hard filter per "minimum" wording; revisit at `/10x-shape`.)
+  - Input unit/validation (metres, sensible upper bound, optional vs. required) — Owner: TBD. Block: no.
+- **Risk:** A genuinely new persisted preference axis, so it crosses three layers: a new `V5__` Flyway migration (nullable column on `preference_profiles`), the profile entity/form/validation/UI (S-02 territory), and the engine's hard-filter stage + `ProfileSnapshot` + tests (S-05 territory). Deliberately **not** folded into S-05, which reads existing tables only and excludes a new migration. Determinism, the sparse branch, and rationale truthfulness must all extend to the new axis. Off the north-star critical path — the MVP recommendation already works without it.
+- **Status:** proposed
+
+### S-09: Recommendation scoring refinement
+
+- **Outcome:** The recommendation engine ranks resorts using **confirmed, tuned scoring values** rather than S-05's shipped defensible defaults. No new user-facing capability and no UI change — the same "Recommend resorts" flow simply produces better-calibrated rankings and rationales. Concretely: lock the six `ScoringConfig` knobs — the two soft-axis weights (`weightDiff` / `weightExp`), the three experience→hardness targets (`beginner/intermediate/advancedHardnessTarget`), and the `rationaleAlignmentThreshold` — against the real expanded dataset, replacing each default with a value chosen on evidence.
+- **Change ID:** recommendation-scoring-refinement
+- **PRD refs:** US-01, FR-008, FR-009 — iterative tuning of the engine shipped in S-05, not a new requirement (S-05's roadmap Unknown already flagged "soft-axis scoring weights … a defensible default ships; tuning is iterative").
+- **Prerequisites:** S-05 (the pluggable `Scorer`, centralized `ScoringConfig`, truthfulness gate, and PIT mutation gate must exist — they are the refinement surface and its safety net).
+- **Parallel with:** S-06, S-07, S-08.
+- **Blockers:** —
+- **Unknowns:**
+  - Soft-axis weights / data-aware handling (research Open Question 1) — how to weight a difficulty axis that, for two of three bands, every candidate fails roughly equally, without emitting an untruthful rationale. S-05 ships Approach A (`weightDiff`/`weightExp` + the rationale threshold gate); the richer data-aware gating (Approach C) is deferred. Owner: user/TBD. Block: no.
+  - Experience → difficulty-mix mapping (research Open Question 2) — whether the shipped hardness-index scalar with targets `0.20 / 0.45 / 0.70` is the right model, and the exact target numbers. Owner: user/TBD. Block: no.
+- **Risk:** Per `context/changes/three-resort-recommendation/refinement-brief.md`, this is a **values-and-tests edit, not a redesign** — the engine's two-stage shape (hard filters → weighted score → deterministic order → explicit sparse/no-profile) and the truthfulness gate are settled by the PRD and pinned by tests + the `com.nextslope.recommendation.*` PIT mutation gate (threshold 90). The real risk is retuning against a still-thin distribution: Phase-1 review flagged `MOSTLY_HARD` coverage as sparse, so tuning before there is genuine data/usage could overfit. Best sequenced once real usage exists; off the north-star critical path — the MVP recommendation already works on defaults. The brief is the ready spec: every knob, its default, its rationale, and the guarding test that locks it.
+- **Status:** proposed
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
@@ -177,6 +207,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-05 | three-resort-recommendation | Recommend three ranked resorts with rationale | no | Needs S-02, S-03, S-04 done |
 | S-06 | admin-resort-management | Admin create/edit/deactivate resorts | no | Needs S-01, S-03 done; heaviest slice — if too broad, split admin create/edit vs deactivate (never by layer) |
 | S-07 | account-deletion | Permanently delete account + data | no | Needs S-02, S-04 done |
+| S-08 | min-top-lift-height-preference | Min top lift height profile axis + recommendation hard filter | no | Needs S-02, S-05 done; post-MVP. New `V5__` migration + profile form change + engine filter — start at `/10x-shape` (hard filter vs soft axis is open) |
+| S-09 | recommendation-scoring-refinement | Tune & lock the recommendation scoring knobs against real data | no | Needs S-05 done; iterative/post-MVP. Spec already exists — `context/changes/three-resort-recommendation/refinement-brief.md`. Values-and-tests edit guarded by the PIT gate; start at `/10x-plan` (or `/10x-frame` if data-aware gating reopens the model) |
 
 ## Open Roadmap Questions
 

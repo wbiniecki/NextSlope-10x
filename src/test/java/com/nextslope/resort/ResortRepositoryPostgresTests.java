@@ -27,7 +27,7 @@ class ResortRepositoryPostgresTests {
 
 	@Test
 	void migrationAppliesAndMappingValidatesOnRealPostgres() {
-		// External id is chosen outside the seeded CSV range (max seed id 380) so this
+		// External id is chosen outside the seeded CSV range (max seed id 485) so this
 		// fixture does not collide with ResortSeedLoader, which runs on this full context.
 		Resort saved = resortRepository.save(Resort.builder()
 				.externalId(900057L)

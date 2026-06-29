@@ -25,3 +25,9 @@ jobs:
       # migration against a real Postgres engine, not just local H2.
       - name: Run tests (incl. Testcontainers Postgres migration verification)
         run: ./gradlew test --no-daemon
+
+      # Mutation gate scoped to com.nextslope.recommendation.* (test-plan.md §5). Fails the
+      # build if the recommendation engine's mutation score drops below the calibrated
+      # threshold, catching weak/tautological assertions in the scorer/filter/rationale logic.
+      - name: Mutation gate (PIT, recommendation engine only)
+        run: ./gradlew pitest --no-daemon

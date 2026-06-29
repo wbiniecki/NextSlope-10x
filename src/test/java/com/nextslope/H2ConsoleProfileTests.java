@@ -60,6 +60,9 @@ class H2ConsoleProfileTests {
 		@MockitoBean
 		private CurrentUserService currentUserService;
 
+		@MockitoBean
+		private com.nextslope.recommendation.RecommendationService recommendationService;
+
 		@Test
 		void h2ConsoleIsPublicUnderNonProdProfile() throws Exception {
 			mockMvc.perform(get("/h2-console/"))
@@ -95,6 +98,9 @@ class H2ConsoleProfileTests {
 
 		@MockitoBean
 		private CurrentUserService currentUserService;
+
+		@MockitoBean
+		private com.nextslope.recommendation.RecommendationService recommendationService;
 
 		@Test
 		void h2ConsoleChainAbsentUnderProdProfileFallsThroughToAuthenticated() throws Exception {
