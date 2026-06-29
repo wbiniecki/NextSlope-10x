@@ -1,10 +1,10 @@
 ---
 change_id: three-resort-recommendation
 title: Three resort recommendation
-status: impl_reviewed
+status: archived
 created: 2026-06-26
-updated: 2026-06-28
-archived_at: null
+updated: 2026-06-29
+archived_at: 2026-06-29T06:05:37Z
 ---
 
 ## Notes
