@@ -3,7 +3,7 @@ project: "NextSlope"
 version: 1
 status: draft
 created: 2026-06-12
-updated: 2026-06-28
+updated: 2026-06-29
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -34,7 +34,7 @@ An avid skier or snowboarder planning the upcoming season drowns in scattered, m
 | S-02 | preference-profile | create and edit a preference profile (experience, difficulty mix, region, novelty) | S-01 | US-01, FR-004 | done |
 | S-03 | resort-catalog-browse | browse the resort list with key facts and open a single resort's detail view | S-01 | FR-006, FR-007 | done |
 | S-04 | mark-visited | mark and unmark resorts as visited from the browse list, privately | S-01, S-03 | US-02, FR-005 | done |
-| S-05 | three-resort-recommendation | click "Recommend resorts" and get exactly three ranked picks with a truthful rationale | S-02, S-03, S-04 | US-01, FR-008, FR-009 | proposed |
+| S-05 | three-resort-recommendation | click "Recommend resorts" and get exactly three ranked picks with a truthful rationale | S-02, S-03, S-04 | US-01, FR-008, FR-009 | done |
 | S-06 | admin-resort-management | (admin) create, edit, and deactivate resort entries from an admin-only view | S-01, S-03 | US-03, FR-010, FR-011, FR-012, FR-013 | proposed |
 | S-07 | account-deletion | permanently delete their account, removing profile and visited data everywhere | S-02, S-04 | FR-004, FR-005 | proposed |
 | S-08 | min-top-lift-height-preference | set a minimum top lift height in their profile and have recommendations honor it as a hard filter | S-02, S-05 | (post-MVP — extends FR-004, FR-008) | proposed |
@@ -141,7 +141,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Soft-axis scoring weights (how much each preference axis contributes to alignment) — Owner: user/TBD. Block: no. (A defensible default ships; tuning is iterative.)
 - **Risk:** The north star and the only "invest deeply" slice. Three guardrails converge here: results are deterministic (same inputs → same three in the same order), the rationale must reflect the actual ranking (not flavor text), and a sparse candidate set must produce an explicit explanation rather than padding. The result render surfaces a progress indicator to satisfy the 2s-progress NFR.
-- **Status:** proposed
+- **Status:** done
 
 ### S-06: Admin resort management
 
@@ -239,3 +239,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-03: A signed-in user can browse the full resort list with key facts visible (name, location, top lift height, slopes, lifts, difficulty mix) and open a single resort's detail view.** — Archived 2026-06-25 → `context/archive/2026-06-21-resort-catalog-browse/`. Lesson: —.
 - **S-02: A signed-in user can create and edit their preference profile — experience level, preferred difficulty mix, location/region, and novelty preference — and the edits persist across sessions.** — Archived 2026-06-26 → `context/archive/2026-06-21-preference-profile/`. Lesson: —.
 - **S-04: A signed-in user can mark and unmark resorts as visited directly from the browse list, with the visual state updating immediately and the list kept strictly private to that user.** — Archived 2026-06-26 → `context/archive/2026-06-26-mark-visited/`. Lesson: —.
+- **S-05: A signed-in user clicks "Recommend resorts" and sees exactly three ranked resorts (key facts + a one-line truthful rationale), or an explicit explanation when fewer than three viable matches exist — honoring hard filters (region, visited-when-new-only) then weighted scoring.** — Archived 2026-06-29 → `context/archive/2026-06-26-three-resort-recommendation/`. Lesson: —.
