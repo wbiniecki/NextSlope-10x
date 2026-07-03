@@ -550,20 +550,20 @@ stays satisfied because no entity mapping changes.
 
 #### Manual
 
-- [ ] 2.5 Create a resort via the form; % + total preview updates live; appears in admin + browse lists
-- [ ] 2.6 Edit a seed resort; unmanaged fields (e.g. price/coords) preserved
-- [ ] 2.7 Invalid input → per-field errors, no save; duplicate `externalId` → clear field error
+- [x] 2.5 Create a resort via the form; % + total preview updates live; appears in admin + browse lists — 7b97b71
+- [x] 2.6 Edit a seed resort; unmanaged fields (e.g. price/coords) preserved — 7b97b71
+- [x] 2.7 Invalid input → per-field errors, no save; duplicate `externalId` → clear field error — 7b97b71
 
 ### Phase 3: Deactivate & reactivate
 
 #### Automated
 
-- [x] 3.1 Build + full suite pass: `./gradlew test`
-- [x] 3.2 `AdminResortControllerTests`: toggle endpoint ADMIN→200 fragment, USER→403, missing→404
-- [x] 3.3 `ResortServiceTests`: `toggleActive` inverts + returns state; missing→throws
-- [x] 3.4 Deactivation `@SpringBootTest`: deactivated resort absent from browse + recommendation; visited reference survives; reactivate restores
+- [x] 3.1 Build + full suite pass: `./gradlew test` — a9e5fca
+- [x] 3.2 `AdminResortControllerTests`: toggle endpoint ADMIN→200 fragment, USER→403, missing→404 — a9e5fca
+- [x] 3.3 `ResortServiceTests`: `toggleActive` inverts + returns state; missing→throws — a9e5fca
+- [x] 3.4 Deactivation `@SpringBootTest`: deactivated resort absent from browse + recommendation; visited reference survives; reactivate restores — a9e5fca
 
 #### Manual
 
-- [ ] 3.5 Admin toggles active/inactive in place (no reload); row restyles
-- [ ] 3.6 Deactivated resort gone from browse + not recommended; prior visited mark still unmarkable
+- [x] 3.5 Admin toggles active/inactive in place (no reload); row restyles — a9e5fca
+- [x] 3.6 Deactivated resort gone from browse + not recommended; prior visited mark still unmarkable — a9e5fca
