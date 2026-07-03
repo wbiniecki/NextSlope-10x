@@ -51,6 +51,20 @@ class ResortRepositoryTests {
 	}
 
 	@Test
+	void findAllByOrderByCountryAscNameAscReturnsActiveAndInactiveInOrder() {
+		resortRepository.save(resort("Active Resort", "Austria").build());
+		resortRepository.save(resort("Hidden Resort", "Austria").active(false).build());
+		resortRepository.save(resort("Alpe d'Huez", "France").build());
+
+		List<Resort> ordered = resortRepository.findAllByOrderByCountryAscNameAsc();
+
+		assertThat(ordered).extracting(Resort::getCountry)
+				.containsExactly("Austria", "Austria", "France");
+		assertThat(ordered).extracting(Resort::getName)
+				.containsExactly("Active Resort", "Hidden Resort", "Alpe d'Huez");
+	}
+
+	@Test
 	void findByIdAndActiveTrueReturnsActiveResort() {
 		Resort saved = resortRepository.save(resort("Sölden", "Austria").build());
 

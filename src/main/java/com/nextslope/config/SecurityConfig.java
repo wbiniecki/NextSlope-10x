@@ -54,6 +54,7 @@ public class SecurityConfig {
 				.requestMatchers("/", "/index", "/login", "/signup", "/actuator/health", "/css/**", "/js/**",
 						"/webjars/**")
 				.permitAll()
+				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest().authenticated())
 			.addFilterBefore(new StaleAuthenticatedSessionFilter(userRepository), AuthorizationFilter.class)
 			.formLogin(form -> form

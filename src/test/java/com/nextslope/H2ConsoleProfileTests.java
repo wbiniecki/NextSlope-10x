@@ -52,6 +52,9 @@ class H2ConsoleProfileTests {
 		private com.nextslope.resort.ResortRepository resortRepository;
 
 		@MockitoBean
+		private com.nextslope.resort.ResortService resortService;
+
+		@MockitoBean
 		private PreferenceProfileService preferenceProfileService;
 
 		@MockitoBean
@@ -89,6 +92,9 @@ class H2ConsoleProfileTests {
 
 		@MockitoBean
 		private com.nextslope.resort.ResortRepository resortRepository;
+
+		@MockitoBean
+		private com.nextslope.resort.ResortService resortService;
 
 		@MockitoBean
 		private PreferenceProfileService preferenceProfileService;

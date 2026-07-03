@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin resorts — NextSlope')}"></head>
+<body class="bg-light">
+	<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+	<main class="container py-4">
+		<div th:if="${resortSaved}" class="alert alert-success" role="alert">
+			Resort saved successfully.
+		</div>
+
+		<h1 class="h3 mb-4">Admin — ski resorts</h1>
+
+		<div class="table-responsive">
+			<table class="table table-hover align-middle">
+				<thead>
+					<tr>
+						<th scope="col">Name</th>
+						<th scope="col">Country</th>
+						<th scope="col" class="text-end">Top lift (m)</th>
+						<th scope="col" class="text-end">Total slopes</th>
+						<th scope="col" class="text-end">Total lifts</th>
+						<th scope="col">Difficulty mix (E / M / H)</th>
+						<th scope="col">Status</th>
+						<th scope="col">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="r : ${resorts}" th:id="'admin-resort-row-' + ${r.id}">
+						<td th:text="${r.name}">Resort</td>
+						<td th:text="${r.country}">Country</td>
+						<td class="text-end" th:text="${r.highestPoint}">0</td>
+						<td class="text-end" th:text="${r.totalSlopes}">0</td>
+						<td class="text-end" th:text="${r.totalLifts}">0</td>
+						<td>
+							<span class="badge text-bg-primary" th:text="${r.difficultyMix.easy()} + '%'">0%</span>
+							<span class="badge text-bg-danger" th:text="${r.difficultyMix.medium()} + '%'">0%</span>
+							<span class="badge text-bg-dark" th:text="${r.difficultyMix.hard()} + '%'">0%</span>
+						</td>
+						<td>
+							<span th:if="${r.active}" class="badge text-bg-success">Active</span>
+							<span th:unless="${r.active}" class="badge text-bg-secondary">Inactive</span>
+						</td>
+						<td></td>
+					</tr>
+					<tr th:if="${#lists.isEmpty(resorts)}">
+						<td colspan="8" class="text-center text-muted py-4">No resorts available.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</main>
+
+	<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

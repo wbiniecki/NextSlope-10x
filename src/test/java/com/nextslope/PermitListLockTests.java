@@ -55,6 +55,9 @@ class PermitListLockTests {
 	private com.nextslope.resort.ResortRepository resortRepository;
 
 	@MockitoBean
+	private com.nextslope.resort.ResortService resortService;
+
+	@MockitoBean
 	private PreferenceProfileService preferenceProfileService;
 
 	@MockitoBean
@@ -106,6 +109,13 @@ class PermitListLockTests {
 				.andExpect(result -> assertThat(result.getResponse().getRedirectedUrl())
 						.as("authenticated /error must reach the handler past security, not redirect to /login")
 						.isNotEqualTo("/login"));
+	}
+
+	@Test
+	@WithMockUser(roles = "USER")
+	void userAdminResortsReturns403() throws Exception {
+		mockMvc.perform(get("/admin/resorts"))
+				.andExpect(status().isForbidden());
 	}
 
 	@Test
