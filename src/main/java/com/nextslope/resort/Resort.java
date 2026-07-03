@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.persistence.Version;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -109,6 +110,10 @@ public class Resort {
 
 	@Column(name = "active", nullable = false)
 	private Boolean active;
+
+	@Version
+	@Column(name = "version", nullable = false)
+	private Long version;
 
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false, updatable = false)

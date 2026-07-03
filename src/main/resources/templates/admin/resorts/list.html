@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/layout :: head('Admin resorts — NextSlope')}"></head>
 <body class="bg-light">
 	<nav th:replace="~{fragments/layout :: navbar}"></nav>
@@ -30,23 +31,32 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="r : ${resorts}" th:id="'admin-resort-row-' + ${r.id}">
+					<tr th:each="r : ${resorts}" th:id="'admin-resort-row-' + ${r.id}"
+						th:classappend="${!r.active} ? 'table-secondary'">
 						<td th:text="${r.name}">Resort</td>
 						<td th:text="${r.country}">Country</td>
 						<td class="text-end" th:text="${r.highestPoint}">0</td>
 						<td class="text-end" th:text="${r.totalSlopes}">0</td>
 						<td class="text-end" th:text="${r.totalLifts}">0</td>
-						<td>
-							<span class="badge text-bg-primary" th:text="${r.difficultyMix.easy()} + '%'">0%</span>
-							<span class="badge text-bg-danger" th:text="${r.difficultyMix.medium()} + '%'">0%</span>
-							<span class="badge text-bg-dark" th:text="${r.difficultyMix.hard()} + '%'">0%</span>
+						<td class="text-nowrap">
+							<span class="d-inline-flex align-items-center flex-nowrap gap-1">
+								<span class="badge text-bg-primary d-inline-block text-center" style="width: 3.25rem;"
+									  th:text="${r.difficultyMix.easy()} + '%'">0%</span>
+								<span class="badge text-bg-danger d-inline-block text-center" style="width: 3.25rem;"
+									  th:text="${r.difficultyMix.medium()} + '%'">0%</span>
+								<span class="badge text-bg-dark d-inline-block text-center" style="width: 3.25rem;"
+									  th:text="${r.difficultyMix.hard()} + '%'">0%</span>
+							</span>
 						</td>
 						<td>
 							<span th:if="${r.active}" class="badge text-bg-success">Active</span>
 							<span th:unless="${r.active}" class="badge text-bg-secondary">Inactive</span>
 						</td>
 						<td>
-							<a th:href="@{/admin/resorts/{id}/edit(id=${r.id})}" class="btn btn-sm btn-outline-primary">Edit</a>
+							<div class="d-flex align-items-center gap-2">
+								<a th:href="@{/admin/resorts/{id}/edit(id=${r.id})}" class="btn btn-sm btn-outline-primary">Edit</a>
+								<span th:insert="~{admin/resorts/list :: activeToggle(${r.id}, ${r.active})}"></span>
+							</div>
 						</td>
 					</tr>
 					<tr th:if="${#lists.isEmpty(resorts)}">
@@ -56,6 +66,25 @@
 			</table>
 		</div>
 	</main>
+
+	<!--
+		Reusable active-toggle control. Defined here (in a never-true block, like the browse list's
+		visitedToggle) because this is the toggle endpoint's return contract; the table wiring above
+		renders it on initial load, and admin/resorts/active-toggle-response.html reaches it as the
+		named fragment `admin/resorts/list :: activeToggle(...)` after a swap. The button carries
+		data-active so the layout's htmx:afterSwap listener can restyle the containing row from a
+		single source of truth without replacing (and wiping) the row.
+	-->
+	<th:block th:if="${false}">
+		<button th:fragment="activeToggle(resortId, active)"
+				type="button"
+				class="btn btn-sm active-toggle"
+				th:classappend="${active} ? 'btn-outline-danger' : 'btn-outline-success'"
+				th:attr="hx-post=@{/admin/resorts/{id}/active(id=${resortId})}, data-active=${active}"
+				hx-swap="outerHTML"
+				hx-disabled-elt="this"
+				th:text="${active} ? 'Deactivate' : 'Reactivate'">Deactivate</button>
+	</th:block>
 
 	<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>

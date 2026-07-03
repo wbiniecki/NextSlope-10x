@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.nextslope.resort.ConcurrentResortUpdateException;
 import com.nextslope.resort.DuplicateExternalIdException;
 import com.nextslope.resort.ResortForm;
 import com.nextslope.resort.ResortNotFoundException;
@@ -96,5 +97,22 @@ public class AdminResortController {
 
 		redirectAttributes.addFlashAttribute("resortSaved", true);
 		return "redirect:/admin/resorts";
+	}
+
+	@PostMapping("/admin/resorts/{id}/active")
+	public String toggleActive(@PathVariable Long id, Model model) {
+		boolean active;
+		try {
+			active = resortService.toggleActive(id);
+		} catch (ResortNotFoundException ex) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		} catch (ConcurrentResortUpdateException ex) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "Resort was updated concurrently");
+		}
+
+		// Attribute names must match the fragment parameter names so the returned fragment binds them.
+		model.addAttribute("resortId", id);
+		model.addAttribute("active", active);
+		return "admin/resorts/active-toggle-response";
 	}
 }

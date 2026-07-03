@@ -55,10 +55,22 @@
 				// pre-swap button, which outerHTML detaches from the DOM — its closest('tr') is null.
 				document.body.addEventListener('htmx:afterSwap', function (evt) {
 					var button = evt.target;
-					if (button && button.classList && button.classList.contains('visited-toggle')) {
-						var row = button.closest('tr');
-						if (row) {
-							row.classList.toggle('table-active', button.dataset.visited === 'true');
+					if (!button || !button.classList) {
+						return;
+					}
+					if (button.classList.contains('visited-toggle')) {
+						var visitedRow = button.closest('tr');
+						if (visitedRow) {
+							visitedRow.classList.toggle('table-active', button.dataset.visited === 'true');
+						}
+					}
+					// Admin active-toggle: an inactive resort's row is styled table-secondary. Re-derive
+					// it from the swapped-in button's data-active (single source of truth), mirroring the
+					// visited branch above — never by replacing the <tr>, which would wipe its cells.
+					if (button.classList.contains('active-toggle')) {
+						var resortRow = button.closest('tr');
+						if (resortRow) {
+							resortRow.classList.toggle('table-secondary', button.dataset.active === 'false');
 						}
 					}
 				});

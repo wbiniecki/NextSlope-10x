@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @ExtendWith(MockitoExtension.class)
 class ResortServiceTests {
@@ -165,6 +166,51 @@ class ResortServiceTests {
 		assertThatThrownBy(() -> service.create(form))
 				.isInstanceOf(DataIntegrityViolationException.class)
 				.isNotInstanceOf(DuplicateExternalIdException.class);
+	}
+
+	@Test
+	void toggleActiveInvertsStateAndReturnsNewValue() {
+		Resort active = Resort.builder().id(8L).name("Resort").country("Austria").active(true).build();
+		when(resortRepository.findById(8L)).thenReturn(Optional.of(active));
+
+		boolean result = service.toggleActive(8L);
+
+		assertThat(result).isFalse();
+		assertThat(active.getActive()).isFalse();
+		verify(resortRepository).saveAndFlush(active);
+	}
+
+	@Test
+	void toggleActiveReactivatesAnInactiveResort() {
+		Resort inactive = Resort.builder().id(9L).name("Resort").country("France").active(false).build();
+		when(resortRepository.findById(9L)).thenReturn(Optional.of(inactive));
+
+		boolean result = service.toggleActive(9L);
+
+		assertThat(result).isTrue();
+		assertThat(inactive.getActive()).isTrue();
+		verify(resortRepository).saveAndFlush(inactive);
+	}
+
+	@Test
+	void toggleActiveConcurrentUpdateThrowsDomainConflict() {
+		Resort active = Resort.builder().id(10L).name("Resort").country("Austria").active(true).build();
+		when(resortRepository.findById(10L)).thenReturn(Optional.of(active));
+		when(resortRepository.saveAndFlush(active))
+				.thenThrow(new ObjectOptimisticLockingFailureException(Resort.class, 10L));
+
+		assertThatThrownBy(() -> service.toggleActive(10L))
+				.isInstanceOf(ConcurrentResortUpdateException.class);
+	}
+
+	@Test
+	void toggleActiveMissingResortThrows() {
+		when(resortRepository.findById(99L)).thenReturn(Optional.empty());
+
+		assertThatThrownBy(() -> service.toggleActive(99L))
+				.isInstanceOf(ResortNotFoundException.class);
+
+		verify(resortRepository, never()).saveAndFlush(any());
 	}
 
 	private static ResortForm validForm() {

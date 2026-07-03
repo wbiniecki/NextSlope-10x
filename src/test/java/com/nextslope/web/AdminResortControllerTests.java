@@ -30,6 +30,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.nextslope.config.SecurityConfig;
+import com.nextslope.resort.ConcurrentResortUpdateException;
 import com.nextslope.resort.DuplicateExternalIdException;
 import com.nextslope.resort.Resort;
 import com.nextslope.resort.ResortForm;
@@ -201,6 +202,46 @@ class AdminResortControllerTests {
 				.andExpect(flash().attribute("resortSaved", true));
 
 		verify(resortService).update(eq(7L), any(ResortForm.class));
+	}
+
+	@Test
+	@WithMockUser(roles = "ADMIN")
+	void adminToggleActiveReturnsFragmentAndCallsService() throws Exception {
+		when(resortService.toggleActive(7L)).thenReturn(false);
+
+		mockMvc.perform(post("/admin/resorts/7/active").with(csrf()))
+				.andExpect(status().isOk())
+				.andExpect(view().name("admin/resorts/active-toggle-response"))
+				.andExpect(model().attribute("resortId", 7L))
+				.andExpect(model().attribute("active", false));
+
+		verify(resortService).toggleActive(7L);
+	}
+
+	@Test
+	@WithMockUser(roles = "USER")
+	void userToggleActiveReturns403() throws Exception {
+		assertForbidden(mockMvc.perform(post("/admin/resorts/7/active").with(csrf())));
+
+		verify(resortService, never()).toggleActive(any());
+	}
+
+	@Test
+	@WithMockUser(roles = "ADMIN")
+	void toggleActiveMissingResortReturns404() throws Exception {
+		when(resortService.toggleActive(99L)).thenThrow(new ResortNotFoundException(99L));
+
+		mockMvc.perform(post("/admin/resorts/99/active").with(csrf()))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	@WithMockUser(roles = "ADMIN")
+	void toggleActiveConcurrentUpdateReturns409() throws Exception {
+		when(resortService.toggleActive(77L)).thenThrow(new ConcurrentResortUpdateException(77L, null));
+
+		mockMvc.perform(post("/admin/resorts/77/active").with(csrf()))
+				.andExpect(status().isConflict());
 	}
 
 	private static ResortForm populatedForm() {

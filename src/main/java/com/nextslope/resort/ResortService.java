@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +44,19 @@ public class ResortService {
 		enforceExternalIdUniqueness(form.getExternalId(), id);
 		applyManagedFields(resort, form);
 		saveResort(resort);
+	}
+
+	@Transactional
+	public boolean toggleActive(Long id) {
+		Resort resort = resortRepository.findById(id)
+				.orElseThrow(() -> new ResortNotFoundException(id));
+		resort.setActive(!resort.getActive());
+		try {
+			resortRepository.saveAndFlush(resort);
+		} catch (ObjectOptimisticLockingFailureException ex) {
+			throw new ConcurrentResortUpdateException(id, ex);
+		}
+		return resort.getActive();
 	}
 
 	private void applyManagedFields(Resort resort, ResortForm form) {

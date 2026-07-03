@@ -26,13 +26,18 @@ class DevAdminBootstrapProfileTests {
 			.withUserConfiguration(DevAdminBootstrapTestSupport.class);
 
 	@Test
-	void devAdminBootstrapIsPresentUnderNonProdProfile() {
-		contextRunner.run(context -> assertThat(context).hasSingleBean(DevAdminBootstrap.class));
+	void devAdminBootstrapIsPresentOnlyWhenEnabledInLocalProfile() {
+		contextRunner.withPropertyValues(
+				"spring.profiles.active=local",
+				"nextslope.dev-admin.enabled=true")
+				.run(context -> assertThat(context).hasSingleBean(DevAdminBootstrap.class));
 	}
 
 	@Test
-	void devAdminBootstrapIsAbsentUnderProdProfile() {
-		contextRunner.withPropertyValues("spring.profiles.active=prod")
+	void devAdminBootstrapIsAbsentUnderProdProfileEvenWhenFlagEnabled() {
+		contextRunner.withPropertyValues(
+				"spring.profiles.active=prod",
+				"nextslope.dev-admin.enabled=true")
 				.run(context -> assertThat(context).doesNotHaveBean(DevAdminBootstrap.class));
 	}
 

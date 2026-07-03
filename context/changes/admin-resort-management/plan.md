@@ -87,6 +87,16 @@ the smallest change, consistent with the existing filter-chain style. A new `Res
 centralizes all resort writes and admin reads (controllers never touch the repository for writes).
 All admin routes live under `/admin/resorts…` so the single URL matcher covers them.
 
+### Review Addendum (2026-07-03)
+
+Phase 1 originally introduced `ResortService`, `AdminResortController`, and
+`templates/admin/resorts/list.html` with list-only behavior. As work progressed on the same branch,
+those shared files were extended in place for Phases 2-3 (form/edit/toggle). This is intentional to
+keep admin behavior cohesive in single ownership points; phase-specific reviews should treat later
+behavior in these files as expected carry-forward scope, not accidental scope creep.
+For local admin bootstrap observability, policy is to log account creation/skips by email only and
+never log plaintext credentials.
+
 ## Critical Implementation Details
 
 - **Security matcher ordering.** `.requestMatchers("/admin/**").hasRole("ADMIN")` must be added
@@ -548,10 +558,10 @@ stays satisfied because no entity mapping changes.
 
 #### Automated
 
-- [ ] 3.1 Build + full suite pass: `./gradlew test`
-- [ ] 3.2 `AdminResortControllerTests`: toggle endpoint ADMIN→200 fragment, USER→403, missing→404
-- [ ] 3.3 `ResortServiceTests`: `toggleActive` inverts + returns state; missing→throws
-- [ ] 3.4 Deactivation `@SpringBootTest`: deactivated resort absent from browse + recommendation; visited reference survives; reactivate restores
+- [x] 3.1 Build + full suite pass: `./gradlew test`
+- [x] 3.2 `AdminResortControllerTests`: toggle endpoint ADMIN→200 fragment, USER→403, missing→404
+- [x] 3.3 `ResortServiceTests`: `toggleActive` inverts + returns state; missing→throws
+- [x] 3.4 Deactivation `@SpringBootTest`: deactivated resort absent from browse + recommendation; visited reference survives; reactivate restores
 
 #### Manual
 
