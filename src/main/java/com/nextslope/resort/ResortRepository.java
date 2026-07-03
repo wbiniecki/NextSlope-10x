@@ -9,5 +9,9 @@ public interface ResortRepository extends JpaRepository<Resort, Long> {
 
 	List<Resort> findByActiveTrueOrderByCountryAscNameAsc();
 
+	List<Resort> findAllByOrderByCountryAscNameAsc();
+
 	Optional<Resort> findByIdAndActiveTrue(Long id);
+
+	Optional<Resort> findByExternalId(Long externalId);
 }

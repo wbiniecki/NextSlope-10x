@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${resortForm.id} != null ? 'Edit resort — NextSlope' : 'New resort — NextSlope')}"></head>
+<body class="bg-light">
+	<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+	<main class="container py-4">
+		<div class="row justify-content-center">
+			<div class="col-lg-8">
+				<h1 class="h3 mb-4" th:text="${resortForm.id} != null ? 'Edit resort' : 'New resort'">Resort</h1>
+
+				<form th:action="@{${formAction}}" th:object="${resortForm}" method="post"
+					  class="card shadow-sm" novalidate>
+					<div class="card-body">
+
+						<input type="hidden" th:field="*{id}">
+
+						<div class="mb-3">
+							<label for="name" class="form-label">Name</label>
+							<input type="text" id="name" th:field="*{name}"
+								   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
+								   class="form-control">
+							<div th:if="${#fields.hasErrors('name')}" class="invalid-feedback d-block"
+								 th:errors="*{name}">Invalid</div>
+						</div>
+
+						<div class="mb-3">
+							<label for="country" class="form-label">Country</label>
+							<input type="text" id="country" th:field="*{country}"
+								   th:classappend="${#fields.hasErrors('country')} ? 'is-invalid'"
+								   class="form-control">
+							<div th:if="${#fields.hasErrors('country')}" class="invalid-feedback d-block"
+								 th:errors="*{country}">Invalid</div>
+						</div>
+
+						<div class="mb-3">
+							<label for="highestPoint" class="form-label">Top lift height (m)</label>
+							<input type="number" id="highestPoint" th:field="*{highestPoint}" min="0"
+								   th:classappend="${#fields.hasErrors('highestPoint')} ? 'is-invalid'"
+								   class="form-control">
+							<div th:if="${#fields.hasErrors('highestPoint')}" class="invalid-feedback d-block"
+								 th:errors="*{highestPoint}">Invalid</div>
+						</div>
+
+						<div class="mb-3">
+							<label for="totalLifts" class="form-label">Number of lifts</label>
+							<input type="number" id="totalLifts" th:field="*{totalLifts}" min="0"
+								   th:classappend="${#fields.hasErrors('totalLifts')} ? 'is-invalid'"
+								   class="form-control">
+							<div th:if="${#fields.hasErrors('totalLifts')}" class="invalid-feedback d-block"
+								 th:errors="*{totalLifts}">Invalid</div>
+						</div>
+
+						<fieldset class="mb-3">
+							<legend class="form-label">Slope counts by difficulty</legend>
+							<div class="row g-3">
+								<div class="col-md-4">
+									<label for="beginnerSlopes" class="form-label">Beginner</label>
+									<input type="number" id="beginnerSlopes" th:field="*{beginnerSlopes}" min="0"
+										   th:classappend="${#fields.hasErrors('beginnerSlopes')} ? 'is-invalid'"
+										   class="form-control slope-count">
+									<div th:if="${#fields.hasErrors('beginnerSlopes')}" class="invalid-feedback d-block"
+										 th:errors="*{beginnerSlopes}">Invalid</div>
+								</div>
+								<div class="col-md-4">
+									<label for="intermediateSlopes" class="form-label">Intermediate</label>
+									<input type="number" id="intermediateSlopes" th:field="*{intermediateSlopes}" min="0"
+										   th:classappend="${#fields.hasErrors('intermediateSlopes')} ? 'is-invalid'"
+										   class="form-control slope-count">
+									<div th:if="${#fields.hasErrors('intermediateSlopes')}" class="invalid-feedback d-block"
+										 th:errors="*{intermediateSlopes}">Invalid</div>
+								</div>
+								<div class="col-md-4">
+									<label for="difficultSlopes" class="form-label">Difficult</label>
+									<input type="number" id="difficultSlopes" th:field="*{difficultSlopes}" min="0"
+										   th:classappend="${#fields.hasErrors('difficultSlopes')} ? 'is-invalid'"
+										   class="form-control slope-count">
+									<div th:if="${#fields.hasErrors('difficultSlopes')}" class="invalid-feedback d-block"
+										 th:errors="*{difficultSlopes}">Invalid</div>
+								</div>
+							</div>
+						</fieldset>
+
+						<div class="mb-3">
+							<label for="externalId" class="form-label">External ID <span class="text-muted">(optional)</span></label>
+							<input type="number" id="externalId" th:field="*{externalId}"
+								   th:classappend="${#fields.hasErrors('externalId')} ? 'is-invalid'"
+								   class="form-control">
+							<div th:if="${#fields.hasErrors('externalId')}" class="invalid-feedback d-block"
+								 th:errors="*{externalId}">Invalid</div>
+						</div>
+
+						<div class="card bg-light mb-3">
+							<div class="card-body">
+								<h2 class="h6 card-title">Difficulty mix preview</h2>
+								<p class="mb-2">
+									Total slopes: <strong id="preview-total">0</strong>
+								</p>
+								<p class="mb-0">
+									<span class="badge text-bg-primary" id="preview-easy">0%</span>
+									<span class="badge text-bg-danger" id="preview-medium">0%</span>
+									<span class="badge text-bg-dark" id="preview-hard">0%</span>
+									<span class="text-muted small ms-1">(Easy / Medium / Hard)</span>
+								</p>
+							</div>
+						</div>
+
+						<div class="d-flex gap-2">
+							<button type="submit" class="btn btn-primary">Save resort</button>
+							<a th:href="@{/admin/resorts}" class="btn btn-outline-secondary">Cancel</a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+
+	<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+	<script>
+		// Mirrors Resort.getDifficultyMix() largest-remainder rounding so the preview matches stored mix.
+		(function () {
+			function parseCount(id) {
+				var el = document.getElementById(id);
+				if (!el || el.value === '') {
+					return 0;
+				}
+				var n = parseInt(el.value, 10);
+				return isNaN(n) || n < 0 ? 0 : n;
+			}
+
+			function difficultyMix(beginner, intermediate, difficult) {
+				var counts = [beginner, intermediate, difficult];
+				var denominator = beginner + intermediate + difficult;
+				if (denominator === 0) {
+					return {easy: 0, medium: 0, hard: 0, total: 0};
+				}
+				var floors = [0, 0, 0];
+				var remainders = [0, 0, 0];
+				var floorSum = 0;
+				for (var i = 0; i < 3; i++) {
+					var exact = counts[i] * 100.0 / denominator;
+					floors[i] = Math.floor(exact);
+					remainders[i] = exact - floors[i];
+					floorSum += floors[i];
+				}
+				var leftover = 100 - floorSum;
+				while (leftover > 0) {
+					var largest = 0;
+					for (var j = 1; j < 3; j++) {
+						if (remainders[j] > remainders[largest]) {
+							largest = j;
+						}
+					}
+					floors[largest]++;
+					remainders[largest] = -1;
+					leftover--;
+				}
+				return {
+					easy: floors[0],
+					medium: floors[1],
+					hard: floors[2],
+					total: denominator
+				};
+			}
+
+			function updatePreview() {
+				var beginner = parseCount('beginnerSlopes');
+				var intermediate = parseCount('intermediateSlopes');
+				var difficult = parseCount('difficultSlopes');
+				var mix = difficultyMix(beginner, intermediate, difficult);
+				document.getElementById('preview-total').textContent = mix.total;
+				document.getElementById('preview-easy').textContent = mix.easy + '%';
+				document.getElementById('preview-medium').textContent = mix.medium + '%';
+				document.getElementById('preview-hard').textContent = mix.hard + '%';
+			}
+
+			document.querySelectorAll('.slope-count').forEach(function (input) {
+				input.addEventListener('input', updatePreview);
+			});
+			updatePreview();
+		})();
+	</script>
+</body>
+</html>

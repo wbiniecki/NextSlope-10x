@@ -57,10 +57,15 @@
 						<td class="text-end" th:text="${r.highestPoint}">0</td>
 						<td class="text-end" th:text="${r.totalSlopes}">0</td>
 						<td class="text-end" th:text="${r.totalLifts}">0</td>
-						<td>
-							<span class="badge text-bg-primary" th:text="${r.difficultyMix.easy()} + '%'">0%</span>
-							<span class="badge text-bg-danger" th:text="${r.difficultyMix.medium()} + '%'">0%</span>
-							<span class="badge text-bg-dark" th:text="${r.difficultyMix.hard()} + '%'">0%</span>
+						<td class="text-nowrap">
+							<span class="d-inline-flex align-items-center flex-nowrap gap-1">
+								<span class="badge text-bg-primary d-inline-block text-center" style="width: 3.25rem;"
+									  th:text="${r.difficultyMix.easy()} + '%'">0%</span>
+								<span class="badge text-bg-danger d-inline-block text-center" style="width: 3.25rem;"
+									  th:text="${r.difficultyMix.medium()} + '%'">0%</span>
+								<span class="badge text-bg-dark d-inline-block text-center" style="width: 3.25rem;"
+									  th:text="${r.difficultyMix.hard()} + '%'">0%</span>
+							</span>
 						</td>
 						<td th:insert="~{resorts/list :: visitedToggle(${r.id}, ${visitedIds.contains(r.id)})}"></td>
 					</tr>
@@ -111,10 +116,15 @@
 								<li>Slopes: <span th:text="${card.totalSlopes()}">0</span></li>
 								<li>Lifts: <span th:text="${card.totalLifts()}">0</span></li>
 							</ul>
-							<div class="mb-2">
-								<span class="badge text-bg-primary" th:text="${card.difficultyMix().easy()} + '%'">0%</span>
-								<span class="badge text-bg-danger" th:text="${card.difficultyMix().medium()} + '%'">0%</span>
-								<span class="badge text-bg-dark" th:text="${card.difficultyMix().hard()} + '%'">0%</span>
+							<div class="mb-2 text-nowrap">
+								<span class="d-inline-flex align-items-center flex-nowrap gap-1">
+									<span class="badge text-bg-primary d-inline-block text-center" style="width: 3.25rem;"
+										  th:text="${card.difficultyMix().easy()} + '%'">0%</span>
+									<span class="badge text-bg-danger d-inline-block text-center" style="width: 3.25rem;"
+										  th:text="${card.difficultyMix().medium()} + '%'">0%</span>
+									<span class="badge text-bg-dark d-inline-block text-center" style="width: 3.25rem;"
+										  th:text="${card.difficultyMix().hard()} + '%'">0%</span>
+								</span>
 							</div>
 							<p class="card-text fst-italic mb-0" th:text="${card.rationale()}">Why this matched you</p>
 						</div>

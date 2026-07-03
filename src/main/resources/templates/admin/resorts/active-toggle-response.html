@@ -1,0 +1,6 @@
+<!--
+	HTMX response for an active toggle: just the updated control button, swapped into the targeting
+	element via outerHTML. The in-place row restyle is applied client-side from the button's
+	data-active state — never by replacing the row, which would wipe its cells.
+-->
+<th:block th:replace="~{admin/resorts/list :: activeToggle(${resortId}, ${active})}"></th:block>

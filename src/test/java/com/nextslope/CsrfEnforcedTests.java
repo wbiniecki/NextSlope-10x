@@ -43,6 +43,9 @@ class CsrfEnforcedTests {
 	private com.nextslope.resort.ResortRepository resortRepository;
 
 	@MockitoBean
+	private com.nextslope.resort.ResortService resortService;
+
+	@MockitoBean
 	private PreferenceProfileService preferenceProfileService;
 
 	@MockitoBean

@@ -41,18 +41,18 @@ import com.nextslope.visited.VisitedResortService;
  * {@code 200}. The route ({@value #ADMIN_ONLY_PATH}) is a pattern fixture that never
  * ships in {@code src/main}.
  *
- * <p><b>Why method security:</b> production {@code SecurityConfig} is binary
- * (permit-listed vs. {@code authenticated()}), so importing it alone would let an
- * authenticated {@code USER} through — there would be no {@code USER → 403}. The
- * role distinction is therefore added test-locally via a {@code @TestConfiguration}
- * that enables method security and a demo handler annotated
- * {@code @PreAuthorize("hasRole('ADMIN')")}. Production {@code SecurityConfig} still
- * supplies the real anonymous-redirect and authenticated-request flow.
+ * <p><b>Why method security in this fixture:</b> production {@code SecurityConfig} now
+ * gates {@code /admin/**} with {@code hasRole("ADMIN")} at the URL layer (S-06), so
+ * importing it alone would produce {@code USER → 403} for admin paths. This test still
+ * uses a {@code @TestConfiguration} with {@code @PreAuthorize("hasRole('ADMIN')")} on a
+ * demo handler ({@value #ADMIN_ONLY_PATH}) so the assertion vocabulary is proven against
+ * method security — the template for slices that opt into {@code @PreAuthorize} instead
+ * of (or in addition to) URL authorization. Production {@code SecurityConfig} supplies
+ * the real anonymous-redirect, authenticated-request, and URL-level admin gate.
  *
- * <p><b>Note for S-06:</b> if admin is ultimately gated via URL authorization
- * ({@code requestMatchers(...).hasRole("ADMIN")}) instead of method security, the
- * assertion vocabulary is identical — only the enforcement seam differs. Call out
- * the chosen seam when S-06 lands.
+ * <p><b>S-06 seam:</b> admin resort management uses URL authorization on
+ * {@code /admin/**}. The USER→403 / ADMIN→200 assertions are identical; only the
+ * enforcement seam differs from this fixture.
  */
 @WebMvcTest
 @Import({SecurityConfig.class, AppUserDetailsService.class,
@@ -72,6 +72,9 @@ class RoleGatingPatternTests {
 
 	@MockitoBean
 	private com.nextslope.resort.ResortRepository resortRepository;
+
+	@MockitoBean
+	private com.nextslope.resort.ResortService resortService;
 
 	@MockitoBean
 	private PreferenceProfileService preferenceProfileService;
@@ -99,8 +102,9 @@ class RoleGatingPatternTests {
 	@WithMockUser(roles = "USER")
 	void authenticatedNonAdminIsForbidden() throws Exception {
 		// Authenticated, so it passes production's anyRequest().authenticated(), but
-		// @PreAuthorize("hasRole('ADMIN')") denies the USER → 403. This is the case
-		// production's binary chain alone could not produce.
+		// @PreAuthorize("hasRole('ADMIN')") denies the USER → 403. URL-level admin
+		// gating in SecurityConfig would also deny USER; this fixture proves the
+		// method-security seam explicitly.
 		assertForbidden(mockMvc.perform(get(ADMIN_ONLY_PATH)));
 	}
 
@@ -114,8 +118,8 @@ class RoleGatingPatternTests {
 
 	/**
 	 * Test-scoped method-security wiring + demo controller. Lives only in the test
-	 * source set; the role rule is intentionally NOT added to production
-	 * {@code SecurityConfig}.
+	 * source set; production {@code /admin/**} is gated via URL authorization in
+	 * {@code SecurityConfig}, while this fixture demonstrates {@code @PreAuthorize}.
 	 */
 	@TestConfiguration
 	@EnableMethodSecurity
