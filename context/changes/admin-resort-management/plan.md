@@ -533,10 +533,10 @@ stays satisfied because no entity mapping changes.
 
 #### Automated
 
-- [ ] 2.1 Build + full suite pass: `./gradlew test`
-- [ ] 2.2 `ResortFormValidationTests`: required + non-negative integer rules
-- [ ] 2.3 `AdminResortControllerTests`: new/create/edit/update handlers incl. dup `externalId` field error
-- [ ] 2.4 `ResortServiceTests`: create (`active=true`, `totalSlopes`=band sum), update preserves unmanaged fields, `loadForm`, dup `externalId` throws
+- [x] 2.1 Build + full suite pass: `./gradlew test` — 7b97b71
+- [x] 2.2 `ResortFormValidationTests`: required + non-negative integer rules — 7b97b71
+- [x] 2.3 `AdminResortControllerTests`: new/create/edit/update handlers incl. dup `externalId` field error — 7b97b71
+- [x] 2.4 `ResortServiceTests`: create (`active=true`, `totalSlopes`=band sum), update preserves unmanaged fields, `loadForm`, dup `externalId` throws — 7b97b71
 
 #### Manual
 
