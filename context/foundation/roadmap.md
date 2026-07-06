@@ -3,7 +3,7 @@ project: "NextSlope"
 version: 1
 status: draft
 created: 2026-06-12
-updated: 2026-06-29
+updated: 2026-07-06
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -35,7 +35,7 @@ An avid skier or snowboarder planning the upcoming season drowns in scattered, m
 | S-03 | resort-catalog-browse | browse the resort list with key facts and open a single resort's detail view | S-01 | FR-006, FR-007 | done |
 | S-04 | mark-visited | mark and unmark resorts as visited from the browse list, privately | S-01, S-03 | US-02, FR-005 | done |
 | S-05 | three-resort-recommendation | click "Recommend resorts" and get exactly three ranked picks with a truthful rationale | S-02, S-03, S-04 | US-01, FR-008, FR-009 | done |
-| S-06 | admin-resort-management | (admin) create, edit, and deactivate resort entries from an admin-only view | S-01, S-03 | US-03, FR-010, FR-011, FR-012, FR-013 | proposed |
+| S-06 | admin-resort-management | (admin) create, edit, and deactivate resort entries from an admin-only view | S-01, S-03 | US-03, FR-010, FR-011, FR-012, FR-013 | done |
 | S-07 | account-deletion | permanently delete their account, removing profile and visited data everywhere | S-02, S-04 | FR-004, FR-005 | proposed |
 | S-08 | min-top-lift-height-preference | set a minimum top lift height in their profile and have recommendations honor it as a hard filter | S-02, S-05 | (post-MVP — extends FR-004, FR-008) | proposed |
 | S-09 | recommendation-scoring-refinement | (no new UI) get recommendations tuned by confirmed scoring values instead of S-05's shipped defaults | S-05 | US-01, FR-008, FR-009 (tuning) | proposed |
@@ -153,7 +153,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Must-have but off the north-star critical path (a seed populates resorts for the recommendation flow), so it's sequenced after the validation milestone and can run in parallel — the main lever against the `time` blocker. Validation rules (percentages sum to 100, non-negative integers, required fields) and deactivation-not-deletion (protects visited-list integrity) are the load-bearing details.
-- **Status:** proposed
+- **Status:** done
 
 ### S-07: Account deletion
 
@@ -240,3 +240,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-02: A signed-in user can create and edit their preference profile — experience level, preferred difficulty mix, location/region, and novelty preference — and the edits persist across sessions.** — Archived 2026-06-26 → `context/archive/2026-06-21-preference-profile/`. Lesson: —.
 - **S-04: A signed-in user can mark and unmark resorts as visited directly from the browse list, with the visual state updating immediately and the list kept strictly private to that user.** — Archived 2026-06-26 → `context/archive/2026-06-26-mark-visited/`. Lesson: —.
 - **S-05: A signed-in user clicks "Recommend resorts" and sees exactly three ranked resorts (key facts + a one-line truthful rationale), or an explicit explanation when fewer than three viable matches exist — honoring hard filters (region, visited-when-new-only) then weighted scoring.** — Archived 2026-06-29 → `context/archive/2026-06-26-three-resort-recommendation/`. Lesson: —.
+- **S-06: A signed-in admin can reach an admin-only view and create, edit, and deactivate resort entries; deactivated resorts vanish from browsing and new recommendations while existing visited-list references keep working; non-admins get access-denied.** — Archived 2026-07-06 → `context/archive/2026-07-02-admin-resort-management/`. Lesson: —.
