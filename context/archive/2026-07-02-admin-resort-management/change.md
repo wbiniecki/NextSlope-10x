@@ -1,10 +1,10 @@
 ---
 change_id: admin-resort-management
 title: Admin resort management (create, edit, deactivate)
-status: implemented
+status: archived
 created: 2026-07-02
-updated: 2026-07-04
-archived_at: null
+updated: 2026-07-06
+archived_at: 2026-07-06T11:32:39Z
 ---
 
 ## Notes
