@@ -6,7 +6,8 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-25 (PIT mutation gate folded into Phase 2)
+> Last updated: 2026-07-02 (strategy change: a small, isolated, CI-gated browser
+> smoke tier is now permitted for client-side HTMX behavior MockMvc can't see)
 
 ## 1. Strategy
 
@@ -16,7 +17,15 @@ Tests follow three non-negotiable principles for this project:
    risk wins. This is a server-rendered Thymeleaf + HTMX app with no SPA
    tier, so user flows are exercised with Spring `MockMvc`/integration tests
    — do not reach for a browser/e2e tool when a `MockMvc` request→response
-   assertion already catches the regression.
+   assertion already catches the regression. **One narrow exception (strategy
+   change, 2026-07-02):** a small browser smoke tier is permitted *only* for
+   the client-side behavior `MockMvc` structurally cannot observe — the HTMX
+   in-place DOM swaps (mark-visited toggle, "Recommend resorts" → three-result
+   render + progress indicator). `MockMvc` proves the server *returns* the right
+   fragment; only a real browser proves it actually *swaps into the DOM* without
+   a full reload. That incremental signal is the sole justification — the tier
+   stays scoped to the 1–2 highest-signal HTMX journeys and never re-tests flows
+   the server-side layer already proves.
 2. **User concerns are first-class evidence.** Risks anchored in "the
    developer is worried about X, and the failure would surface somewhere in
    <area>" carry the same weight as PRD lines. The recommender risks here
@@ -84,18 +93,20 @@ orchestrator updates Status as artifacts appear on disk.
 |---|---|---|---|---|---|---|
 | 1 | Access-control & privacy regression net | Lock the current auth surface and ship a reusable per-route gating + ownership/IDOR + admin-authz test pattern every later slice extends | #4, #5 | web-slice + integration | complete | context/archive/2026-06-23-testing-access-control-privacy-net/ |
 | 2 | Recommender correctness suite | Prove all-axes matching, the visited/new-only hard filter, and a truthful rationale for the north-star recommendation flow, plus a recommender-scoped mutation-testing gate (gated on S-05 shipping) | #1, #2, #3 | unit + integration + mutation (PIT, recommender packages only) | not started | — |
-| 3 | End-to-end user-flow coverage | Walk the real journeys (signup → profile → browse → mark-visited → recommend; admin-create → appears in browse) with `MockMvc`/integration, no browser (gated on S-02/03/04 shipping) | #1–#5 (flow-level) | integration | not started | — |
+| 3 | End-to-end user-flow coverage | Walk the real journeys (signup → profile → browse → mark-visited → recommend; admin-create → appears in browse) with `MockMvc`/integration, **plus a small isolated browser smoke tier for the HTMX in-place swaps `MockMvc` can't see** (mark-visited toggle; recommend → three-result render + progress indicator). Prereqs S-02/03/04/05 all `done` → unblocked | #1–#5 (flow-level) | integration + browser smoke (isolated source set / task) | not started | — |
 
 **Status vocabulary** (fixed — parser literals): `not started` →
 `change opened` → `researched` → `planned` → `implementing` → `complete`.
 
-**Sequencing reality.** Only Phase 1 is implementable today — it covers the
-sole fully-built surface (auth/route-gating) and seeds the security test
-cookbook before the route count grows. Phase 2 depends on the recommender
-slice (S-05) existing; Phase 3 depends on the profile/catalog/visited slices
-(S-02/S-03/S-04). Do not open Phase 2 or 3 against code that has not shipped;
-if a product slice ships its own guardrail tests via `/10x-implement` first,
-the corresponding phase narrows to the gaps that remain.
+**Sequencing reality.** Phase 1 is complete. Phase 2 depends on the recommender
+slice (S-05) existing; Phase 3 depends on the profile/catalog/visited/recommend
+slices (S-02/S-03/S-04/S-05). As of 2026-07-02 **all of S-02/03/04/05 are `done`**,
+so Phase 3 is unblocked (its browser smoke tier needs the shipped mark-visited and
+recommend HTMX surfaces to drive). Do not open Phase 2 or 3 against code that has
+not shipped; if a product slice ships its own guardrail tests via `/10x-implement`
+first, the corresponding phase narrows to the gaps that remain. The Phase-3
+browser tier is deliberately **isolated** (its own source set / Gradle task + a
+dedicated headless CI step) so the fast `./gradlew test` stays fast.
 
 ## 4. Stack
 
@@ -108,13 +119,13 @@ The classic test base for this project. Recommendations are grounded in
 | web slice | Spring `@WebMvcTest` + spring-security-test | (BOM) | Route-gating / controller tests; `@WithMockUser`, `@MockitoBean` |
 | data slice | `@DataJpaTest` + H2 (PostgreSQL mode) | (BOM) | Repository/entity mapping against local engine |
 | prod-engine integration | `@SpringBootTest @Testcontainers` Postgres 16 | (BOM) | Dual-engine migration proof; CI gate (AGENTS.md mandate) |
-| e2e / browser | none — flows via `MockMvc`/integration | n/a | Server-rendered Thymeleaf+HTMX; no SPA tier, no browser MCP in session |
+| e2e / browser smoke (HTMX only) | **leading option: Playwright for Java** (`com.microsoft.playwright:playwright`); Selenium/Selenide = heavier alternative, HtmlUnit rejected (JS engine too weak for modern HTMX) | 1.61.0 (Maven Central latest, `lastUpdated 2026-06-29`); checked: 2026-07-02 | **Strategy change 2026-07-02.** Small isolated tier for the client-side HTMX swaps `MockMvc` can't see. Playwright-Java recommended for its bundled browser download, first-class headless on `ubuntu-latest`, and auto-waiting (reduces HTMX-swap flakiness). Tool choice is still an **open plan-level decision** (S-05→Phase-3 plan picks it) — recorded as leading option, not a hard commitment. Runs as `@SpringBootTest(webEnvironment = RANDOM_PORT)` + seeded H2, isolated as its own source set / Gradle task with a dedicated headless CI step (keep `./gradlew test` fast). **Not the `cursor-ide-browser` MCP** — that is an in-session interactive driver, not a committed CI dependency |
 | mutation testing (recommender only) | `info.solidsoft.pitest` Gradle plugin + `pitest-junit5-plugin` | plugin 1.19.0 / `junit5PluginVersion` 1.2.3 | Java 21 ✓ (plugin needs 17+); Gradle 9.4.1 ✓ (≥ plugin min 8.4, but plugin's Gradle-9 support is "initial"/smoke-tested vs 9.0 at release → smoke-verify `./gradlew pitest` once at S-05 wiring). `pitest-junit5-plugin` documents JUnit-Platform support to 1.10 "and probably above"; Spring Boot 4 ships a newer platform → verify at wiring. **Not wired today** — deferred to S-05 (`three-resort-recommendation`); scoped to recommender packages only, never repo-wide |
 
 **Stack grounding tools (current session):**
 - Docs: **Context7** — can validate Spring Boot 4 / Thymeleaf / spring-security-test APIs and HTMX fragment patterns when wiring Phase 2/3 tests; checked: 2026-06-22
 - Search: **none** in session — fall back to Context7 + local config; checked: 2026-06-22
-- Runtime/browser: **none** (no Playwright/browser MCP) — Phase 3 flows use `MockMvc`, not a browser; checked: 2026-06-22
+- Runtime/browser: **`cursor-ide-browser` MCP present** in this session (previously none) — an in-session, interactive browser driver useful for *prototyping/verifying* a Phase-3 HTMX journey during implementation. **It is NOT the committed suite:** it runs only inside the agent session, never on the headless `ubuntu-latest` CI runner, so the CI-gated browser smoke tier needs a real JVM dependency (Playwright-Java, §4 row above). Phase-3 server-side flows still use `MockMvc`; only the HTMX-swap smoke journeys use the browser; checked: 2026-07-02
 - Provider/platform: **Linear** — issue tracking; possible quality-gate relevance (CI/issue status), not used as a test surface; checked: 2026-06-22
 - Mutation: **`info.solidsoft.pitest` 1.19.0 + `pitest-junit5-plugin` 1.2.3** — version contract grounded against the Java 21 / Gradle 9.4.1 / Spring Boot 4.0.6 stack; wiring deferred to S-05 (smoke-verify on Gradle 9.4.1 + confirm JUnit-Platform compat at that time); checked: 2026-06-25
 
@@ -131,7 +142,8 @@ phase lands; before that, the gate is `planned`.
 | access-control + IDOR suite | local + CI | required after §3 Phase 1 | unprotected new routes, cross-user data exposure |
 | recommender correctness suite | local + CI | required after §3 Phase 2 | guardrail violations (untruthful rationale, dropped axis, visited leak) |
 | recommender mutation-score gate (PIT, scoped to recommender packages) | local + CI | required after §3 Phase 2 | surviving mutants in scorer/filter/rationale logic (weak/tautological assertions). Threshold: a high package-scoped mutation score, exact % calibrated when S-05 lands — never repo-wide |
-| user-flow integration | CI on PR | required after §3 Phase 3 | broken end-to-end journeys |
+| user-flow integration | CI on PR | required after §3 Phase 3 | broken end-to-end journeys (server-side, via `MockMvc`/integration) |
+| HTMX browser smoke (isolated) | CI on PR — **own headless step / Gradle task**, not folded into `./gradlew test` | required after §3 Phase 3 | broken client-side HTMX in-place swaps (mark-visited toggle, recommend render + progress indicator) that server-side tests structurally can't see. Must run headless on `ubuntu-latest`; the in-session `cursor-ide-browser` MCP does NOT satisfy this gate |
 
 ## 6. Cookbook Patterns
 
@@ -220,24 +232,26 @@ S-01 patterns carry a real reference test; the rest read
 
 ### 6.6 Adding an end-to-end user-flow test
 
-- TBD — see §3 Phase 3. Will cover multi-step `MockMvc` journeys (signup → profile → browse → mark-visited → recommend) with no browser.
+- TBD — see §3 Phase 3. Two layers, filled in when the phase ships:
+  - **Server-side journeys**: multi-step `MockMvc`/integration walks (signup → profile → browse → mark-visited → recommend; admin-create → appears in browse).
+  - **Browser smoke (HTMX only, strategy change 2026-07-02)**: a small isolated tier — `@SpringBootTest(webEnvironment = RANDOM_PORT)` + a JVM browser lib (Playwright-Java leading option, §4) against seeded H2, in its own source set / Gradle task with a dedicated headless CI step. Cover only the 1–2 HTMX in-place swaps `MockMvc` can't see (mark-visited toggle; recommend → three-result render + progress indicator). **Out of scope** (keep it small): pixel/visual snapshots (§7), cross-browser matrices, exhaustive page coverage, and re-testing flows already proven server-side. The `cursor-ide-browser` MCP may help prototype a journey interactively, but it is not the committed runner.
 
 ## 7. What We Deliberately Don't Test
 
 Exclusions agreed during the rollout (Phase 2 interview, Q5). Future
 contributors should respect these unless the underlying assumption changes.
 
-- **Pixel / visual snapshots of pages** — break on every CSS tweak, catch nothing. Re-evaluate only if a visual regression actually ships. (Source: interview Q5.)
-- **Third-party CDN/library behavior (Bootstrap, HTMX)** — that is the library's job, not ours. (Source: interview Q5.)
+- **Pixel / visual snapshots of pages** — break on every CSS tweak, catch nothing. Re-evaluate only if a visual regression actually ships. (Source: interview Q5.) *Still excluded even with the new browser tier — the browser smoke tests assert DOM/behavior, never pixels.*
+- **Third-party CDN/library behavior (Bootstrap, HTMX)** — that is the library's job, not ours. (Source: interview Q5.) **Narrowed 2026-07-02 (strategy change):** we still don't test HTMX-the-library, but we *do* smoke-test that **our** pages wire HTMX correctly end-to-end in a real browser — i.e. that the mark-visited toggle and the recommend button actually trigger the expected in-place DOM swap (+ progress indicator) rather than a full reload or no-op. The exclusion now covers "does HTMX work," not "does our page use HTMX correctly." (See §1 exception, §3 Phase 3, §4 browser row.)
 - **Exhaustive admin-form permutations** — one trusted admin, low blast radius; minimal validation tests (percentages sum to 100, non-negative ints) live inside the S-06 slice's own tests, not a dedicated phase. (Source: interview Q5; PRD US-03 AC.)
 - **Standalone configuration / infrastructure tests** — not a budget line. Exception: the existing dual-engine Flyway/Postgres migration check stays in CI (AGENTS.md mandate, not new budget). (Source: interview Q5.)
 - **Repo-wide mutation testing** — PIT is deliberately scoped to the recommender (scorer/filter/rationale) only; the auth/web/config surfaces are guarded by cheaper slice tests where a surviving mutant is near-zero signal. (Source: cost × signal, §1 principle #1; test-plan-refresh-2026-06-25.)
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-06-22
-- Stack versions last verified: 2026-06-22
-- AI-native tool references last verified: 2026-06-22
+- Strategy (§1–§5) last reviewed: 2026-07-02 (deliberate change — permitted a small, isolated, CI-gated browser smoke tier for HTMX in-place swaps; §1/§3/§4/§5 amended)
+- Stack versions last verified: 2026-07-02 (added e2e/browser row — Playwright-Java 1.61.0 grounded via Maven Central; earlier rows unchanged since 2026-06-22 / PIT 2026-06-25)
+- AI-native tool references last verified: 2026-07-02 (`cursor-ide-browser` MCP now present in session — noted as in-session-only, not the committed CI runner)
 - PIT/mutation tooling grounded: 2026-06-25
 
 Refresh (`/10x-test-plan --refresh`) when:

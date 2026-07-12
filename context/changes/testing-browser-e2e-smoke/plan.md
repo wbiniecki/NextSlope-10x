@@ -126,6 +126,11 @@ set/task; per-PR blocking CI gate.
   seed — but do not add `resortRepository.deleteAll()`-style cleanup (the
   pattern some integration tests use), or the recommend journey loses its
   candidate set.
+- Addendum (impl review 2026-07-12): the suite uses a deterministic
+  condition-based htmx-readiness guard
+  (`page.waitForFunction("() => window.htmx !== undefined")`) before the first
+  HTMX-driven click — explicitly a condition wait, not a sleep — to prevent a
+  race where a click lands before the CDN-loaded HTMX runtime initializes.
 
 ## Phase 1: Playwright harness + chained journey (local green)
 
@@ -158,6 +163,10 @@ a `Test`-type task `e2eTest` with
 **not** added to `check`; and a `JavaExec` task `playwrightInstall` using the
 e2e runtime classpath, main class `com.microsoft.playwright.CLI`, and arguments
 `install --with-deps chromium`. `tasks.named('test')` remains untouched.
+
+Addendum (impl review 2026-07-12): the `e2eTest` task also declares
+`shouldRunAfter tasks.named('test')` — a benign ordering hint that does not
+couple `e2eTest` into `check`/`build`.
 
 #### 2. E2E journey test
 
@@ -347,14 +356,14 @@ completely.
 
 #### Automated
 
-- [x] 1.1 `./gradlew e2eTest` passes locally (chained journey green, headless)
-- [x] 1.2 `./gradlew test` still passes and does not compile or execute anything under `src/e2eTest`
-- [x] 1.3 `./gradlew build` succeeds without running `e2eTest` (not wired into `check`)
+- [x] 1.1 `./gradlew e2eTest` passes locally (chained journey green, headless) — 40bf93b
+- [x] 1.2 `./gradlew test` still passes and does not compile or execute anything under `src/e2eTest` — 40bf93b
+- [x] 1.3 `./gradlew build` succeeds without running `e2eTest` (not wired into `check`) — 40bf93b
 
 #### Manual
 
-- [x] 1.4 Journey visually confirmed once in headed mode (or via the `cursor-ide-browser` MCP prototype) — cards and row highlight behave as asserted
-- [x] 1.5 Test source reviewed: no sleeps/fixed waits; reload-marker assertions present for both HTMX interactions
+- [x] 1.4 Journey visually confirmed once in headed mode (or via the `cursor-ide-browser` MCP prototype) — cards and row highlight behave as asserted — 40bf93b
+- [x] 1.5 Test source reviewed: no sleeps/fixed waits; reload-marker assertions present for both HTMX interactions — 40bf93b
 
 ### Phase 2: CI gate + test-plan bookkeeping
 
