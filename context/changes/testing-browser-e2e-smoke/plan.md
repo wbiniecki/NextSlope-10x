@@ -369,8 +369,8 @@ completely.
 
 #### Automated
 
-- [ ] 2.1 `./gradlew tasks --all` lists `playwrightInstall` and `e2eTest`; `e2eTest` remains outside `check`
-- [ ] 2.2 `./gradlew e2eTest --no-daemon` passes locally using the same test command configured in CI
+- [x] 2.1 `./gradlew tasks --all` lists `playwrightInstall` and `e2eTest`; `e2eTest` remains outside `check`
+- [x] 2.2 `./gradlew e2eTest --no-daemon` passes locally using the same test command configured in CI
 
 #### Manual
 

@@ -93,7 +93,7 @@ orchestrator updates Status as artifacts appear on disk.
 |---|---|---|---|---|---|---|
 | 1 | Access-control & privacy regression net | Lock the current auth surface and ship a reusable per-route gating + ownership/IDOR + admin-authz test pattern every later slice extends | #4, #5 | web-slice + integration | complete | context/archive/2026-06-23-testing-access-control-privacy-net/ |
 | 2 | Recommender correctness suite | Prove all-axes matching, the visited/new-only hard filter, and a truthful rationale for the north-star recommendation flow, plus a recommender-scoped mutation-testing gate (gated on S-05 shipping) | #1, #2, #3 | unit + integration + mutation (PIT, recommender packages only) | not started | — |
-| 3 | End-to-end user-flow coverage | Walk the real journeys (signup → profile → browse → mark-visited → recommend; admin-create → appears in browse) with `MockMvc`/integration, **plus a small isolated browser smoke tier for the HTMX in-place swaps `MockMvc` can't see** (mark-visited toggle; recommend → three-result render + progress indicator). Prereqs S-02/03/04/05 all `done` → unblocked | #1–#5 (flow-level) | integration + browser smoke (isolated source set / task) | not started | — |
+| 3 | End-to-end user-flow coverage | Walk the real journeys (signup → profile → browse → mark-visited → recommend; admin-create → appears in browse) with `MockMvc`/integration, **plus a small isolated browser smoke tier for the HTMX in-place swaps `MockMvc` can't see** (mark-visited toggle; recommend → three-result render + progress indicator). Prereqs S-02/03/04/05 all `done` → unblocked | #1–#5 (flow-level) | integration + browser smoke (isolated source set / task) | implementing | context/changes/testing-browser-e2e-smoke/ (browser-smoke half — shipped; server-side `MockMvc` journey half — still open) |
 
 **Status vocabulary** (fixed — parser literals): `not started` →
 `change opened` → `researched` → `planned` → `implementing` → `complete`.
@@ -143,7 +143,7 @@ phase lands; before that, the gate is `planned`.
 | recommender correctness suite | local + CI | required after §3 Phase 2 | guardrail violations (untruthful rationale, dropped axis, visited leak) |
 | recommender mutation-score gate (PIT, scoped to recommender packages) | local + CI | required after §3 Phase 2 | surviving mutants in scorer/filter/rationale logic (weak/tautological assertions). Threshold: a high package-scoped mutation score, exact % calibrated when S-05 lands — never repo-wide |
 | user-flow integration | CI on PR | required after §3 Phase 3 | broken end-to-end journeys (server-side, via `MockMvc`/integration) |
-| HTMX browser smoke (isolated) | CI on PR — **own headless step / Gradle task**, not folded into `./gradlew test` | required after §3 Phase 3 | broken client-side HTMX in-place swaps (mark-visited toggle, recommend render + progress indicator) that server-side tests structurally can't see. Must run headless on `ubuntu-latest`; the in-session `cursor-ide-browser` MCP does NOT satisfy this gate |
+| HTMX browser smoke (isolated) | CI on PR — **own headless steps** (`playwrightInstall` → `e2eTest` Gradle tasks in `.github/workflows/ci.yml`), not folded into `./gradlew test` | **required (enforced 2026-07-12** via `testing-browser-e2e-smoke`; blocking, no `continue-on-error`) | broken client-side HTMX in-place swaps (mark-visited toggle, recommend render + progress indicator) that server-side tests structurally can't see. Must run headless on `ubuntu-latest`; the in-session `cursor-ide-browser` MCP does NOT satisfy this gate |
 
 ## 6. Cookbook Patterns
 
@@ -232,9 +232,38 @@ S-01 patterns carry a real reference test; the rest read
 
 ### 6.6 Adding an end-to-end user-flow test
 
-- TBD — see §3 Phase 3. Two layers, filled in when the phase ships:
-  - **Server-side journeys**: multi-step `MockMvc`/integration walks (signup → profile → browse → mark-visited → recommend; admin-create → appears in browse).
-  - **Browser smoke (HTMX only, strategy change 2026-07-02)**: a small isolated tier — `@SpringBootTest(webEnvironment = RANDOM_PORT)` + a JVM browser lib (Playwright-Java leading option, §4) against seeded H2, in its own source set / Gradle task with a dedicated headless CI step. Cover only the 1–2 HTMX in-place swaps `MockMvc` can't see (mark-visited toggle; recommend → three-result render + progress indicator). **Out of scope** (keep it small): pixel/visual snapshots (§7), cross-browser matrices, exhaustive page coverage, and re-testing flows already proven server-side. The `cursor-ide-browser` MCP may help prototype a journey interactively, but it is not the committed runner.
+Two layers; the browser-smoke half shipped 2026-07-12 via
+`context/changes/testing-browser-e2e-smoke/`, the server-side half is still TBD:
+
+- **Server-side journeys**: TBD — see §3 Phase 3 (still open). Multi-step
+  `MockMvc`/integration walks (signup → profile → browse → mark-visited →
+  recommend; admin-create → appears in browse).
+- **Browser smoke (HTMX only, strategy change 2026-07-02) — shipped**:
+  - **Location**: `src/e2eTest/java/com/nextslope/e2e/` — a dedicated `e2eTest`
+    source set that `./gradlew test`/`check`/`build` never touch (Playwright is
+    scoped to `e2eTestImplementation` only).
+  - **Type**: `@SpringBootTest(webEnvironment = RANDOM_PORT)` on the default
+    profile (in-memory H2 + Flyway + 150-resort seed) + Playwright-Java (§4)
+    driving headless Chromium; reuses `src/test` fixtures (`UserFixtures`) via
+    source-set wiring.
+  - **Reference test**: `src/e2eTest/java/com/nextslope/e2e/HtmxSmokeE2eTests.java`
+    — one chained journey: real form login → save profile → recommend (3 cards
+    swapped in, no reload) → visited toggle on/off (button swap + `htmx:afterSwap`
+    row highlight). Uses Playwright auto-waiting assertions exclusively (no
+    sleeps) and a `window.__e2eMarker` survival check to prove in-place swap
+    rather than full reload.
+  - **Run locally**: `./gradlew e2eTest`. First run downloads Chromium (~150 MB)
+    to `~/.cache/ms-playwright` and is correspondingly slower; subsequent runs
+    reuse the local download. To provision explicitly (what CI does):
+    `./gradlew playwrightInstall`.
+  - **CI**: blocking per-PR steps in `.github/workflows/ci.yml` —
+    `./gradlew playwrightInstall --no-daemon` (Chromium + Linux deps,
+    deliberately uncached) then `./gradlew e2eTest --no-daemon`.
+  - Cover only the 1–2 HTMX in-place swaps `MockMvc` can't see. **Out of scope**
+    (keep it small): pixel/visual snapshots (§7), cross-browser matrices,
+    exhaustive page coverage, and re-testing flows already proven server-side.
+    The `cursor-ide-browser` MCP may help prototype a journey interactively, but
+    it is not the committed runner.
 
 ## 7. What We Deliberately Don't Test
 
