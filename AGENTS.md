@@ -24,6 +24,9 @@ NextSlope is a Spring Boot 4 + Thymeleaf web app that recommends three ski resor
 
 - `./gradlew bootRun` — start the app locally.
 - `./gradlew test` — run the JUnit 5 suite.
+- `./gradlew pitest` — run the PIT mutation gate for `com.nextslope.recommendation.*`.
+- `./gradlew playwrightInstall` — install Playwright Chromium (+ Linux deps) used by browser e2e.
+- `./gradlew e2eTest` — run the browser smoke tier from `src/e2eTest/java/` (headless Chromium via Playwright).
 - `./gradlew build` — compile, test, and assemble the boot jar.
 - `./gradlew test --tests com.nextslope.NextslopeApplicationTests` — run one test class.
 - `./gradlew --version` — verify Gradle wrapper + JDK 21.
@@ -40,6 +43,8 @@ NextSlope is a Spring Boot 4 + Thymeleaf web app that recommends three ski resor
 - JUnit 5 is enabled via `useJUnitPlatform()` in `@build.gradle`. Per-domain Spring Boot test starters (`*-data-jpa-test`, `*-security-test`, `*-webmvc-test`, etc.) are on the classpath — pick the slice that matches the unit rather than booting the full context.
 - Routine repository/domain tests should use the lightest viable slice (`@DataJpaTest`); reserve full-context `@SpringBootTest @Testcontainers` tests for cross-engine migration proof or full-wiring checks. `UserRepositoryPostgresTests` is the canonical prod-engine (real Postgres) verification example.
 - Access-control / IDOR / role tests use the shared scaffolding in `src/test/java/com/nextslope/support/` (`UserFixtures`, `TwoUserIntegrationTestBase`, `AccessControlAssertions`) — extend it, don't re-derive security setup. Recipe + reference tests: `@context/foundation/test-plan.md` §6.4.
+- Browser e2e smoke tests live in the dedicated `e2eTest` source set (`src/e2eTest/java/`) and run with Playwright (`./gradlew e2eTest`); CI provisions Chromium first via `./gradlew playwrightInstall`.
+- CI's merge gate is multi-tier: `./gradlew test`, then `./gradlew pitest` (recommendation engine mutation threshold), then Playwright browser smoke (`./gradlew playwrightInstall` + `./gradlew e2eTest`).
 
 ## Persistence & Migrations
 
@@ -53,5 +58,5 @@ NextSlope is a Spring Boot 4 + Thymeleaf web app that recommends three ski resor
 
 ## Deployment & Configuration
 
-- Target is Render (Free web tier, $0/mo) with an external Neon free Postgres and GitHub Actions auto-deploy-on-merge per `@context/foundation/infrastructure.md`. CI is wired in `.github/workflows/ci.yml` (runs `./gradlew test` on push/PR to `main`, including the Testcontainers Postgres migration check). Rationale: Render is the only candidate with a genuine $0 path, the lowest-regret choice for an MVP that may be discarded. Fly.io is the documented runner-up for cheapest always-on if cold starts become unacceptable; deploy via a multi-stage Dockerfile (no native Java runtime on Render).
+- Target is Render (Free web tier, $0/mo) with an external Neon free Postgres and GitHub Actions auto-deploy-on-merge per `@context/foundation/infrastructure.md`. CI is wired in `.github/workflows/ci.yml` and runs `./gradlew test`, `./gradlew pitest`, `./gradlew playwrightInstall`, and `./gradlew e2eTest` on push/PR to `main`. This private GitHub Free repo does not have technical branch protection; green CI on PRs is a required process control before merge. Rationale: Render is the only candidate with a genuine $0 path, the lowest-regret choice for an MVP that may be discarded. Fly.io is the documented runner-up for cheapest always-on if cold starts become unacceptable; deploy via a multi-stage Dockerfile (no native Java runtime on Render).
 - PostgreSQL (Neon free tier, external) and H2 (local) are both on the runtime classpath. Datasource config is wired: local uses H2 (see `application.properties`); prod uses Neon via `SPRING_DATASOURCE_URL` (pooled) + `SPRING_FLYWAY_URL` (DIRECT) Render secrets (see `application-prod.properties` and `render.yaml`). Spring Security is active via `SecurityConfig` (default form-login; every endpoint authenticated except the permit-listed public routes) — real user-backed auth lands in S-01.
