@@ -1,11 +1,11 @@
 ---
 change_id: account-deletion
 title: Account deletion (permanent, cascades profile + visited)
-status: impl_reviewed
+status: archived
 roadmap_id: S-07
 created: 2026-07-02
 updated: 2026-07-12
-archived_at: null
+archived_at: 2026-07-12T16:42:36Z
 ---
 
 ## Notes

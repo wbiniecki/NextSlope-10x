@@ -3,7 +3,7 @@ project: "NextSlope"
 version: 1
 status: draft
 created: 2026-06-12
-updated: 2026-07-06
+updated: 2026-07-12
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -36,7 +36,7 @@ An avid skier or snowboarder planning the upcoming season drowns in scattered, m
 | S-04 | mark-visited | mark and unmark resorts as visited from the browse list, privately | S-01, S-03 | US-02, FR-005 | done |
 | S-05 | three-resort-recommendation | click "Recommend resorts" and get exactly three ranked picks with a truthful rationale | S-02, S-03, S-04 | US-01, FR-008, FR-009 | done |
 | S-06 | admin-resort-management | (admin) create, edit, and deactivate resort entries from an admin-only view | S-01, S-03 | US-03, FR-010, FR-011, FR-012, FR-013 | done |
-| S-07 | account-deletion | permanently delete their account, removing profile and visited data everywhere | S-02, S-04 | FR-004, FR-005 | proposed |
+| S-07 | account-deletion | permanently delete their account, removing profile and visited data everywhere | S-02, S-04 | FR-004, FR-005 | done |
 | S-08 | min-top-lift-height-preference | set a minimum top lift height in their profile and have recommendations honor it as a hard filter | S-02, S-05 | (post-MVP — extends FR-004, FR-008) | proposed |
 | S-09 | recommendation-scoring-refinement | (no new UI) get recommendations tuned by confirmed scoring values instead of S-05's shipped defaults | S-05 | US-01, FR-008, FR-009 (tuning) | proposed |
 
@@ -165,7 +165,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** — (PRD Open Question 4 resolved 2026-06-16: deletion is immediate, no undo window)
 - **Risk:** Satisfies the account-deletion NFR; FR-004/FR-005 define the cascaded data removed. Depends on both the profile (S-02) and visited (S-04) models existing so deletion can cascade across all the user's data. Privacy-completing slice; small and off the critical path, so it lands late without endangering the deadline.
-- **Status:** proposed
+- **Status:** done
 
 ### S-08: Minimum top lift height preference
 
@@ -241,3 +241,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-04: A signed-in user can mark and unmark resorts as visited directly from the browse list, with the visual state updating immediately and the list kept strictly private to that user.** — Archived 2026-06-26 → `context/archive/2026-06-26-mark-visited/`. Lesson: —.
 - **S-05: A signed-in user clicks "Recommend resorts" and sees exactly three ranked resorts (key facts + a one-line truthful rationale), or an explicit explanation when fewer than three viable matches exist — honoring hard filters (region, visited-when-new-only) then weighted scoring.** — Archived 2026-06-29 → `context/archive/2026-06-26-three-resort-recommendation/`. Lesson: —.
 - **S-06: A signed-in admin can reach an admin-only view and create, edit, and deactivate resort entries; deactivated resorts vanish from browsing and new recommendations while existing visited-list references keep working; non-admins get access-denied.** — Archived 2026-07-06 → `context/archive/2026-07-02-admin-resort-management/`. Lesson: —.
+- **S-07: A signed-in user can permanently delete their account; once confirmed, their profile and visited list are immediately removed and never reappear on any product surface.** — Archived 2026-07-12 → `context/archive/2026-07-02-account-deletion/`. Lesson: —.
