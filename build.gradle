@@ -87,6 +87,8 @@ tasks.register('e2eTest', Test) {
 	classpath = sourceSets.e2eTest.runtimeClasspath
 	useJUnitPlatform()
 	shouldRunAfter tasks.named('test')
+	// Always execute: browser binary/CDN inputs are external and invisible to Gradle tracking.
+	outputs.upToDateWhen { false }
 }
 
 // Deterministic browser provisioning for CI: installs Chromium plus its Linux system
@@ -94,7 +96,9 @@ tasks.register('e2eTest', Test) {
 tasks.register('playwrightInstall', JavaExec) {
 	description = 'Installs the Chromium browser (and OS dependencies) used by e2eTest.'
 	group = 'verification'
-	classpath = sourceSets.e2eTest.runtimeClasspath
+	// Dependency jars only (not sourceSets.e2eTest.runtimeClasspath): the Playwright CLI needs no
+	// project classes, and this keeps browser provisioning decoupled from e2e compilation.
+	classpath = configurations.e2eTestRuntimeClasspath
 	mainClass = 'com.microsoft.playwright.CLI'
 	args 'install', '--with-deps', 'chromium'
 }

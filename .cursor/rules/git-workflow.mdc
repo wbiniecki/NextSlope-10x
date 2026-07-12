@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Git Workflow — branch per change
 
-`main` is protected, always deployable, and auto-deploys to Render on merge. **Never commit
+`main` is process-protected (green CI + PR review discipline), always deployable, and auto-deploys to Render on merge. **Never commit
 feature work directly to `main`.**
 
 ## Branch per change

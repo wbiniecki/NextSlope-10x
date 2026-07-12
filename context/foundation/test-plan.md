@@ -93,7 +93,7 @@ orchestrator updates Status as artifacts appear on disk.
 |---|---|---|---|---|---|---|
 | 1 | Access-control & privacy regression net | Lock the current auth surface and ship a reusable per-route gating + ownership/IDOR + admin-authz test pattern every later slice extends | #4, #5 | web-slice + integration | complete | context/archive/2026-06-23-testing-access-control-privacy-net/ |
 | 2 | Recommender correctness suite | Prove all-axes matching, the visited/new-only hard filter, and a truthful rationale for the north-star recommendation flow, plus a recommender-scoped mutation-testing gate (gated on S-05 shipping) | #1, #2, #3 | unit + integration + mutation (PIT, recommender packages only) | not started | — |
-| 3 | End-to-end user-flow coverage | Walk the real journeys (signup → profile → browse → mark-visited → recommend; admin-create → appears in browse) with `MockMvc`/integration, **plus a small isolated browser smoke tier for the HTMX in-place swaps `MockMvc` can't see** (mark-visited toggle; recommend → three-result render + progress indicator). Prereqs S-02/03/04/05 all `done` → unblocked | #1–#5 (flow-level) | integration + browser smoke (isolated source set / task) | implementing | context/changes/testing-browser-e2e-smoke/ (browser-smoke half — shipped; server-side `MockMvc` journey half — still open) |
+| 3 | End-to-end user-flow coverage | Walk the real journeys (signup → profile → browse → mark-visited → recommend; admin-create → appears in browse) with `MockMvc`/integration, **plus a small isolated browser smoke tier for the HTMX in-place swaps `MockMvc` can't see** (mark-visited toggle; recommend → three-result render + progress indicator). Prereqs S-02/03/04/05 all `done` → unblocked | #1–#5 (flow-level) | integration + browser smoke (isolated source set / task) | implementing | context/archive/2026-07-12-testing-browser-e2e-smoke/ (browser-smoke half — shipped; server-side `MockMvc` journey half — still open) |
 
 **Status vocabulary** (fixed — parser literals): `not started` →
 `change opened` → `researched` → `planned` → `implementing` → `complete`.
@@ -119,7 +119,7 @@ The classic test base for this project. Recommendations are grounded in
 | web slice | Spring `@WebMvcTest` + spring-security-test | (BOM) | Route-gating / controller tests; `@WithMockUser`, `@MockitoBean` |
 | data slice | `@DataJpaTest` + H2 (PostgreSQL mode) | (BOM) | Repository/entity mapping against local engine |
 | prod-engine integration | `@SpringBootTest @Testcontainers` Postgres 16 | (BOM) | Dual-engine migration proof; CI gate (AGENTS.md mandate) |
-| e2e / browser smoke (HTMX only) | **leading option: Playwright for Java** (`com.microsoft.playwright:playwright`); Selenium/Selenide = heavier alternative, HtmlUnit rejected (JS engine too weak for modern HTMX) | 1.61.0 (Maven Central latest, `lastUpdated 2026-06-29`); checked: 2026-07-02 | **Strategy change 2026-07-02.** Small isolated tier for the client-side HTMX swaps `MockMvc` can't see. Playwright-Java recommended for its bundled browser download, first-class headless on `ubuntu-latest`, and auto-waiting (reduces HTMX-swap flakiness). Tool choice is still an **open plan-level decision** (S-05→Phase-3 plan picks it) — recorded as leading option, not a hard commitment. Runs as `@SpringBootTest(webEnvironment = RANDOM_PORT)` + seeded H2, isolated as its own source set / Gradle task with a dedicated headless CI step (keep `./gradlew test` fast). **Not the `cursor-ide-browser` MCP** — that is an in-session interactive driver, not a committed CI dependency |
+| e2e / browser smoke (HTMX only) | **Playwright for Java** (`com.microsoft.playwright:playwright`); Selenium/Selenide = heavier alternative, HtmlUnit rejected (JS engine too weak for modern HTMX) | 1.61.0 (Maven Central latest, `lastUpdated 2026-06-29`); checked: 2026-07-02 | **Strategy change 2026-07-02.** Small isolated tier for the client-side HTMX swaps `MockMvc` can't see. Playwright-Java recommended for its bundled browser download, first-class headless on `ubuntu-latest`, and auto-waiting (reduces HTMX-swap flakiness). Tool choice is now **decided and shipped** (`testing-browser-e2e-smoke`, 2026-07-12) — a committed CI dependency. Runs as `@SpringBootTest(webEnvironment = RANDOM_PORT)` + seeded H2, isolated as its own source set / Gradle task with a dedicated headless CI step (keep `./gradlew test` fast). **Not the `cursor-ide-browser` MCP** — that is an in-session interactive driver, not a committed CI dependency |
 | mutation testing (recommender only) | `info.solidsoft.pitest` Gradle plugin + `pitest-junit5-plugin` | plugin 1.19.0 / `junit5PluginVersion` 1.2.3 | Java 21 ✓ (plugin needs 17+); Gradle 9.4.1 ✓ (≥ plugin min 8.4, but plugin's Gradle-9 support is "initial"/smoke-tested vs 9.0 at release → smoke-verify `./gradlew pitest` once at S-05 wiring). `pitest-junit5-plugin` documents JUnit-Platform support to 1.10 "and probably above"; Spring Boot 4 ships a newer platform → verify at wiring. **Not wired today** — deferred to S-05 (`three-resort-recommendation`); scoped to recommender packages only, never repo-wide |
 
 **Stack grounding tools (current session):**
@@ -233,7 +233,7 @@ S-01 patterns carry a real reference test; the rest read
 ### 6.6 Adding an end-to-end user-flow test
 
 Two layers; the browser-smoke half shipped 2026-07-12 via
-`context/changes/testing-browser-e2e-smoke/`, the server-side half is still TBD:
+`context/archive/2026-07-12-testing-browser-e2e-smoke/`, the server-side half is still TBD:
 
 - **Server-side journeys**: TBD — see §3 Phase 3 (still open). Multi-step
   `MockMvc`/integration walks (signup → profile → browse → mark-visited →
@@ -249,18 +249,50 @@ Two layers; the browser-smoke half shipped 2026-07-12 via
   - **Reference test**: `src/e2eTest/java/com/nextslope/e2e/HtmxSmokeE2eTests.java`
     — one chained journey: real form login → save profile → recommend (3 cards
     swapped in, no reload) → visited toggle on/off (button swap + `htmx:afterSwap`
-    row highlight). Uses Playwright auto-waiting assertions (no sleeps; plus one
-    condition-based htmx-readiness guard — see the plan's Critical Implementation
-    Details addendum) and a `window.__e2eMarker` survival check to prove in-place
-    swap rather than full reload.
+    row highlight), plus a second admin test: active-toggle off/on (button swap +
+    `htmx:afterSwap` row restyle, seed data restored in-test). Uses Playwright
+    auto-waiting assertions (no sleeps; plus two condition-based waits — an
+    htmx-readiness guard, see the plan's Critical Implementation Details
+    addendum, and an `htmx:afterSettle` guard against the post-swap
+    listener-rebind race) and a `window.__e2eMarker` survival check to prove
+    in-place swap rather than full reload.
   - **Run locally**: `./gradlew e2eTest`. First run downloads Chromium (~150 MB)
     to `~/.cache/ms-playwright` (Linux default; `~/Library/Caches/ms-playwright`
     on macOS) and is correspondingly slower; subsequent runs reuse the local
-    download. To provision explicitly (what CI does):
+    download. `e2eTest` is intentionally never `UP-TO-DATE`, so each invocation
+    really reruns the browser smoke suite. To provision explicitly (what CI does):
     `./gradlew playwrightInstall`.
   - **CI**: blocking per-PR steps in `.github/workflows/ci.yml` —
     `./gradlew playwrightInstall --no-daemon` (Chromium + Linux deps,
     deliberately uncached) then `./gradlew e2eTest --no-daemon`.
+  - **Accepted risk (CDN dependency in CI)**: this smoke check depends on live
+    `cdn.jsdelivr.net` availability because the app loads pinned Bootstrap 5 and
+    HTMX 2.0.4 assets from jsDelivr at page load. SRI hashes prevent false-greens
+    (unexpected CDN content cannot be accepted), so the failure mode is false-red:
+    the CI `Browser e2e smoke` step times out in `awaitHtmxReady()`. Triage:
+    check [status.jsdelivr.com](https://status.jsdelivr.com) and re-run once
+    before suspecting product code. Revisit this decision if CDN-caused false reds
+    occur more than rarely: vendor the three pinned assets (Bootstrap CSS + JS
+    bundle, HTMX JS) under
+    `src/main/resources/static/` for all environments (still no build step),
+    rather than maintaining a split E2E profile.
+  - **Recorded exclusions (targeted review, 2026-07-13)**: `hx-disabled-elt`
+    request-time button disabling stays unasserted (same anti-flake rationale as
+    the transient spinner; structural wiring is asserted). Profile-form checkbox
+    JavaScript remains unasserted as low-risk progressive enhancement exercised
+    implicitly by the journey's real profile save. Session-expiry HTMX failure is
+    a known product gap (AJAX POST can 302 to `/login` with no
+    `htmx:responseError`/redirect handling); it needs a dedicated change
+    (auth-aware HX-Request handling in `SecurityConfig` + a client handler) and
+    is deliberately not patched in this chore branch.
+  - **Watch items (targeted review, 2026-07-13)**: shared named-H2
+    (`jdbc:h2:mem:nextslope;MODE=PostgreSQL;DB_CLOSE_DELAY=-1`) is safe with one
+    E2E class but becomes an isolation hazard when a second class arrives — then
+    move shared setup/cleanup into a base harness or enforce per-class unique
+    fixture emails. CI's single-job `timeout-minutes: 10` currently has margin
+    (measured healthy runs are ~3–5 min including the Playwright steps), but
+    slow apt/CDN/Chromium-download days can consume it; raise the timeout if a
+    healthy run is ever cancelled.
   - Cover only the 1–2 HTMX in-place swaps `MockMvc` can't see. **Out of scope**
     (keep it small): pixel/visual snapshots (§7), cross-browser matrices,
     exhaustive page coverage, and re-testing flows already proven server-side.

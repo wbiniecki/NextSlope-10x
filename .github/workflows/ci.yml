@@ -15,10 +15,13 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
 
       - name: Set up JDK 21 (Temurin)
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
         with:
           distribution: temurin
           java-version: '21'
@@ -48,4 +51,18 @@ jobs:
       # MockMvc structurally can't see (recommend fragment swap, visited-toggle swap +
       # row highlight). Headless is Playwright's default — no xvfb needed.
       - name: Browser e2e smoke (headless Chromium)
+        id: e2e
         run: ./gradlew e2eTest --no-daemon
+
+      # On red runs, keep enough browser context to distinguish flakes from regressions:
+      # Playwright failure diagnostics + the e2eTest HTML/XML reports. Scoped to the e2e
+      # step's own outcome so earlier failures (unit tests, PIT) don't trigger an upload.
+      - name: Upload e2e failure diagnostics
+        if: failure() && steps.e2e.outcome == 'failure'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: e2e-failure-diagnostics
+          if-no-files-found: ignore
+          path: |
+            build/reports/e2e-diagnostics/**
+            build/reports/tests/e2eTest/**
