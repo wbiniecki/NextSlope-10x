@@ -54,6 +54,51 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+// Browser e2e smoke tier (test-plan.md §3 Phase 3 / §6.6): an isolated source set so
+// Playwright and the browser-driven journey never touch (or slow down) `./gradlew test`.
+// Compile/runtime classpaths extend the test output to reuse fixtures (UserFixtures).
+sourceSets {
+	e2eTest {
+		java.srcDirs = ['src/e2eTest/java']
+		resources.srcDirs = ['src/e2eTest/resources']
+		compileClasspath += sourceSets.main.output + sourceSets.test.output
+		runtimeClasspath += sourceSets.main.output + sourceSets.test.output
+	}
+}
+
+configurations {
+	e2eTestImplementation.extendsFrom testImplementation
+	// Inherits testRuntimeOnly (JUnit Platform launcher) which in turn inherits the
+	// application runtimeOnly dependencies (H2 driver) via the java plugin hierarchy.
+	e2eTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+dependencies {
+	// Scoped to e2eTestImplementation only so Playwright never leaks onto the unit-test classpath.
+	e2eTestImplementation 'com.microsoft.playwright:playwright:1.61.0'
+}
+
+// Deliberately NOT wired into `check`/`build`: the browser suite runs only when invoked
+// explicitly (`./gradlew e2eTest` locally, or its own blocking CI step).
+tasks.register('e2eTest', Test) {
+	description = 'Runs the browser-driven e2e smoke suite (headless Chromium via Playwright).'
+	group = 'verification'
+	testClassesDirs = sourceSets.e2eTest.output.classesDirs
+	classpath = sourceSets.e2eTest.runtimeClasspath
+	useJUnitPlatform()
+	shouldRunAfter tasks.named('test')
+}
+
+// Deterministic browser provisioning for CI: installs Chromium plus its Linux system
+// dependencies. Locally this is optional — Playwright auto-downloads on first run.
+tasks.register('playwrightInstall', JavaExec) {
+	description = 'Installs the Chromium browser (and OS dependencies) used by e2eTest.'
+	group = 'verification'
+	classpath = sourceSets.e2eTest.runtimeClasspath
+	mainClass = 'com.microsoft.playwright.CLI'
+	args 'install', '--with-deps', 'chromium'
+}
+
 // PIT mutation gate — scoped strictly to the recommendation engine (scorer / filter / rationale),
 // never repo-wide (test-plan.md §5 quality gates, §6.5 cookbook, §7 deliberate exclusion). The
 // branch-heavy scoring, hard-filter, and truthfulness logic is the one place a surviving mutant
