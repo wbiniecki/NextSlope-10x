@@ -1,7 +1,6 @@
 package com.nextslope.e2e;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.regex.Pattern;
@@ -75,18 +74,22 @@ class HtmxSmokeE2eTests {
 
 	@AfterAll
 	void tearDown() {
-		if (playwright != null) {
-			playwright.close();
-		}
-		// FK-safe cleanup order: visited rows → preference profile → user. Never delete
-		// resorts — the seed loader only refills an empty table, so later contexts in the
-		// same JVM would lose the recommend candidate set.
-		if (user != null) {
-			Long userId = user.getId();
-			visitedResortRepository.findResortIdsByUserId(userId)
-					.forEach(resortId -> visitedResortRepository.deleteByUserIdAndResortId(userId, resortId));
-			preferenceProfileRepository.findByUserId(userId).ifPresent(preferenceProfileRepository::delete);
-			userRepository.deleteById(userId);
+		try {
+			if (playwright != null) {
+				playwright.close();
+			}
+		} finally {
+			// FK-safe cleanup order: visited rows → preference profile → user. Never delete
+			// resorts — the seed loader only refills an empty table, so later contexts in the
+			// same JVM would lose the recommend candidate set. Runs even if the Playwright
+			// close throws, so the seeded user never leaks into a shared JVM-cached context.
+			if (user != null) {
+				Long userId = user.getId();
+				visitedResortRepository.findResortIdsByUserId(userId)
+						.forEach(resortId -> visitedResortRepository.deleteByUserIdAndResortId(userId, resortId));
+				preferenceProfileRepository.findByUserId(userId).ifPresent(preferenceProfileRepository::delete);
+				userRepository.deleteById(userId);
+			}
 		}
 	}
 
@@ -156,8 +159,7 @@ class HtmxSmokeE2eTests {
 		Locator toggle = firstRow.locator("button.visited-toggle");
 
 		assertThat(toggle).hasAttribute("data-visited", "false");
-		assertEquals(0, page.locator("#" + rowId + ".table-active").count(),
-				"row must start un-highlighted");
+		assertThat(page.locator("#" + rowId + ".table-active")).hasCount(0);
 
 		setReloadMarker();
 		toggle.click();
