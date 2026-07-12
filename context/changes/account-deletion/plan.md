@@ -368,12 +368,12 @@ documented product behavior, not a migration risk.
 
 #### Automated
 
-- [x] 2.1 Full suite passes: `./gradlew test`
-- [x] 2.2 Security net passes in isolation (`PermitListLockTests`, `CsrfEnforcedTests`)
-- [x] 2.3 New web tests pass (`AccountControllerTests`, `AccountDeletionIntegrationTests`)
+- [x] 2.1 Full suite passes: `./gradlew test` — ce8a9fc
+- [x] 2.2 Security net passes in isolation (`PermitListLockTests`, `CsrfEnforcedTests`) — ce8a9fc
+- [x] 2.3 New web tests pass (`AccountControllerTests`, `AccountDeletionIntegrationTests`) — ce8a9fc
 
 #### Manual
 
-- [x] 2.4 Browser walk-through: profile → danger zone → confirm → delete → `/?deleted` banner, signed out
-- [x] 2.5 Post-delete access checks: gated pages redirect to `/login`; re-registering same email starts blank
-- [x] 2.6 Confirm-page cancel link returns to `/profile` without side effects
+- [x] 2.4 Browser walk-through: profile → danger zone → confirm → delete → `/?deleted` banner, signed out — ce8a9fc
+- [x] 2.5 Post-delete access checks: gated pages redirect to `/login`; re-registering same email starts blank — ce8a9fc
+- [x] 2.6 Confirm-page cancel link returns to `/profile` without side effects — ce8a9fc
