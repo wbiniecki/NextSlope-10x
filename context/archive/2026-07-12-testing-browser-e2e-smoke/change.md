@@ -1,10 +1,10 @@
 ---
 change_id: testing-browser-e2e-smoke
 title: Testing browser e2e smoke
-status: impl_reviewed
+status: archived
 created: 2026-07-12
 updated: 2026-07-12
-archived_at: null
+archived_at: 2026-07-12T16:39:35Z
 ---
 
 ## Notes
