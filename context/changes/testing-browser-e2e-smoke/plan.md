@@ -369,10 +369,10 @@ completely.
 
 #### Automated
 
-- [x] 2.1 `./gradlew tasks --all` lists `playwrightInstall` and `e2eTest`; `e2eTest` remains outside `check`
-- [x] 2.2 `./gradlew e2eTest --no-daemon` passes locally using the same test command configured in CI
+- [x] 2.1 `./gradlew tasks --all` lists `playwrightInstall` and `e2eTest`; `e2eTest` remains outside `check` — e0dfa49
+- [x] 2.2 `./gradlew e2eTest --no-daemon` passes locally using the same test command configured in CI — e0dfa49
 
 #### Manual
 
-- [ ] 2.3 CI workflow reviewed: explicit Chromium/dependency installation precedes blocking `e2eTest`, with no browser cache and no `continue-on-error`
-- [ ] 2.4 Test-plan §6.6/§3/§5 read consistently against what actually shipped
+- [x] 2.3 CI workflow reviewed: explicit Chromium/dependency installation precedes blocking `e2eTest`, with no browser cache and no `continue-on-error` — confirmed by user 2026-07-12
+- [x] 2.4 Test-plan §6.6/§3/§5 read consistently against what actually shipped — confirmed by user 2026-07-12

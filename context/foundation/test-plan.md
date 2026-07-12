@@ -249,12 +249,14 @@ Two layers; the browser-smoke half shipped 2026-07-12 via
   - **Reference test**: `src/e2eTest/java/com/nextslope/e2e/HtmxSmokeE2eTests.java`
     — one chained journey: real form login → save profile → recommend (3 cards
     swapped in, no reload) → visited toggle on/off (button swap + `htmx:afterSwap`
-    row highlight). Uses Playwright auto-waiting assertions exclusively (no
-    sleeps) and a `window.__e2eMarker` survival check to prove in-place swap
-    rather than full reload.
+    row highlight). Uses Playwright auto-waiting assertions (no sleeps; plus one
+    condition-based htmx-readiness guard — see the plan's Critical Implementation
+    Details addendum) and a `window.__e2eMarker` survival check to prove in-place
+    swap rather than full reload.
   - **Run locally**: `./gradlew e2eTest`. First run downloads Chromium (~150 MB)
-    to `~/.cache/ms-playwright` and is correspondingly slower; subsequent runs
-    reuse the local download. To provision explicitly (what CI does):
+    to `~/.cache/ms-playwright` (Linux default; `~/Library/Caches/ms-playwright`
+    on macOS) and is correspondingly slower; subsequent runs reuse the local
+    download. To provision explicitly (what CI does):
     `./gradlew playwrightInstall`.
   - **CI**: blocking per-PR steps in `.github/workflows/ci.yml` —
     `./gradlew playwrightInstall --no-daemon` (Chromium + Linux deps,

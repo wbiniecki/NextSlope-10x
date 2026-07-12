@@ -1,7 +1,7 @@
 ---
 change_id: testing-browser-e2e-smoke
 title: Testing browser e2e smoke
-status: implementing
+status: impl_reviewed
 created: 2026-07-12
 updated: 2026-07-12
 archived_at: null
@@ -20,8 +20,9 @@ slices it exercises (S-01→S-05); no separate Linear issue.
 - `./gradlew e2eTest` — boots the app on a random port (in-memory H2 + Flyway +
   150-resort seed) and drives headless Chromium through the chained HTMX journey.
   Not wired into `check`/`build`; it runs only when invoked explicitly.
-- **First run downloads Chromium** (~150 MB) to `~/.cache/ms-playwright` and is
-  correspondingly slower; subsequent runs reuse the local download. To provision
+- **First run downloads Chromium** (~150 MB) to `~/.cache/ms-playwright` (Linux
+  default; `~/Library/Caches/ms-playwright` on macOS) and is correspondingly
+  slower; subsequent runs reuse the local download. To provision
   explicitly (what CI does): `./gradlew playwrightInstall`.
 
 Framed 2026-07-02 — see `frame.md` in this folder (originally drafted under the working name
