@@ -11,9 +11,13 @@ import lombok.RequiredArgsConstructor;
 /**
  * Orchestrates permanent account deletion (S-07). The schema has no DB-level cascade — referential
  * integrity for user-owned rows is owned by the application — so every trace of the user is removed
- * here, children before parents: visited marks (bulk, no FK), then the preference profile as a
- * managed entity (Hibernate removes its {@code preference_profile_regions} element-collection rows
- * first), then the {@code users} row.
+ * here, children before parents: visited marks (no FK), then the preference profile as a managed
+ * entity (Hibernate removes its {@code preference_profile_regions} element-collection rows first),
+ * then the {@code users} row.
+ *
+ * <p>Accepted MVP tradeoff (impl-review phase 1, F1): a visited-mark write racing this transaction
+ * can commit one orphaned {@code visited_resorts} row after the user is gone. Orphans are
+ * unreachable — every read is principal-scoped and the principal no longer resolves.
  */
 @Service
 @RequiredArgsConstructor
@@ -26,8 +30,8 @@ public class AccountService {
 	@Transactional
 	public void deleteAccount(Long userId) {
 		visitedResortRepository.deleteByUserId(userId);
-		// Entity delete, never a derived bulk delete: only a managed-entity removal cascades to the
-		// regions element collection; a bulk delete would orphan those rows and violate their FK.
+		// Managed-entity removal so Hibernate cascades to the regions element collection; a JPQL
+		// bulk delete (@Query) would bypass the persistence context and orphan those rows.
 		preferenceProfileRepository.findByUserId(userId)
 				.ifPresent(preferenceProfileRepository::delete);
 		userRepository.deleteById(userId);

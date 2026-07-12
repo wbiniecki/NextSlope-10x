@@ -359,8 +359,8 @@ documented product behavior, not a migration risk.
 
 #### Automated
 
-- [x] 1.1 Full suite passes (both engines): `./gradlew test`
-- [x] 1.2 New cascade tests pass in isolation: `./gradlew test --tests "com.nextslope.user.AccountService*"`
+- [x] 1.1 Full suite passes (both engines): `./gradlew test` — 5548248
+- [x] 1.2 New cascade tests pass in isolation: `./gradlew test --tests "com.nextslope.user.AccountService*"` — 5548248
 
 ### Phase 2: Web Flow & Security Wiring
 

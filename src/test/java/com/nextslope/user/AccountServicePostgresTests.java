@@ -1,6 +1,7 @@
 package com.nextslope.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import java.util.Set;
 
@@ -122,5 +123,36 @@ class AccountServicePostgresTests {
 		accountService.deleteAccount(userId);
 
 		assertThat(userRepository.findById(userId)).isEmpty();
+	}
+
+	@Test
+	void deleteAccountRollsBackAllTablesWhenUserDeleteFails() {
+		Long userId = saveUser("pg-rollback@nextslope.test");
+		Long profileId = saveProfile(userId, Set.of("France"));
+		visitedResortRepository.save(VisitedResort.builder().userId(userId).resortId(10L).build());
+
+		jdbcTemplate.execute("""
+				create or replace function block_user_delete() returns trigger as $$
+				begin
+					raise exception 'user delete blocked by test trigger';
+				end;
+				$$ language plpgsql
+				""");
+		jdbcTemplate.execute(
+				"create trigger test_block_user_delete before delete on users for each row execute function block_user_delete()");
+		try {
+			Throwable thrown = catchThrowable(() -> accountService.deleteAccount(userId));
+
+			assertThat(thrown).isNotNull()
+					.rootCause().hasMessageContaining("user delete blocked by test trigger");
+		} finally {
+			jdbcTemplate.execute("drop trigger test_block_user_delete on users");
+			jdbcTemplate.execute("drop function block_user_delete()");
+		}
+
+		assertThat(userRepository.findById(userId)).isPresent();
+		assertThat(preferenceProfileRepository.findByUserId(userId)).isPresent();
+		assertThat(visitedResortRepository.findResortIdsByUserId(userId)).containsExactly(10L);
+		assertThat(countRegionRows(profileId)).isEqualTo(1);
 	}
 }
