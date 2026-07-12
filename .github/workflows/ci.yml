@@ -6,9 +6,13 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   Test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,3 +35,17 @@ jobs:
       # threshold, catching weak/tautological assertions in the scorer/filter/rationale logic.
       - name: Mutation gate (PIT, recommendation engine only)
         run: ./gradlew pitest --no-daemon
+
+      # Deterministic browser provisioning for the e2e smoke tier: installs Chromium plus
+      # its Linux system dependencies via Playwright's CLI. Deliberately no cache of
+      # ~/.cache/ms-playwright — Playwright's guidance notes cache restoration is often
+      # comparable to downloading, and the Linux system dependencies aren't cacheable.
+      - name: Install Playwright Chromium (+ OS dependencies)
+        run: ./gradlew playwrightInstall --no-daemon
+
+      # Blocking browser smoke gate (test-plan.md §3 Phase 3 / §5): boots the app on a
+      # random port and drives headless Chromium through the chained HTMX journey that
+      # MockMvc structurally can't see (recommend fragment swap, visited-toggle swap +
+      # row highlight). Headless is Playwright's default — no xvfb needed.
+      - name: Browser e2e smoke (headless Chromium)
+        run: ./gradlew e2eTest --no-daemon
