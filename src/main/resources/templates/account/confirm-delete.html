@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Delete your account — NextSlope')}"></head>
+<body class="bg-light">
+	<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+	<main class="container py-4">
+		<div class="row justify-content-center">
+			<div class="col-lg-6">
+				<div class="card border-danger shadow-sm">
+					<div class="card-body">
+						<h1 class="h4 text-danger mb-3">Delete your account?</h1>
+						<p>
+							This will <strong>permanently</strong> delete your account. Your
+							preference profile and your visited-resorts list are removed
+							immediately — there is no undo.
+						</p>
+						<form th:action="@{/account/delete}" method="post"
+							  class="d-flex gap-2 mt-4">
+							<button type="submit" class="btn btn-danger">
+								Permanently delete my account
+							</button>
+							<a th:href="@{/profile}" class="btn btn-outline-secondary">Cancel</a>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

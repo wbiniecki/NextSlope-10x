@@ -10,6 +10,10 @@
 					You've been signed out.
 				</div>
 
+				<div th:if="${param.deleted}" class="alert alert-success" role="alert">
+					Your account has been deleted.
+				</div>
+
 				<h1 class="display-4 fw-bold mb-3">NextSlope</h1>
 				<p class="lead text-secondary mb-4">
 					Find three ski resorts that match how you actually ski.

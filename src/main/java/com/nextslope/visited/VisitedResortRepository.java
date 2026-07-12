@@ -16,6 +16,11 @@ public interface VisitedResortRepository extends JpaRepository<VisitedResort, Lo
 	@Transactional
 	long deleteByUserIdAndResortId(Long userId, Long resortId);
 
+	/** The S-07 cascade: removes every mark a user owns (derived delete — entities loaded and removed individually). */
+	@Modifying
+	@Transactional
+	long deleteByUserId(Long userId);
+
 	/** The S-05 read: ids of the resorts a given user has marked visited. */
 	@Query("select v.resortId from VisitedResort v where v.userId = :userId")
 	Set<Long> findResortIdsByUserId(@Param("userId") Long userId);

@@ -89,6 +89,19 @@
 						</div>
 					</div>
 				</form>
+
+				<div class="card border-danger mt-4">
+					<div class="card-body">
+						<h2 class="h5 text-danger">Danger zone</h2>
+						<p class="mb-2 text-secondary">
+							Deleting your account permanently removes your preference profile and
+							visited-resorts list. This cannot be undone.
+						</p>
+						<a th:href="@{/account/delete}" class="btn btn-outline-danger btn-sm">
+							Delete my account
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</main>
