@@ -51,9 +51,11 @@ From `context/changes/account-deletion/research.md` (2026-07-02, verified agains
 - Deletion order is load-bearing: `visited_resorts` (bulk, no FK) → `preference_profiles` **as a
   managed entity** so Hibernate removes `preference_profile_regions` first → `users`
   (research.md §B).
-- A derived `deleteByUserId` on `PreferenceProfileRepository` would be a bulk delete that skips
-  the element collection and violates `fk_preference_profile_regions_profile` — the profile must
-  go through `findByUserId(...)` → `repository.delete(entity)` (research.md §B).
+- A JPQL `@Query` bulk delete on `PreferenceProfileRepository` would bypass the persistence
+  context, skip the element collection, and violate `fk_preference_profile_regions_profile` — the
+  profile must be removed as a managed entity, e.g. `findByUserId(...)` → `repository.delete(entity)`.
+  (Correction, impl-review r2: a *derived* `deleteByUserId` loads and removes entities one by one,
+  so it would cascade too — the entity path was chosen as the explicit, unambiguous variant.)
 - `VisitedResortRepository` already has the safe derived-bulk-delete precedent
   (`deleteByUserIdAndResortId`, `VisitedResortRepository.java:11-22`); `deleteByUserId` follows it.
 - After session invalidation a flash attribute won't survive — success must be signaled with a
@@ -92,11 +94,11 @@ patterns.
 
 ### Cascade ordering & the element-collection trap
 
-Delete in this order inside one `@Transactional` method: (1) `visited_resorts` by bulk
+Delete in this order inside one `@Transactional` method: (1) `visited_resorts` by derived
 `deleteByUserId` (no FK, safe), (2) the profile via `preferenceProfileRepository.findByUserId(userId)`
-→ `delete(entity)` — never a derived `deleteByUserId`, which would orphan
-`preference_profile_regions` rows and violate its FK, (3) the `users` row. H2 will not reliably
-catch a wrong order; the Testcontainers Postgres test is the real proof.
+→ `delete(entity)` — never a JPQL `@Query` bulk delete, which would bypass the persistence context
+and orphan `preference_profile_regions` rows, violating its FK, (3) the `users` row. H2 will not
+reliably catch a wrong order; the Testcontainers Postgres test is the real proof.
 
 ### Session invalidation & success signaling
 
