@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.nextslope.config.SecurityConfig;
 import com.nextslope.profile.PreferenceProfileService;
+import com.nextslope.user.AccountService;
 import com.nextslope.user.AppUserDetailsService;
 import com.nextslope.user.CurrentUserService;
 import com.nextslope.user.UserRegistrationService;
@@ -69,6 +70,9 @@ class PermitListLockTests {
 	@MockitoBean
 	private CurrentUserService currentUserService;
 
+	@MockitoBean
+	private AccountService accountService;
+
 	@BeforeEach
 	void mockUserExists() {
 		when(userRepository.existsByEmail(anyString())).thenReturn(true);
@@ -88,7 +92,8 @@ class PermitListLockTests {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {"/error", "/profile", "/visited", "/recommend", "/admin", "/resorts", "/resorts/1"})
+	@ValueSource(strings = {"/error", "/profile", "/visited", "/recommend", "/admin", "/resorts", "/resorts/1",
+			"/account/delete"})
 	void mustStayGatedPathsRedirectAnonymousToLogin(String path) throws Exception {
 		// Permit-list lock: if a future permitAll() edit widens the public set to
 		// include one of these high-value samples (a real route today, /error, plus

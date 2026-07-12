@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.nextslope.config.SecurityConfig;
 import com.nextslope.profile.PreferenceProfileService;
+import com.nextslope.user.AccountService;
 import com.nextslope.user.AppUserDetailsService;
 import com.nextslope.user.CurrentUserService;
 import com.nextslope.user.UserRegistrationService;
@@ -57,6 +58,9 @@ class CsrfEnforcedTests {
 	@MockitoBean
 	private com.nextslope.recommendation.RecommendationService recommendationService;
 
+	@MockitoBean
+	private AccountService accountService;
+
 	@Test
 	void stateChangingPostWithoutCsrfTokenIsForbidden() throws Exception {
 		mockMvc.perform(post("/logout"))
@@ -68,5 +72,11 @@ class CsrfEnforcedTests {
 		mockMvc.perform(post("/logout").with(csrf()))
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/?logout"));
+	}
+
+	@Test
+	void accountDeletePostWithoutCsrfTokenIsForbidden() throws Exception {
+		mockMvc.perform(post("/account/delete"))
+				.andExpect(status().isForbidden());
 	}
 }
