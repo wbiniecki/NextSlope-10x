@@ -26,6 +26,9 @@ public final class UserFixtures {
 	public static final String USER_B_EMAIL = "user-b@example.com";
 	public static final String USER_B_PASSWORD = "user-b-secret1";
 
+	public static final String USER_C_EMAIL = "user-c@example.com";
+	public static final String USER_C_PASSWORD = "user-c-secret1";
+
 	public static final String ADMIN_EMAIL = "admin@example.com";
 	public static final String ADMIN_PASSWORD = "admin-secret1";
 
@@ -44,6 +47,14 @@ public final class UserFixtures {
 		return User.builder()
 				.email(USER_B_EMAIL)
 				.passwordHash(passwordEncoder.encode(USER_B_PASSWORD))
+				.role(User.Role.USER)
+				.build();
+	}
+
+	public static User userC(PasswordEncoder passwordEncoder) {
+		return User.builder()
+				.email(USER_C_EMAIL)
+				.passwordHash(passwordEncoder.encode(USER_C_PASSWORD))
 				.role(User.Role.USER)
 				.build();
 	}
