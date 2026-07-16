@@ -17,6 +17,7 @@ import com.nextslope.profile.ExperienceLevel;
 import com.nextslope.profile.NoveltyPreference;
 import com.nextslope.profile.PreferenceProfileService;
 import com.nextslope.profile.ProfileSnapshot;
+import com.nextslope.resort.DifficultyMix;
 import com.nextslope.resort.Resort;
 import com.nextslope.resort.ResortRepository;
 import com.nextslope.visited.VisitedResortService;
@@ -291,11 +292,16 @@ class RecommendationServiceTests {
 
 		RecommendationResult result = service().recommend(USER_ID);
 
+		// Solden (id 1, 60/30/10) is the deterministic winner for this BEGINNER / MOSTLY_EASY profile
+		// (score 0.975 vs Kitzbuhel 0.95, Ischgl 0.925), so pin its identity and exact projected mix —
+		// presence-only checks would pass for any of the three all-Austrian survivors. Rationale is only
+		// smoke-checked here; its truthfulness is proven in ScorerRationaleTruthfulnessTests.
 		ResortCard top = result.cards().get(0);
-		assertThat(top.name()).isNotBlank();
+		assertThat(top.id()).isEqualTo(1L);
+		assertThat(top.name()).isEqualTo("Solden");
 		assertThat(top.country()).isEqualTo("Austria");
 		assertThat(top.totalLifts()).isEqualTo(20);
-		assertThat(top.difficultyMix()).isNotNull();
+		assertThat(top.difficultyMix()).isEqualTo(new DifficultyMix(60, 30, 10));
 		assertThat(top.rationale()).isNotBlank();
 	}
 

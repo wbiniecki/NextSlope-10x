@@ -485,7 +485,7 @@ Not applicable — no schema, data, or runtime-config changes in this test-only 
 
 #### Manual
 
-- [x] 4.1 §4/§5/§6.5 read end-to-end, no stale "not wired"/"deferred" PIT language remains, §3 Status and §8 Freshness Ledger untouched — df89de6
+- [x] 4.1 §4/§5/§6.5 reconciled to "wired & live", no stale "not wired"/"deferred" PIT language remains; §3 Phase 2 row updated to `change opened` (accepted addendum per impl-review F1); §8 Freshness Ledger untouched — df89de6 (4.1 wording corrected in impl-review F2)
 
 ### Phase 5: PIT validation at the retained threshold
 

@@ -127,7 +127,7 @@ The classic test base for this project. Recommendations are grounded in
 - Search: **none** in session — fall back to Context7 + local config; checked: 2026-06-22
 - Runtime/browser: **`cursor-ide-browser` MCP present** in this session (previously none) — an in-session, interactive browser driver useful for *prototyping/verifying* a Phase-3 HTMX journey during implementation. **It is NOT the committed suite:** it runs only inside the agent session, never on the headless `ubuntu-latest` CI runner, so the CI-gated browser smoke tier needs a real JVM dependency (Playwright-Java, §4 row above). Phase-3 server-side flows still use `MockMvc`; only the HTMX-swap smoke journeys use the browser; checked: 2026-07-02
 - Provider/platform: **Linear** — issue tracking; possible quality-gate relevance (CI/issue status), not used as a test surface; checked: 2026-06-22
-- Mutation: **`info.solidsoft.pitest` 1.19.0 + `pitest-junit5-plugin` 1.2.3** — version contract grounded against the Java 21 / Gradle 9.4.1 / Spring Boot 4.0.6 stack; wiring deferred to S-05 (smoke-verify on Gradle 9.4.1 + confirm JUnit-Platform compat at that time); checked: 2026-06-25 — update: wiring subsequently landed at S-05 and is now live/CI-blocking (see §4 stack table + §6.5 cookbook)
+- Mutation: **`info.solidsoft.pitest` 1.19.0 + `pitest-junit5-plugin` 1.2.3** — version contract grounded against the Java 21 / Gradle 9.4.1 / Spring Boot 4.0.6 stack; checked: 2026-06-25. Wired and live at S-05: the gate runs CI-blocking at `mutationThreshold = 90` (see §4 stack table + §6.5 cookbook)
 
 ## 5. Quality Gates
 
