@@ -1,10 +1,10 @@
 ---
 change_id: testing-recommender-correctness
 title: Recommender correctness suite — test-plan rollout Phase 2
-status: impl_reviewed
+status: archived
 created: 2026-07-14
 updated: 2026-07-16
-archived_at: null
+archived_at: 2026-07-16T21:27:36Z
 ---
 
 ## Notes
