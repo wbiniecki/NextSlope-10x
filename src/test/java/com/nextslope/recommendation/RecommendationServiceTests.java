@@ -277,7 +277,12 @@ class RecommendationServiceTests {
 	}
 
 	@Test
-	void cardsCarryViewFactsAndATruthfulRationale() {
+	void cardsCarryTheExpectedViewFacts() {
+		// Scope: the card faithfully projects the resort's view facts (name, country, lifts, difficulty
+		// mix). The rationale is only smoke-checked for non-blankness here — a distinct, legitimate concern
+		// from whether it is *truthful*, which is proven separately against a real scorer breakdown in
+		// ScorerRationaleTruthfulnessTests (this test's former name over-claimed a truthfulness check it
+		// never actually made).
 		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of()));
 		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
 				resort(1L, "Solden", "Austria", 60, 30, 10),
@@ -292,5 +297,29 @@ class RecommendationServiceTests {
 		assertThat(top.totalLifts()).isEqualTo(20);
 		assertThat(top.difficultyMix()).isNotNull();
 		assertThat(top.rationale()).isNotBlank();
+	}
+
+	@Test
+	void cardsUseTheRealScorerBreakdownForRationale() {
+		// Guards the RecommendationService.toCard() handoff that direct scorer+builder composition (in
+		// ScorerRationaleTruthfulnessTests) bypasses: the emitted card's rationale must be derived from the
+		// resort's REAL scored breakdown. Profile MOSTLY_EASY / INTERMEDIATE / no region; the winner
+		// (60/30/10) scores real alignDiff 1.0 (>= the 0.6 threshold) and alignExp 0.80 → difficulty is the
+		// strongest qualifying axis (combined score 0.90). Two lower-scoring fillers (0.60, 0.275) keep the
+		// survivor count at 3 (no sparse short-circuit) and rank below the winner. The expected axis is
+		// derived from the fixture arithmetic, then asserted on the emitted ResortCard — not on a directly
+		// invoked builder result.
+		givenProfile(new ProfileSnapshot(
+				ExperienceLevel.INTERMEDIATE, DifficultyBand.MOSTLY_EASY, NoveltyPreference.REVISIT_OKAY, Set.of()));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Winner", "Austria", 60, 30, 10),
+				resort(2L, "FillerB", "France", 10, 30, 60),
+				resort(3L, "FillerC", "Italy", 0, 0, 100)));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		ResortCard top = result.cards().get(0);
+		assertThat(top.id()).isEqualTo(1L);
+		assertThat(top.rationale()).contains(DifficultyBand.MOSTLY_EASY.getLabel());
 	}
 }

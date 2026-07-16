@@ -448,27 +448,27 @@ Not applicable — no schema, data, or runtime-config changes in this test-only 
 
 #### Automated
 
-- [x] 1.1 New test class compiles and all four tests pass
-- [x] 1.2 Full suite still green (`./gradlew test`)
+- [x] 1.1 New test class compiles and all four tests pass — cef8068
+- [x] 1.2 Full suite still green (`./gradlew test`) — cef8068
 
 #### Manual
 
-- [x] 1.3 Confirm each test exercises the real scorer/filter and asserts a set/ordering delta, not a copied exact score
+- [x] 1.3 Confirm each test exercises the real scorer/filter and asserts a set/ordering delta, not a copied exact score — cef8068
 
 ### Phase 2: Rationale truthfulness vs. real scoring (Risk #1)
 
 #### Automated
 
-- [ ] 2.1 New truthfulness test class compiles and all four tests pass
-- [ ] 2.2 Renamed `cardsCarryTheExpectedViewFacts` test still passes
-- [ ] 2.3 New `cardsUseTheRealScorerBreakdownForRationale` service-handoff guard passes
-- [ ] 2.4 Full suite still green (`./gradlew test`)
+- [x] 2.1 New truthfulness test class compiles and all four tests pass
+- [x] 2.2 Renamed `cardsCarryTheExpectedViewFacts` test still passes
+- [x] 2.3 New `cardsUseTheRealScorerBreakdownForRationale` service-handoff guard passes
+- [x] 2.4 Full suite still green (`./gradlew test`)
 
 #### Manual
 
-- [ ] 2.5 Confirm no `ScoreBreakdown` is hand-constructed anywhere in the new class
-- [ ] 2.6 Confirm expected labels match `DifficultyBand`/`ExperienceLevel` real `getLabel()` strings
-- [ ] 2.7 Confirm the service-handoff guard derives its expected axis independently and asserts the emitted `ResortCard` rationale
+- [x] 2.5 Confirm no `ScoreBreakdown` is hand-constructed anywhere in the new class
+- [x] 2.6 Confirm expected labels match `DifficultyBand`/`ExperienceLevel` real `getLabel()` strings
+- [x] 2.7 Confirm the service-handoff guard derives its expected axis independently and asserts the emitted `ResortCard` rationale
 
 ### Phase 3: Visited/new-only hard-filter edges (Risk #3)
 
