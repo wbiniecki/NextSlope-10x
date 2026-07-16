@@ -17,6 +17,7 @@ import com.nextslope.profile.ExperienceLevel;
 import com.nextslope.profile.NoveltyPreference;
 import com.nextslope.profile.PreferenceProfileService;
 import com.nextslope.profile.ProfileSnapshot;
+import com.nextslope.resort.DifficultyMix;
 import com.nextslope.resort.Resort;
 import com.nextslope.resort.ResortRepository;
 import com.nextslope.visited.VisitedResortService;
@@ -277,7 +278,12 @@ class RecommendationServiceTests {
 	}
 
 	@Test
-	void cardsCarryViewFactsAndATruthfulRationale() {
+	void cardsCarryTheExpectedViewFacts() {
+		// Scope: the card faithfully projects the resort's view facts (name, country, lifts, difficulty
+		// mix). The rationale is only smoke-checked for non-blankness here — a distinct, legitimate concern
+		// from whether it is *truthful*, which is proven separately against a real scorer breakdown in
+		// ScorerRationaleTruthfulnessTests (this test's former name over-claimed a truthfulness check it
+		// never actually made).
 		givenProfile(profile(NoveltyPreference.REVISIT_OKAY, Set.of()));
 		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
 				resort(1L, "Solden", "Austria", 60, 30, 10),
@@ -286,11 +292,78 @@ class RecommendationServiceTests {
 
 		RecommendationResult result = service().recommend(USER_ID);
 
+		// Solden (id 1, 60/30/10) is the deterministic winner for this BEGINNER / MOSTLY_EASY profile
+		// (score 0.975 vs Kitzbuhel 0.95, Ischgl 0.925), so pin its identity and exact projected mix —
+		// presence-only checks would pass for any of the three all-Austrian survivors. Rationale is only
+		// smoke-checked here; its truthfulness is proven in ScorerRationaleTruthfulnessTests.
 		ResortCard top = result.cards().get(0);
-		assertThat(top.name()).isNotBlank();
+		assertThat(top.id()).isEqualTo(1L);
+		assertThat(top.name()).isEqualTo("Solden");
 		assertThat(top.country()).isEqualTo("Austria");
 		assertThat(top.totalLifts()).isEqualTo(20);
-		assertThat(top.difficultyMix()).isNotNull();
+		assertThat(top.difficultyMix()).isEqualTo(new DifficultyMix(60, 30, 10));
 		assertThat(top.rationale()).isNotBlank();
+	}
+
+	@Test
+	void cardsUseTheRealScorerBreakdownForRationale() {
+		// Guards the RecommendationService.toCard() handoff that direct scorer+builder composition (in
+		// ScorerRationaleTruthfulnessTests) bypasses: the emitted card's rationale must be derived from the
+		// resort's REAL scored breakdown. Profile MOSTLY_EASY / INTERMEDIATE / no region; the winner
+		// (60/30/10) scores real alignDiff 1.0 (>= the 0.6 threshold) and alignExp 0.80 → difficulty is the
+		// strongest qualifying axis (combined score 0.90). Two lower-scoring fillers (0.60, 0.275) keep the
+		// survivor count at 3 (no sparse short-circuit) and rank below the winner. The expected axis is
+		// derived from the fixture arithmetic, then asserted on the emitted ResortCard — not on a directly
+		// invoked builder result.
+		givenProfile(new ProfileSnapshot(
+				ExperienceLevel.INTERMEDIATE, DifficultyBand.MOSTLY_EASY, NoveltyPreference.REVISIT_OKAY, Set.of()));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Winner", "Austria", 60, 30, 10),
+				resort(2L, "FillerB", "France", 10, 30, 60),
+				resort(3L, "FillerC", "Italy", 0, 0, 100)));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		ResortCard top = result.cards().get(0);
+		assertThat(top.id()).isEqualTo(1L);
+		assertThat(top.rationale()).contains(DifficultyBand.MOSTLY_EASY.getLabel());
+	}
+
+	@Test
+	void allVisitedCandidatesUnderNewOnlyYieldsZeroSurvivorSparseWithRevisitSuggestion() {
+		// Edge: a NEW_ONLY user who has visited every active resort. The novelty hard filter removes all
+		// candidates, so zero survive — the specific zero-via-visited-exhaustion path (distinct from the
+		// zero-via-region-mismatch case covered by sparseExplanationForZeroSurvivorsSaysNoneMatched). The
+		// explanation must both report zero matches AND offer the NEW_ONLY-specific "allow revisits" escape.
+		givenProfile(profile(NoveltyPreference.NEW_ONLY, Set.of()));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Solden", "Austria", 60, 30, 10),
+				resort(2L, "Ischgl", "Austria", 55, 30, 15),
+				resort(3L, "Kitzbuhel", "Austria", 70, 20, 10)));
+		when(visitedResortService.visitedResortIds(USER_ID)).thenReturn(Set.of(1L, 2L, 3L));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isSparse()).isTrue();
+		assertThat(result.cards()).isEmpty();
+		assertThat(result.explanation()).contains("couldn't find any").contains("allowing revisits");
+	}
+
+	@Test
+	void emptyVisitedListUnderNewOnlyBehavesLikeNoVisitedResorts() {
+		// Edge: a NEW_ONLY user with an explicitly empty visited list (not merely an unstubbed default).
+		// The novelty filter must be a no-op when nothing has been visited, so every active resort survives
+		// and all three are recommended — proving empty-set semantics rather than incidental mock behavior.
+		givenProfile(profile(NoveltyPreference.NEW_ONLY, Set.of()));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Solden", "Austria", 60, 30, 10),
+				resort(2L, "Ischgl", "Austria", 55, 30, 15),
+				resort(3L, "Kitzbuhel", "Austria", 70, 20, 10)));
+		when(visitedResortService.visitedResortIds(USER_ID)).thenReturn(Set.of());
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isRecommendations()).isTrue();
+		assertThat(cardIds(result)).containsExactlyInAnyOrder(1L, 2L, 3L);
 	}
 }
