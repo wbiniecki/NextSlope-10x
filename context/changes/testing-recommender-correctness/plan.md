@@ -474,18 +474,18 @@ Not applicable — no schema, data, or runtime-config changes in this test-only 
 
 #### Automated
 
-- [x] 3.1 New edge-case tests pass
-- [x] 3.2 Full suite still green (`./gradlew test`)
+- [x] 3.1 New edge-case tests pass — b07ebe1
+- [x] 3.2 Full suite still green (`./gradlew test`) — b07ebe1
 
 #### Manual
 
-- [x] 3.3 Deliberate-break check: commenting out the `NEW_ONLY` visited-filter line fails `allVisitedCandidatesUnderNewOnlyYieldsZeroSurvivorSparseWithRevisitSuggestion`, then restore
+- [x] 3.3 Deliberate-break check: commenting out the `NEW_ONLY` visited-filter line fails `allVisitedCandidatesUnderNewOnlyYieldsZeroSurvivorSparseWithRevisitSuggestion`, then restore — b07ebe1
 
 ### Phase 4: Docs reconciliation
 
 #### Manual
 
-- [ ] 4.1 §4/§5/§6.5 read end-to-end, no stale "not wired"/"deferred" PIT language remains, §3 Status and §8 Freshness Ledger untouched
+- [x] 4.1 §4/§5/§6.5 read end-to-end, no stale "not wired"/"deferred" PIT language remains, §3 Status and §8 Freshness Ledger untouched
 
 ### Phase 5: PIT validation at the retained threshold
 

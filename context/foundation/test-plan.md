@@ -92,7 +92,7 @@ orchestrator updates Status as artifacts appear on disk.
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
 | 1 | Access-control & privacy regression net | Lock the current auth surface and ship a reusable per-route gating + ownership/IDOR + admin-authz test pattern every later slice extends | #4, #5 | web-slice + integration | complete | context/archive/2026-06-23-testing-access-control-privacy-net/ |
-| 2 | Recommender correctness suite | Prove all-axes matching, the visited/new-only hard filter, and a truthful rationale for the north-star recommendation flow, plus a recommender-scoped mutation-testing gate (gated on S-05 shipping) | #1, #2, #3 | unit + integration + mutation (PIT, recommender packages only) | not started | — |
+| 2 | Recommender correctness suite | Prove all-axes matching, the visited/new-only hard filter, and a truthful rationale for the north-star recommendation flow, plus a recommender-scoped mutation-testing gate (gated on S-05 shipping) | #1, #2, #3 | unit + integration + mutation (PIT, recommender packages only) | change opened | context/changes/testing-recommender-correctness/ |
 | 3 | End-to-end user-flow coverage | Walk the real journeys (signup → profile → browse → mark-visited → recommend; admin-create → appears in browse) with `MockMvc`/integration, **plus a small isolated browser smoke tier for the HTMX in-place swaps `MockMvc` can't see** (mark-visited toggle; recommend → three-result render + progress indicator). Prereqs S-02/03/04/05 all `done` → unblocked | #1–#5 (flow-level) | integration + browser smoke (isolated source set / task) | implementing | context/archive/2026-07-12-testing-browser-e2e-smoke/ (browser-smoke half — shipped; server-side `MockMvc` journey half — still open) |
 
 **Status vocabulary** (fixed — parser literals): `not started` →
@@ -120,7 +120,7 @@ The classic test base for this project. Recommendations are grounded in
 | data slice | `@DataJpaTest` + H2 (PostgreSQL mode) | (BOM) | Repository/entity mapping against local engine |
 | prod-engine integration | `@SpringBootTest @Testcontainers` Postgres 16 | (BOM) | Dual-engine migration proof; CI gate (AGENTS.md mandate) |
 | e2e / browser smoke (HTMX only) | **Playwright for Java** (`com.microsoft.playwright:playwright`); Selenium/Selenide = heavier alternative, HtmlUnit rejected (JS engine too weak for modern HTMX) | 1.61.0 (Maven Central latest, `lastUpdated 2026-06-29`); checked: 2026-07-02 | **Strategy change 2026-07-02.** Small isolated tier for the client-side HTMX swaps `MockMvc` can't see. Playwright-Java recommended for its bundled browser download, first-class headless on `ubuntu-latest`, and auto-waiting (reduces HTMX-swap flakiness). Tool choice is now **decided and shipped** (`testing-browser-e2e-smoke`, 2026-07-12) — a committed CI dependency. Runs as `@SpringBootTest(webEnvironment = RANDOM_PORT)` + seeded H2, isolated as its own source set / Gradle task with a dedicated headless CI step (keep `./gradlew test` fast). **Not the `cursor-ide-browser` MCP** — that is an in-session interactive driver, not a committed CI dependency |
-| mutation testing (recommender only) | `info.solidsoft.pitest` Gradle plugin + `pitest-junit5-plugin` | plugin 1.19.0 / `junit5PluginVersion` 1.2.3 | Java 21 ✓ (plugin needs 17+); Gradle 9.4.1 ✓ (≥ plugin min 8.4, but plugin's Gradle-9 support is "initial"/smoke-tested vs 9.0 at release → smoke-verify `./gradlew pitest` once at S-05 wiring). `pitest-junit5-plugin` documents JUnit-Platform support to 1.10 "and probably above"; Spring Boot 4 ships a newer platform → verify at wiring. **Not wired today** — deferred to S-05 (`three-resort-recommendation`); scoped to recommender packages only, never repo-wide |
+| mutation testing (recommender only) | `info.solidsoft.pitest` Gradle plugin + `pitest-junit5-plugin` | plugin 1.19.0 / `junit5PluginVersion` 1.2.3 | Java 21 ✓ (plugin needs 17+); Gradle 9.4.1 ✓ (≥ plugin min 8.4, but plugin's Gradle-9 support is "initial"/smoke-tested vs 9.0 at release → smoke-verify `./gradlew pitest` once at S-05 wiring). `pitest-junit5-plugin` documents JUnit-Platform support to 1.10 "and probably above"; Spring Boot 4 ships a newer platform → verify at wiring. **Wired and live** — the `pitest {}` gate (`build.gradle:114-122`) runs as a blocking CI step (`.github/workflows/ci.yml:36-40`) at `mutationThreshold = 90` (first green run scored 94%); scoped to recommender packages only, never repo-wide |
 
 **Stack grounding tools (current session):**
 - Docs: **Context7** — can validate Spring Boot 4 / Thymeleaf / spring-security-test APIs and HTMX fragment patterns when wiring Phase 2/3 tests; checked: 2026-06-22
@@ -141,7 +141,7 @@ phase lands; before that, the gate is `planned`.
 | dual-engine migration check (Testcontainers Postgres) | CI on push/PR | required (AGENTS.md mandate) | H2↔Postgres DDL drift, entity↔schema mismatch |
 | access-control + IDOR suite | local + CI | required after §3 Phase 1 | unprotected new routes, cross-user data exposure |
 | recommender correctness suite | local + CI | required after §3 Phase 2 | guardrail violations (untruthful rationale, dropped axis, visited leak) |
-| recommender mutation-score gate (PIT, scoped to recommender packages) | local + CI | required after §3 Phase 2 | surviving mutants in scorer/filter/rationale logic (weak/tautological assertions). Threshold: a high package-scoped mutation score, exact % calibrated when S-05 lands — never repo-wide |
+| recommender mutation-score gate (PIT, scoped to recommender packages) | local + CI | required — **live & CI-blocking today** (wired at S-05: `build.gradle:114-122`, `.github/workflows/ci.yml:36-40`). The gate already exists; only its *threshold calibration* is finalized when the §3 Phase 2 correctness tests land | surviving mutants in scorer/filter/rationale logic (weak/tautological assertions). Threshold: a high package-scoped mutation score, exact % calibrated when S-05 lands — never repo-wide |
 | user-flow integration | CI on PR | required after §3 Phase 3 | broken end-to-end journeys (server-side, via `MockMvc`/integration) |
 | HTMX browser smoke (isolated) | CI on PR — **own headless steps** (`playwrightInstall` → `e2eTest` Gradle tasks in `.github/workflows/ci.yml`), not folded into `./gradlew test` | **required (enforced 2026-07-12** via `testing-browser-e2e-smoke`; blocking, no `continue-on-error`) | broken client-side HTMX in-place swaps (mark-visited toggle, recommend render + progress indicator) that server-side tests structurally can't see. Must run headless on `ubuntu-latest`; the in-session `cursor-ide-browser` MCP does NOT satisfy this gate |
 
@@ -225,10 +225,11 @@ S-01 patterns carry a real reference test; the rest read
   (expected values from user input, never the generator) — a tautological assertion lets
   mutants survive silently. Keep recommender unit tests plain JUnit 5 + AssertJ (no full Spring
   context) so mutants are killed fast.
-- **Deferred to S-05**: the gate is **not wired today**. The `pitest {}` block, the exact
-  `mutationThreshold` %, the final recommender package names, the CI cadence, and the Gradle
-  9.4.1 smoke check are all resolved in the S-05 (`three-resort-recommendation`) plan when the
-  recommender code exists. Extend that scaffolding then; don't re-derive it.
+- **Wired and live** (resolved at S-05): the gate exists and blocks CI today. The `pitest {}`
+  block (`build.gradle:114-122`) pins the plugin (1.19.0 / `junit5PluginVersion` 1.2.3), scopes
+  `targetClasses`/`targetTests` to `com.nextslope.recommendation.*`, and sets
+  `mutationThreshold = 90`; `.github/workflows/ci.yml:36-40` runs `./gradlew pitest` as a blocking
+  step. Extend this existing scaffolding when adding recommender coverage; don't re-derive it.
 
 ### 6.6 Adding an end-to-end user-flow test
 
