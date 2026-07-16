@@ -322,4 +322,42 @@ class RecommendationServiceTests {
 		assertThat(top.id()).isEqualTo(1L);
 		assertThat(top.rationale()).contains(DifficultyBand.MOSTLY_EASY.getLabel());
 	}
+
+	@Test
+	void allVisitedCandidatesUnderNewOnlyYieldsZeroSurvivorSparseWithRevisitSuggestion() {
+		// Edge: a NEW_ONLY user who has visited every active resort. The novelty hard filter removes all
+		// candidates, so zero survive — the specific zero-via-visited-exhaustion path (distinct from the
+		// zero-via-region-mismatch case covered by sparseExplanationForZeroSurvivorsSaysNoneMatched). The
+		// explanation must both report zero matches AND offer the NEW_ONLY-specific "allow revisits" escape.
+		givenProfile(profile(NoveltyPreference.NEW_ONLY, Set.of()));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Solden", "Austria", 60, 30, 10),
+				resort(2L, "Ischgl", "Austria", 55, 30, 15),
+				resort(3L, "Kitzbuhel", "Austria", 70, 20, 10)));
+		when(visitedResortService.visitedResortIds(USER_ID)).thenReturn(Set.of(1L, 2L, 3L));
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isSparse()).isTrue();
+		assertThat(result.cards()).isEmpty();
+		assertThat(result.explanation()).contains("couldn't find any").contains("allowing revisits");
+	}
+
+	@Test
+	void emptyVisitedListUnderNewOnlyBehavesLikeNoVisitedResorts() {
+		// Edge: a NEW_ONLY user with an explicitly empty visited list (not merely an unstubbed default).
+		// The novelty filter must be a no-op when nothing has been visited, so every active resort survives
+		// and all three are recommended — proving empty-set semantics rather than incidental mock behavior.
+		givenProfile(profile(NoveltyPreference.NEW_ONLY, Set.of()));
+		when(resortRepository.findByActiveTrueOrderByCountryAscNameAsc()).thenReturn(List.of(
+				resort(1L, "Solden", "Austria", 60, 30, 10),
+				resort(2L, "Ischgl", "Austria", 55, 30, 15),
+				resort(3L, "Kitzbuhel", "Austria", 70, 20, 10)));
+		when(visitedResortService.visitedResortIds(USER_ID)).thenReturn(Set.of());
+
+		RecommendationResult result = service().recommend(USER_ID);
+
+		assertThat(result.isRecommendations()).isTrue();
+		assertThat(cardIds(result)).containsExactlyInAnyOrder(1L, 2L, 3L);
+	}
 }

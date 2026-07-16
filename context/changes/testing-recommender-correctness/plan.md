@@ -459,27 +459,27 @@ Not applicable — no schema, data, or runtime-config changes in this test-only 
 
 #### Automated
 
-- [x] 2.1 New truthfulness test class compiles and all four tests pass
-- [x] 2.2 Renamed `cardsCarryTheExpectedViewFacts` test still passes
-- [x] 2.3 New `cardsUseTheRealScorerBreakdownForRationale` service-handoff guard passes
-- [x] 2.4 Full suite still green (`./gradlew test`)
+- [x] 2.1 New truthfulness test class compiles and all four tests pass — e469cc3
+- [x] 2.2 Renamed `cardsCarryTheExpectedViewFacts` test still passes — e469cc3
+- [x] 2.3 New `cardsUseTheRealScorerBreakdownForRationale` service-handoff guard passes — e469cc3
+- [x] 2.4 Full suite still green (`./gradlew test`) — e469cc3
 
 #### Manual
 
-- [x] 2.5 Confirm no `ScoreBreakdown` is hand-constructed anywhere in the new class
-- [x] 2.6 Confirm expected labels match `DifficultyBand`/`ExperienceLevel` real `getLabel()` strings
-- [x] 2.7 Confirm the service-handoff guard derives its expected axis independently and asserts the emitted `ResortCard` rationale
+- [x] 2.5 Confirm no `ScoreBreakdown` is hand-constructed anywhere in the new class — e469cc3
+- [x] 2.6 Confirm expected labels match `DifficultyBand`/`ExperienceLevel` real `getLabel()` strings — e469cc3
+- [x] 2.7 Confirm the service-handoff guard derives its expected axis independently and asserts the emitted `ResortCard` rationale — e469cc3
 
 ### Phase 3: Visited/new-only hard-filter edges (Risk #3)
 
 #### Automated
 
-- [ ] 3.1 New edge-case tests pass
-- [ ] 3.2 Full suite still green (`./gradlew test`)
+- [x] 3.1 New edge-case tests pass
+- [x] 3.2 Full suite still green (`./gradlew test`)
 
 #### Manual
 
-- [ ] 3.3 Deliberate-break check: commenting out the `NEW_ONLY` visited-filter line fails `allVisitedCandidatesUnderNewOnlyYieldsZeroSurvivorSparseWithRevisitSuggestion`, then restore
+- [x] 3.3 Deliberate-break check: commenting out the `NEW_ONLY` visited-filter line fails `allVisitedCandidatesUnderNewOnlyYieldsZeroSurvivorSparseWithRevisitSuggestion`, then restore
 
 ### Phase 4: Docs reconciliation
 
