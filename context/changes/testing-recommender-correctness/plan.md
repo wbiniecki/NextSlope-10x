@@ -485,15 +485,24 @@ Not applicable — no schema, data, or runtime-config changes in this test-only 
 
 #### Manual
 
-- [x] 4.1 §4/§5/§6.5 read end-to-end, no stale "not wired"/"deferred" PIT language remains, §3 Status and §8 Freshness Ledger untouched
+- [x] 4.1 §4/§5/§6.5 read end-to-end, no stale "not wired"/"deferred" PIT language remains, §3 Status and §8 Freshness Ledger untouched — df89de6
 
 ### Phase 5: PIT validation at the retained threshold
 
 #### Automated
 
-- [ ] 5.1 `./gradlew pitest` passes against the retained threshold of 90
-- [ ] 5.2 Full suite still green (`./gradlew test`)
+- [x] 5.1 `./gradlew pitest` passes against the retained threshold of 90
+- [x] 5.2 Full suite still green (`./gradlew test`)
 
 #### Manual
 
-- [ ] 5.3 Confirm `mutationThreshold = 90`, record the achieved score, and resolve or document every surviving mutant
+- [x] 5.3 Confirm `mutationThreshold = 90`, record the achieved score, and resolve or document every surviving mutant
+
+#### Mutation result (PIT 1.22.1, `com.nextslope.recommendation.*`, 2026-07-16)
+
+- **Achieved mutation score: 94% (63/67 killed); test strength 95% (63/66); line coverage 98% (87/89). Gate `mutationThreshold = 90` retained (`build.gradle:121`) — pass.** 16 tests examined, 67 mutations generated, 154 test runs (2.3 per mutation).
+- **Targeted scorer/filter/rationale behavior is fully killed (100%):** `WeightedDistanceScorer` 16/16, `RecommendationService` 24/24, `RationaleBuilder` 15/15, `ScoringConfig` 2/2. No genuine surviving mutant in the behavior this change targets, so no test needed strengthening.
+  - **Four non-killed mutants — all equivalent/cosmetic and outside the targeted behavior; identical to the S-05-accepted list (`context/archive/2026-06-26-three-resort-recommendation/refinement-brief.md:116-125`), so Phases 1–3 introduced zero new survivors:**
+  - `RecommendationConfig.scoringConfig()` — `NULL_RETURNS` NO_COVERAGE. Spring `@Bean` factory returning `ScoringConfig.defaults()`; the plain-JUnit recommender tests construct `ScoringConfig.defaults()` directly and never boot the context (by design, to keep PIT fast), so this wiring line is exercised only by the excluded `@SpringBootTest` integration test. No truthfulness/determinism signal.
+  - `RecommendationResult.isRecommendations()` / `isSparse()` / `isNoProfile()` — `TRUE_RETURNS` SURVIVED on each. Trivial discriminated-union accessors (`kind == Kind.X`); the `NEGATE_CONDITIONALS` variant of each is KILLED, only the degenerate always-`true` form survives. Value-type accessors, not scorer/filter/rationale logic.
+- **Disposition:** no test strengthening or gate change. Per the S-05 precedent, if refinement ever adds real branching to any of these, add a killing test rather than lowering the gate.
