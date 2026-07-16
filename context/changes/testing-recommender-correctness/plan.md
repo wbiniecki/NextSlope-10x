@@ -491,12 +491,12 @@ Not applicable — no schema, data, or runtime-config changes in this test-only 
 
 #### Automated
 
-- [x] 5.1 `./gradlew pitest` passes against the retained threshold of 90
-- [x] 5.2 Full suite still green (`./gradlew test`)
+- [x] 5.1 `./gradlew pitest` passes against the retained threshold of 90 — d5af33f
+- [x] 5.2 Full suite still green (`./gradlew test`) — d5af33f
 
 #### Manual
 
-- [x] 5.3 Confirm `mutationThreshold = 90`, record the achieved score, and resolve or document every surviving mutant
+- [x] 5.3 Confirm `mutationThreshold = 90`, record the achieved score, and resolve or document every surviving mutant — d5af33f
 
 #### Mutation result (PIT 1.22.1, `com.nextslope.recommendation.*`, 2026-07-16)
 
