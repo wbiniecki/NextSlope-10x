@@ -824,26 +824,26 @@ never applied.
 
 #### Automated
 
-- [x] 5.1 `npm run verify` passes all fixtures despite the embedded adversarial instruction
-- [x] 5.2 Harness exits non-zero when an expectation is corrupted
-- [x] 5.3 `sample-diff.patch` passes `git apply --check` against `main`
+- [x] 5.1 `npm run verify` passes all fixtures despite the embedded adversarial instruction — 03152e6
+- [x] 5.2 Harness exits non-zero when an expectation is corrupted — 03152e6
+- [x] 5.3 `sample-diff.patch` passes `git apply --check` against `main` — 03152e6
 
 #### Manual
 
-- [x] 5.4 Findings name the actual planted defects with truthful justifications
-- [x] 5.5 IDOR finding is absent from the `sample-diff-broken` run (deliberate break)
-- [x] 5.6 `clean-diff.patch` produces no findings (false-positive control)
-- [x] 5.7 Cost stays within `$0.50`; turn count has no unexpected `error_max_turns`
+- [x] 5.4 Findings name the actual planted defects with truthful justifications — 03152e6
+- [x] 5.5 IDOR finding is absent from the `sample-diff-broken` run (deliberate break) — 03152e6
+- [x] 5.6 `clean-diff.patch` produces no findings (false-positive control) — 03152e6
+- [x] 5.7 Cost stays within `$0.50`; turn count has no unexpected `error_max_turns` — 03152e6
 
 ### Phase 6: Governance — Tooling-Zone Carve-Out and Package Conventions
 
 #### Automated
 
-- [ ] 6.1 `./gradlew build` still succeeds
-- [ ] 6.2 `npm run verify` still passes
+- [x] 6.1 `./gradlew build` still succeeds
+- [x] 6.2 `npm run verify` still passes
 
 #### Manual
 
-- [ ] 6.3 Amended hard rule unambiguously permits `packages/code-reviewer`
-- [ ] 6.4 Agent run over this change's own diff produces no "no JS build step" violation
-- [ ] 6.5 Root `AGENTS.md` still reads cleanly in one pass and has no Node section
+- [x] 6.3 Amended hard rule unambiguously permits `packages/code-reviewer`
+- [x] 6.4 Agent run over this change's own diff produces no "no JS build step" violation
+- [x] 6.5 Root `AGENTS.md` still reads cleanly in one pass and has no Node section
