@@ -48,3 +48,10 @@ out/
 
 ### Local file-backed H2 (application-local profile) ###
 /data/
+
+### Node tooling (packages/) ###
+packages/**/node_modules/
+packages/**/dist/
+packages/**/.env*
+/packages/code-reviewer/review.json
+/packages/code-reviewer/review.md

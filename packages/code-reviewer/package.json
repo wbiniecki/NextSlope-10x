@@ -1,0 +1,28 @@
+{
+  "name": "@nextslope/code-reviewer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Diff review agent scoring NextSlope's own conventions via the Claude Agent SDK",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "review": "node --import tsx/esm src/cli.ts",
+    "verify": "node --import tsx/esm scripts/verify.ts",
+    "smoke": "node --import tsx/esm scripts/smoke.ts",
+    "test": "node --import tsx/esm --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "0.3.224",
+    "@anthropic-ai/sdk": "^0.93.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
