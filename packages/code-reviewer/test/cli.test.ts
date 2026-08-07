@@ -58,10 +58,23 @@ const CRITICAL_FINDING: Finding = {
 	message: "Edits an already-applied migration.",
 };
 
-/** Fails the test if a session is ever started. */
-const forbiddenRunner: SessionRunner = () => {
-	throw new Error("A session was started when none should have been");
-};
+/**
+ * Fails the test if a session is ever started, and counts attempts so the caller can assert the
+ * negative directly. The throw alone would be a fragile guarantee: it is observable only because
+ * `run()` happens not to wrap `deps.runSession` in a `try`, so adding one — a reasonable-looking
+ * hardening change — would swallow it and leave these tests green with the property gone.
+ */
+function forbiddenRunner(): { runner: SessionRunner; calls: number } {
+	const state = {
+		runner: (() => {}) as unknown as SessionRunner,
+		calls: 0,
+	};
+	state.runner = (() => {
+		state.calls += 1;
+		throw new Error("A session was started when none should have been");
+	}) as SessionRunner;
+	return state;
+}
 
 function runnerReturning(verdict: Verdict): { runner: SessionRunner; calls: number } {
 	const state = { runner: (() => {}) as unknown as SessionRunner, calls: 0 };
@@ -242,16 +255,22 @@ describe("run", () => {
 
 	describe("input rejection", () => {
 		it("exits 1 for a missing diff file without starting a session", async () => {
-			const code = await run(["--diff-file", "nope.patch"], depsWith(forbiddenRunner));
+			const forbidden = forbiddenRunner();
+
+			const code = await run(["--diff-file", "nope.patch"], depsWith(forbidden.runner));
 
 			assert.equal(code, EXIT_INVALID_INPUT);
+			assert.equal(forbidden.calls, 0);
 			assert.match(errors.join("\n"), /Cannot read --diff-file/);
 		});
 
 		it("exits 1 for an unreadable diff path without starting a session", async () => {
-			const code = await run(["--diff-file", "."], depsWith(forbiddenRunner));
+			const forbidden = forbiddenRunner();
+
+			const code = await run(["--diff-file", "."], depsWith(forbidden.runner));
 
 			assert.equal(code, EXIT_INVALID_INPUT);
+			assert.equal(forbidden.calls, 0);
 			assert.match(errors.join("\n"), /not a regular file/);
 		});
 
@@ -259,18 +278,23 @@ describe("run", () => {
 			const path = join(workspace, "huge.patch");
 			const bytes = MAX_DIFF_BYTES + 1;
 			writeFileSync(path, "x".repeat(bytes), "utf8");
+			const forbidden = forbiddenRunner();
 
-			const code = await run(["--diff-file", path], depsWith(forbiddenRunner));
+			const code = await run(["--diff-file", path], depsWith(forbidden.runner));
 
 			assert.equal(code, EXIT_INVALID_INPUT);
+			assert.equal(forbidden.calls, 0);
 			assert.match(errors.join("\n"), new RegExp(`${bytes} bytes`));
 			assert.match(errors.join("\n"), new RegExp(`${MAX_DIFF_BYTES}-byte limit`));
 		});
 
 		it("exits 1 for an invalid invocation and prints usage", async () => {
-			const code = await run(["--fail-on", "blocker"], depsWith(forbiddenRunner));
+			const forbidden = forbiddenRunner();
+
+			const code = await run(["--fail-on", "blocker"], depsWith(forbidden.runner));
 
 			assert.equal(code, EXIT_INVALID_INPUT);
+			assert.equal(forbidden.calls, 0);
 			assert.match(errors.join("\n"), /Usage: npm run review/);
 		});
 

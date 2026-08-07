@@ -52,8 +52,11 @@ out/
 ### Node tooling (packages/) ###
 packages/**/node_modules/
 packages/**/dist/
-/packages/code-reviewer/review.json
-/packages/code-reviewer/review.md
+
+### Code-reviewer artifacts — unanchored: --out defaults to the process cwd, ###
+### so these land wherever the CLI is invoked from, not just in the package.  ###
+review.json
+review.md
 
 ### Secrets — any dotenv file, at any depth ###
 .env

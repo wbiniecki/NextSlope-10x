@@ -12,8 +12,10 @@ is not part of the deployed artifact.
 ## Prerequisites
 
 - Node `>=20.6.0`
-- `ANTHROPIC_API_KEY` exported in your shell. There is no `--api-key` flag: the SDK spawns a native
-  Claude Code binary that reads the credential from the environment.
+- A credential the SDK can resolve. There is no `--api-key` flag: the SDK spawns a native Claude
+  Code binary that finds its own, from `ANTHROPIC_API_KEY` if exported or from a Claude Code CLI
+  login otherwise. Export the key for CI and for reproducibility; a CLI login is fine locally.
+  `npm run smoke` prints `apiKeySource`, which tells you which one actually won.
 
 ## Install
 
@@ -45,9 +47,11 @@ npm run review -- --diff-file ../../my-change.patch
 | `--verbose` | off | Logs diff size, configured and resolved model, turn count, and per-run cost. |
 | `--help` | — | Prints usage. |
 
-The turn budget is fixed at 3. Repo reads (`Read`, `Glob`, `Grep`, all read-only) are available as
+The turn budget is fixed at 3. Reads (`Read`, `Glob`, `Grep`, all read-only) are available as
 optional enrichment, but every criterion is answerable from the diff alone, which is what keeps the
-budget workable.
+budget workable. Those reads are scoped to `src/` — not the repo root — so a review session cannot
+reach `.env`, `.claude/`, or the local database, whose contents would otherwise be one prompt
+injection away from a published PR comment.
 
 ## Outputs
 
@@ -77,7 +81,8 @@ from `findings` and a threshold you would have to duplicate.
 a criterion score table, then findings grouped by file with line anchors. It is meant to be pasted
 into a PR comment unedited.
 
-Both files are gitignored at the package root.
+Both filenames are gitignored repo-wide, not just here — `--out` defaults to the process working
+directory, so a run started from the repo root writes them there.
 
 ## Exit codes
 

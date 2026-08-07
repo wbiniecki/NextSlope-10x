@@ -194,7 +194,9 @@ this gate is green.
 `review`, `verify`, `test`, and `typecheck` scripts the rest of the plan refers to. Keep it private
 so it is never publishable.
 
-**Contract**: `"type": "module"`, `"private": true`, `engines.node >= 18`. Dependencies:
+**Contract**: `"type": "module"`, `"private": true`, `engines.node >= 20.6.0` (raised from the
+originally planned `>= 18` during Phase 1: every script runs `node --import tsx/esm`, which on 18
+fails with an unknown-flag error instead of npm's engine-mismatch message). Dependencies:
 `@anthropic-ai/claude-agent-sdk@0.3.224`, `@anthropic-ai/sdk`, `@modelcontextprotocol/sdk`, `zod@^4`.
 Dev dependencies: `typescript`, `tsx` (or equivalent TS runner), `@types/node`. Scripts:
 `review`, `verify`, `test`, `typecheck`.
@@ -669,7 +671,7 @@ fixture patches to the working tree.
 
 **Intent**: Human-facing quickstart — what it does, how to run it, what the outputs mean.
 
-**Contract**: Prerequisites (Node ≥18, `ANTHROPIC_API_KEY`), install, the `review` and `verify`
+**Contract**: Prerequisites (Node ≥20.6.0, `ANTHROPIC_API_KEY`), install, the `review` and `verify`
 invocations, the default model / 200,000-byte diff limit / `$0.50` budget and their supported
 overrides, a description of `review.json` and `review.md`, and the exit-code table.
 

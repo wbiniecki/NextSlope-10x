@@ -22,8 +22,9 @@ governs the application, not this package.
 
 ## Commands
 
-- `npm install` — install; the lockfile is committed so CI's `npm ci` is reproducible. Never pass
-  `--omit=optional`: the native Claude Code binary ships as a per-platform optional dependency.
+- `npm install` — install; the lockfile is committed so the `npm ci` that 10X-19 will add to CI
+  resolves reproducibly (`ci.yml` has no Node step yet). Never pass `--omit=optional`: the native
+  Claude Code binary ships as a per-platform optional dependency.
 - `npm run review -- --diff-file <path>` — review one diff (real API call).
 - `npm run verify` — run all fixtures against `fixtures/expectations.json` (three real API calls).
 - `npm test` — unit tests via `node --test`; no network calls, none allowed.
@@ -56,7 +57,17 @@ them away.
 3. **`allowedTools` does not restrict anything** — it only auto-approves, and unlisted tools still
    fall through to `permissionMode`. Read-only is enforced by the separate restrictive `tools`
    allowlist (`Read`, `Glob`, `Grep`), with `disallowedTools: ["Write", "Edit", "Bash"]` as defense
-   in depth and `permissionMode: "dontAsk"` denying the rest.
+   in depth and `permissionMode: "dontAsk"` denying the rest. Read-only is not the same as harmless:
+   `cwd` is scoped to `src/` (`REVIEW_ROOT` in `cli.ts`), never the repo root, because finding text
+   lands verbatim in a PR comment and a session that can read `.env` or `.claude/` could publish it.
+
+   **Expect four tools, not three.** A live `system`/`init` reports
+   `["Glob","Grep","Read","StructuredOutput"]`. `StructuredOutput` is the SDK's end-turn carrier:
+   setting `outputFormat: { type: "json_schema" }` makes the session an end-turn tool session and
+   the model delivers its payload by calling that tool. It is injected by that option, not granted
+   by `tools` or `allowedTools`, and removing it would mean abandoning structured output — the
+   reason this package chose the Claude Agent SDK. It is not a permission leak, and a review of this
+   package should not report it as one.
 4. **Never set `options.env`.** It replaces the subprocess environment rather than merging into it,
    which drops `PATH` and `ANTHROPIC_API_KEY`.
 

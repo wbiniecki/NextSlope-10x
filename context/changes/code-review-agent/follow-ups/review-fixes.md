@@ -3,6 +3,39 @@
 Queued from `reviews/impl-review-phase-1.md` and from adaptations made during implementation. Each
 entry names the phase that must consume it.
 
+## 10X-19 — decide whether an auth failure should exit 1 rather than 2
+
+From F8 of the full-plan review (`reviews/impl-review.md`), deferred by the user on 2026-08-07.
+
+The plan's exit table assigns `1` to "startup/auth failure before a valid session result" and `2` to
+"success-without-`structured_output`". A real auth failure was observed arriving as exactly the
+second shape (`impl-review-phase-1.md:152-154`): `subtype: "success"` whose text was an
+authentication error. `agent.ts:184` therefore classifies it `missing_structured_output` → exit `2`,
+which `README.md` documents as "the review is worth retrying".
+
+Both plan rows are satisfiable and the code picked the more specific one, so this is a plan
+ambiguity rather than drift. It matters at CI time: a workflow that retries on `2` would burn
+retries on a bad credential instead of failing fast. Decide deliberately in 10X-19 — either accept
+the retry behavior and document it, or sniff the result text for an auth signature and reclassify
+to `startup_failure`.
+
+## 10X-19 — unit-test `src/agent.ts`
+
+From F5 of the full-plan review (`reviews/impl-review.md`), deferred by the user on 2026-08-07.
+
+`src/agent.ts` holds the most branching logic in the package and has no tests: eight failure kinds,
+the subtype-to-kind map at `:266-277`, the diagnostic composer at `:279-304`, the
+missing-`structured_output` guard at `:184`, the terminal-result-without-init guard at `:209`, and
+two stream-closed guards at `:226-257`. `test/cli.test.ts:195-217` covers `exitCodeForFailure`,
+which takes a failure kind as *input* and so proves nothing about whether one is ever produced
+correctly. The comment at `agent.ts:244-245` records that the no-result guard was learned the hard
+way, which is exactly the knowledge that should be pinned by a test.
+
+Approach: inject `query` as a dependency the way `cli.ts` injects `SessionRunner`, then drive
+`runStructuredSession` with a hand-written async generator yielding canned `system`/`init` and
+`result` messages. No network, no SDK. This matters more once CI runs the reviewer on every PR,
+because a misclassified failure kind is the difference between a retry and a hard stop.
+
 ## Phase 6 — document `StructuredOutput` as part of the expected tool surface
 
 From a Phase 2 implementation adaptation, approved by the user on 2026-08-07.

@@ -60,6 +60,19 @@ describe("verdictSchema", () => {
 		assert.equal(verdictSchema.safeParse(partial).success, false);
 	});
 
+	// The array length alone would let this through, and nothing downstream would notice: the
+	// markdown table would repeat one criterion and silently drop four, while `passed` and the exit
+	// code stayed normal.
+	it("rejects a verdict that scores one criterion several times", () => {
+		const duplicated = wellFormedVerdict();
+		const first = duplicated.criteria[0];
+		assert.ok(first !== undefined);
+		duplicated.criteria = duplicated.criteria.map(() => ({ ...first }));
+
+		assert.equal(duplicated.criteria.length, CRITERION_IDS.length);
+		assert.equal(verdictSchema.safeParse(duplicated).success, false);
+	});
+
 	it("rejects an unknown criterion id", () => {
 		const verdict = wellFormedVerdict();
 		const raw = JSON.parse(JSON.stringify(verdict));

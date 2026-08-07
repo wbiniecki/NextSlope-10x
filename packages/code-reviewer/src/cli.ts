@@ -17,6 +17,7 @@
  * validation, input rejection, exit-code mapping, artifact contents — is testable without a
  * network call or a real session.
  */
+import { randomBytes } from "node:crypto";
 import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -57,8 +58,20 @@ export const EXIT_NO_USABLE_RESULT = 2;
 export const EXIT_BLOCKED = 3;
 
 const CRITERIA_PATH = fileURLToPath(new URL("../prompts/criteria.md", import.meta.url));
-/** Repo root, so the session's read-only tools can optionally cross-reference the codebase. */
-const REPO_ROOT = fileURLToPath(new URL("../../../", import.meta.url));
+/**
+ * The only tree the session may read, deliberately the application sources rather than the repo
+ * root. Findings are free text that lands verbatim in `review.md`, which 10X-19 will post as a PR
+ * comment, so a session that can read `.env`, `.claude/settings.local.json`, `data/`, or `.neon` is
+ * one prompt injection away from publishing them. `src/` still covers everything the criteria cite:
+ * migrations and properties under `main/resources`, production code under `main/java`, and the e2e
+ * suite under `e2eTest/`.
+ *
+ * Consequence worth knowing: diff paths are repo-relative (`src/main/java/...`) while reads resolve
+ * against this root, so a cross-reference read needs the path without the `src/` prefix. Reads are
+ * optional enrichment for the rare ambiguous case — every criterion is answerable from the diff — so
+ * a mistaken path degrades to "no extra evidence" rather than a failed review.
+ */
+const REVIEW_ROOT = fileURLToPath(new URL("../../../src/", import.meta.url));
 
 export const USAGE = [
 	"Usage: npm run review -- --diff-file <path> [options]",
@@ -260,12 +273,18 @@ export async function run(argv: string[], deps: CliDeps): Promise<number> {
 	}
 
 	const result = await deps.runSession<Verdict>({
-		prompt: buildReviewPrompt({ criteriaMarkdown, diffText: diff.text }),
+		// Fresh per run: a delimiter the diff's author could predict is not a boundary, since a diff
+		// carrying the closing marker would smuggle its own text into instruction position.
+		prompt: buildReviewPrompt({
+			criteriaMarkdown,
+			diffText: diff.text,
+			nonce: randomBytes(12).toString("hex"),
+		}),
 		jsonSchema: verdictJsonSchema as Record<string, unknown>,
 		validate: validateVerdict,
 		model: options.model,
 		maxBudgetUsd: options.maxBudgetUsd,
-		cwd: REPO_ROOT,
+		cwd: REVIEW_ROOT,
 	});
 
 	if (!result.ok) {

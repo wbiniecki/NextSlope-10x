@@ -70,6 +70,15 @@ export const verdictSchema = z.object({
 	criteria: z
 		.array(criterionScoreSchema)
 		.length(CRITERION_IDS.length)
+		// Length alone would accept five copies of one criterion, and the failure would be silent:
+		// `render.ts` orders by `CRITERION_IDS.indexOf`, so the table would repeat one row and drop
+		// four while `passed` and the exit code looked entirely normal. The refinement does not
+		// survive into `verdictJsonSchema` — it belongs at the `safeParse` boundary in `cli.ts`,
+		// which is where model output is re-checked anyway.
+		.refine(
+			(criteria) => new Set(criteria.map((entry) => entry.id)).size === CRITERION_IDS.length,
+			{ error: "each criterion must be scored exactly once" },
+		)
 		.describe("One entry per criterion, scored even when the criterion is not violated."),
 	findings: z
 		.array(findingSchema)
