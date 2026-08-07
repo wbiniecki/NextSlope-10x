@@ -839,11 +839,11 @@ never applied.
 
 #### Automated
 
-- [x] 6.1 `./gradlew build` still succeeds
-- [x] 6.2 `npm run verify` still passes
+- [x] 6.1 `./gradlew build` still succeeds — 6d1c119
+- [x] 6.2 `npm run verify` still passes — 6d1c119
 
 #### Manual
 
-- [x] 6.3 Amended hard rule unambiguously permits `packages/code-reviewer`
-- [x] 6.4 Agent run over this change's own diff produces no "no JS build step" violation
-- [x] 6.5 Root `AGENTS.md` still reads cleanly in one pass and has no Node section
+- [x] 6.3 Amended hard rule unambiguously permits `packages/code-reviewer` — 6d1c119
+- [x] 6.4 Agent run over this change's own diff produces no "no JS build step" violation — 6d1c119
+- [x] 6.5 Root `AGENTS.md` still reads cleanly in one pass and has no Node section — 6d1c119
