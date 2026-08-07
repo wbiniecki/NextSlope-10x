@@ -797,28 +797,28 @@ never applied.
 
 #### Automated
 
-- [x] 3.1 `npm run typecheck` passes
-- [x] 3.2 Unit test asserts criterion ids in `criteria.md` and the schema enum match exactly
-- [x] 3.3 Unit test asserts the prompt contains all criteria and delimits the diff as untrusted data
+- [x] 3.1 `npm run typecheck` passes — a72f0fa
+- [x] 3.2 Unit test asserts criterion ids in `criteria.md` and the schema enum match exactly — a72f0fa
+- [x] 3.3 Unit test asserts the prompt contains all criteria and delimits the diff as untrusted data — a72f0fa
 
 #### Manual
 
-- [x] 3.4 Every `Source:` citation resolves to a real `AGENTS.md` section or `lessons.md` rule
-- [x] 3.5 Criteria read as scoring instructions, not implementation instructions
+- [x] 3.4 Every `Source:` citation resolves to a real `AGENTS.md` section or `lessons.md` rule — a72f0fa
+- [x] 3.5 Criteria read as scoring instructions, not implementation instructions — a72f0fa
 
 ### Phase 4: CLI, Verdict Policy, Rendering, and Exit Codes
 
 #### Automated
 
-- [ ] 4.1 `npm run typecheck` passes
-- [ ] 4.2 `npm test` passes: verdict policy, exit-code mapping, markdown rendering
-- [ ] 4.3 Invalid diff inputs exit `1` without attempting a session
-- [ ] 4.4 No test in this phase makes a network call
+- [x] 4.1 `npm run typecheck` passes
+- [x] 4.2 `npm test` passes: verdict policy, exit-code mapping, markdown rendering
+- [x] 4.3 Invalid diff inputs exit `1` without attempting a session
+- [x] 4.4 No test in this phase makes a network call
 
 #### Manual
 
-- [ ] 4.5 `review.md` is readable enough to paste into a PR comment unedited
-- [ ] 4.6 `--verbose` output makes per-run cost legible
+- [x] 4.5 `review.md` is readable enough to paste into a PR comment unedited
+- [x] 4.6 `--verbose` output makes per-run cost legible
 
 ### Phase 5: Fixtures and the Verification Harness
 
