@@ -786,25 +786,25 @@ never applied.
 - [x] 2.1 `npm run typecheck` passes — 2ce063d
 - [x] 2.2 Unit test asserts `$schema` is `http://json-schema.org/draft-07/schema#` — 2ce063d
 - [x] 2.3 Unit tests validate model-output and enriched review-report schema boundaries — 2ce063d
-- [x] 2.4 Live run returns parsed output with the read-only tools and pinned model
+- [x] 2.4 Live run returns parsed output with the read-only tools and pinned model — dc478b0
 
 #### Manual
 
-- [x] 2.5 Breaking the target to `draft-2020-12` fails visibly and the `$schema` test catches it
+- [x] 2.5 Breaking the target to `draft-2020-12` fails visibly and the `$schema` test catches it — dc478b0
 - [x] 2.6 No module other than `src/agent.ts` imports the SDK — 2ce063d
 
 ### Phase 3: Review Criteria and Prompt Assembly
 
 #### Automated
 
-- [ ] 3.1 `npm run typecheck` passes
-- [ ] 3.2 Unit test asserts criterion ids in `criteria.md` and the schema enum match exactly
-- [ ] 3.3 Unit test asserts the prompt contains all criteria and delimits the diff as untrusted data
+- [x] 3.1 `npm run typecheck` passes
+- [x] 3.2 Unit test asserts criterion ids in `criteria.md` and the schema enum match exactly
+- [x] 3.3 Unit test asserts the prompt contains all criteria and delimits the diff as untrusted data
 
 #### Manual
 
-- [ ] 3.4 Every `Source:` citation resolves to a real `AGENTS.md` section or `lessons.md` rule
-- [ ] 3.5 Criteria read as scoring instructions, not implementation instructions
+- [x] 3.4 Every `Source:` citation resolves to a real `AGENTS.md` section or `lessons.md` rule
+- [x] 3.5 Criteria read as scoring instructions, not implementation instructions
 
 ### Phase 4: CLI, Verdict Policy, Rendering, and Exit Codes
 
