@@ -783,15 +783,15 @@ never applied.
 
 #### Automated
 
-- [ ] 2.1 `npm run typecheck` passes
-- [ ] 2.2 Unit test asserts `$schema` is `http://json-schema.org/draft-07/schema#`
-- [ ] 2.3 Unit tests validate model-output and enriched review-report schema boundaries
+- [x] 2.1 `npm run typecheck` passes
+- [x] 2.2 Unit test asserts `$schema` is `http://json-schema.org/draft-07/schema#`
+- [x] 2.3 Unit tests validate model-output and enriched review-report schema boundaries
 - [ ] 2.4 Live run returns parsed output with the read-only tools and pinned model
 
 #### Manual
 
 - [ ] 2.5 Breaking the target to `draft-2020-12` fails visibly and the `$schema` test catches it
-- [ ] 2.6 No module other than `src/agent.ts` imports the SDK
+- [x] 2.6 No module other than `src/agent.ts` imports the SDK
 
 ### Phase 3: Review Criteria and Prompt Assembly
 
