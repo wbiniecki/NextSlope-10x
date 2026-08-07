@@ -24,6 +24,7 @@ async function main(): Promise<number> {
 	);
 
 	let sawInit = false;
+	let sawResult = false;
 
 	try {
 		for await (const message of query({
@@ -56,6 +57,7 @@ async function main(): Promise<number> {
 				}
 
 				console.log("result.result:", message.result.trim());
+				sawResult = true;
 			}
 		}
 	} catch (error) {
@@ -65,6 +67,11 @@ async function main(): Promise<number> {
 
 	if (!sawInit) {
 		console.error("No system/init message was received — the session never started.");
+		return 1;
+	}
+
+	if (!sawResult) {
+		console.error("The stream ended without a terminal result — the session did not answer.");
 		return 1;
 	}
 

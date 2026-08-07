@@ -52,6 +52,10 @@ out/
 ### Node tooling (packages/) ###
 packages/**/node_modules/
 packages/**/dist/
-packages/**/.env*
 /packages/code-reviewer/review.json
 /packages/code-reviewer/review.md
+
+### Secrets — any dotenv file, at any depth ###
+.env
+.env.*
+!.env.example

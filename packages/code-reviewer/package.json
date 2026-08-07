@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Diff review agent scoring NextSlope's own conventions via the Claude Agent SDK",
   "engines": {
-    "node": ">=18"
+    "node": ">=20.6.0"
   },
   "scripts": {
     "review": "node --import tsx/esm src/cli.ts",

@@ -768,16 +768,16 @@ never applied.
 
 #### Automated
 
-- [x] 1.1 `npm install` completes and produces a committed lockfile
-- [x] 1.2 `npm run typecheck` passes
-- [x] 1.3 `./gradlew build` succeeds with unchanged output
-- [x] 1.4 `git status` shows no `node_modules/` or `dist/` untracked
-- [x] 1.5 Smoke script exits 0 and prints a non-empty `claude_code_version`
+- [x] 1.1 `npm install` completes and produces a committed lockfile — 68da6c1
+- [x] 1.2 `npm run typecheck` passes — 68da6c1
+- [x] 1.3 `./gradlew build` succeeds with unchanged output — 68da6c1
+- [x] 1.4 `git status` shows no `node_modules/` or `dist/` untracked — 68da6c1
+- [x] 1.5 Smoke script exits 0 and prints a non-empty `claude_code_version` — 68da6c1
 
 #### Manual
 
-- [x] 1.6 `apiKeySource` confirms the intended credential was used
-- [x] 1.7 `claude_code_version` is 2.1.224 or later
+- [x] 1.6 `apiKeySource` confirms the intended credential was used — 68da6c1
+- [x] 1.7 `claude_code_version` is 2.1.224 or later — 68da6c1
 
 ### Phase 2: Verdict Schema and the Vendor-Isolated Agent Module
 
