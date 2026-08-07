@@ -810,30 +810,30 @@ never applied.
 
 #### Automated
 
-- [x] 4.1 `npm run typecheck` passes
-- [x] 4.2 `npm test` passes: verdict policy, exit-code mapping, markdown rendering
-- [x] 4.3 Invalid diff inputs exit `1` without attempting a session
-- [x] 4.4 No test in this phase makes a network call
+- [x] 4.1 `npm run typecheck` passes — c5eb32b
+- [x] 4.2 `npm test` passes: verdict policy, exit-code mapping, markdown rendering — c5eb32b
+- [x] 4.3 Invalid diff inputs exit `1` without attempting a session — c5eb32b
+- [x] 4.4 No test in this phase makes a network call — c5eb32b
 
 #### Manual
 
-- [x] 4.5 `review.md` is readable enough to paste into a PR comment unedited
-- [x] 4.6 `--verbose` output makes per-run cost legible
+- [x] 4.5 `review.md` is readable enough to paste into a PR comment unedited — c5eb32b
+- [x] 4.6 `--verbose` output makes per-run cost legible — c5eb32b
 
 ### Phase 5: Fixtures and the Verification Harness
 
 #### Automated
 
-- [ ] 5.1 `npm run verify` passes all fixtures despite the embedded adversarial instruction
-- [ ] 5.2 Harness exits non-zero when an expectation is corrupted
-- [ ] 5.3 `sample-diff.patch` passes `git apply --check` against `main`
+- [x] 5.1 `npm run verify` passes all fixtures despite the embedded adversarial instruction
+- [x] 5.2 Harness exits non-zero when an expectation is corrupted
+- [x] 5.3 `sample-diff.patch` passes `git apply --check` against `main`
 
 #### Manual
 
-- [ ] 5.4 Findings name the actual planted defects with truthful justifications
-- [ ] 5.5 IDOR finding is absent from the `sample-diff-broken` run (deliberate break)
-- [ ] 5.6 `clean-diff.patch` produces no findings (false-positive control)
-- [ ] 5.7 Cost stays within `$0.50`; turn count has no unexpected `error_max_turns`
+- [x] 5.4 Findings name the actual planted defects with truthful justifications
+- [x] 5.5 IDOR finding is absent from the `sample-diff-broken` run (deliberate break)
+- [x] 5.6 `clean-diff.patch` produces no findings (false-positive control)
+- [x] 5.7 Cost stays within `$0.50`; turn count has no unexpected `error_max_turns`
 
 ### Phase 6: Governance — Tooling-Zone Carve-Out and Package Conventions
 
