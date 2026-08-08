@@ -4,7 +4,7 @@ NextSlope is a Spring Boot 4 + Thymeleaf web app that recommends three ski resor
 
 ## Hard Rules
 
-- Single-tier stack: server-rendered Thymeleaf with Bootstrap 5 + HTMX via CDN. Do not introduce a JS build step, SPA framework, or Node tier. Full rationale: `@context/foundation/tech-stack.md`.
+- Single-tier stack **for the application**: server-rendered Thymeleaf with Bootstrap 5 + HTMX via CDN. Do not introduce a JS build step, SPA framework, or Node tier into the app. Full rationale: `@context/foundation/tech-stack.md`. Carve-out: `packages/` is a developer-tooling zone, outside the Gradle build and absent from the deployed artifact — Node/TypeScript there is expected and is not a violation of this rule.
 - Java 21 toolchain is pinned in `@build.gradle`; do not bump.
 - Remote: `git@github.com:wbiniecki/NextSlope-10x.git` (`main` tracks `origin/main`).
 - Recommendation logic must honor the PRD guardrails: always three results or an explicit explanation, truthful rationale, profile and visited-list privacy. See `@context/foundation/prd.md` → "Success Criteria → Guardrails".
@@ -18,6 +18,7 @@ NextSlope is a Spring Boot 4 + Thymeleaf web app that recommends three ski resor
 - `src/test/java/com/nextslope/` — JUnit 5 tests; class suffix `*Tests` (see `NextslopeApplicationTests.java`).
 - `context/foundation/` — PRD, tech-stack hand-off, shape-notes (authoritative product/architecture).
 - `context/changes/` — change logs (e.g., bootstrap verification).
+- `packages/code-reviewer/` — Node/TypeScript diff-review agent; developer tooling, not shipped. Conventions live in `packages/code-reviewer/AGENTS.md`.
 - `.cursor/skills/` — 10x workflow skills you can invoke.
 
 ## Build, Test & Development Commands
