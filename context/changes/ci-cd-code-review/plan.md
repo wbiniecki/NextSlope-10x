@@ -610,7 +610,7 @@ existing is migrated.
 
 #### Manual
 
-- [x] 2.3 Dry/manual run confirms `npm ci` resolves inside `packages/code-reviewer` and the CLI runs to completion
+- [x] 2.3 Dry/manual run confirms `npm ci` resolves inside `packages/code-reviewer` and the CLI runs to completion — e2e6a1c
 
 ### Phase 3: Consumer Workflow
 
@@ -621,7 +621,7 @@ existing is migrated.
 
 #### Manual
 
-- [x] 3.3 `workflow_dispatch` run confirms the diff file is non-empty and matches expected changes
+- [x] 3.3 `workflow_dispatch` run confirms the diff file is non-empty and matches expected changes — e2e6a1c
 
 ### Phase 4: PR Comment & Label Side-Effects
 
@@ -631,9 +631,9 @@ existing is migrated.
 
 #### Manual
 
-- [x] 4.2 Real draft PR shows exactly one label and exactly one new comment per push
-- [x] 4.3 Adding `ai-cr:review` re-triggers a run and removes the label immediately
-- [x] 4.4 Each comment's provenance footer names the commit SHA it reviewed
+- [x] 4.2 Real draft PR shows exactly one label and exactly one new comment per push — e2e6a1c
+- [x] 4.3 Adding `ai-cr:review` re-triggers a run and removes the label immediately — e2e6a1c
+- [x] 4.4 Each comment's provenance footer names the commit SHA it reviewed — e2e6a1c
 
 ### Phase 5: Promptfoo Eval Suite
 
@@ -650,18 +650,18 @@ existing is migrated.
 
 #### Manual
 
-- [x] 6.1 Screenshot/log capture of the Actions pipeline view showing the push-triggered smoke run
-- [x] 6.2 Job logs from the real-PR run
-- [x] 6.3 The AI-review comment visible on the PR
-- [x] 6.4 The label swap and `ai-cr:review` consumption observed live
+- [x] 6.1 Screenshot/log capture of the Actions pipeline view showing the push-triggered smoke run — e2e6a1c
+- [x] 6.2 Job logs from the real-PR run — e2e6a1c
+- [x] 6.3 The AI-review comment visible on the PR — e2e6a1c
+- [x] 6.4 The label swap and `ai-cr:review` consumption observed live — e2e6a1c
 
 ### Phase 7: Documentation & Governance
 
 #### Automated
 
-- [x] 7.1 The temporary `push:` trigger is gone from `review.yml`
-- [x] 7.2 `./gradlew build` behaves identically to before this change
+- [x] 7.1 The temporary `push:` trigger is gone from `review.yml` — 4ac495f
+- [x] 7.2 `./gradlew build` behaves identically to before this change — 4ac495f
 
 #### Manual
 
-- [ ] 7.3 Root and package-level `AGENTS.md` read end-to-end make the two-workflow setup clear
+- [x] 7.3 Root and package-level `AGENTS.md` read end-to-end make the two-workflow setup clear — 4ac495f
