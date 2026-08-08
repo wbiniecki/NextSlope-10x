@@ -1,0 +1,105 @@
+name: AI code reviewer
+description: >-
+  Runs the packages/code-reviewer CLI against a unified diff and reports the outcome as a verdict
+  string plus the directory holding review.json / review.md.
+
+# Self-contained on purpose: the action owns Node, npm, and the CLI so the calling workflow only
+# has to know about GitHub's PR surface. See context/changes/ci-cd-code-review/requirements.md.
+
+inputs:
+  api-key:
+    description: Anthropic API key, forwarded to the CLI step as ANTHROPIC_API_KEY.
+    required: true
+  diff-file:
+    description: >-
+      Path to a unified diff on the runner. A path, never the diff text: $GITHUB_OUTPUT caps at
+      1 MB and its parser is line-oriented, which a multi-line diff corrupts.
+    required: true
+  pr-title:
+    description: >-
+      Pull request title. Declared for forward compatibility only — the review prompt does not
+      consume it today.
+    required: false
+    default: ''
+  pr-body:
+    description: >-
+      Pull request body. Declared for forward compatibility only — the review prompt does not
+      consume it today.
+    required: false
+    default: ''
+  node-version:
+    description: Node major to run the CLI on. The package requires >=20.6.0 for --import tsx/esm.
+    required: false
+    default: '22'
+
+outputs:
+  verdict:
+    description: >-
+      One of passed | invalid_input | no_result | blocked, mapped from the CLI's exit code
+      (0/1/2/3). Codes 1 and 2 mean no usable verdict was produced.
+    value: ${{ steps.review.outputs.verdict }}
+  report-dir:
+    description: Directory containing review.json and review.md.
+    value: ${{ steps.review.outputs.report-dir }}
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve the reviewer package directory
+      id: resolve
+      shell: bash
+      run: |
+        set -euo pipefail
+        # The action sits at .github/actions/ai-reviewer, so the package it wraps is three levels
+        # up and then into packages/. Resolved from github.action_path rather than
+        # github.workspace so the action does not depend on where the caller checked out.
+        package_dir="$(cd "${{ github.action_path }}/../../../packages/code-reviewer" && pwd)"
+        echo "package-dir=$package_dir" >> "$GITHUB_OUTPUT"
+
+    - name: Set up Node
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install reviewer dependencies
+      shell: bash
+      working-directory: ${{ steps.resolve.outputs.package-dir }}
+      # Never --omit=optional: the SDK's native Claude Code binary ships as a per-platform
+      # optional dependency, and skipping it yields "Native CLI binary not found" at runtime.
+      run: npm ci
+
+    - name: Review the diff
+      id: review
+      shell: bash
+      working-directory: ${{ steps.resolve.outputs.package-dir }}
+      env:
+        ANTHROPIC_API_KEY: ${{ inputs.api-key }}
+        DIFF_FILE: ${{ inputs.diff-file }}
+        REPORT_DIR: ${{ runner.temp }}/ai-reviewer
+      run: |
+        set -uo pipefail
+        mkdir -p "$REPORT_DIR"
+        echo "report-dir=$REPORT_DIR" >> "$GITHUB_OUTPUT"
+
+        # Exit codes 1-3 are meaningful outcomes for the caller to branch on, not action
+        # failures, so `set -e` stays off and the numeric code is captured explicitly.
+        # `continue-on-error: true` would expose only success/failure and `cmd || true` would
+        # discard $? — either collapses the four-way verdict into pass/fail and silently drops
+        # the "no misleading label on a missing verdict" behaviour.
+        npm run review --silent -- --diff-file "$DIFF_FILE" --out "$REPORT_DIR" --verbose
+        code=$?
+
+        case "$code" in
+          0) verdict=passed ;;
+          1) verdict=invalid_input ;;
+          2) verdict=no_result ;;
+          3) verdict=blocked ;;
+          *)
+            echo "::error::Reviewer exited $code, outside the documented 0-3 contract." >&2
+            exit 1
+            ;;
+        esac
+
+        echo "Reviewer exited $code -> verdict=$verdict"
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        echo "verdict=$verdict" >> "$GITHUB_OUTPUT"

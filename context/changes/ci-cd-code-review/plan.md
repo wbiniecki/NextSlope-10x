@@ -595,18 +595,18 @@ existing is migrated.
 
 #### Automated
 
-- [x] 1.1 File exists and is valid markdown
+- [x] 1.1 File exists and is valid markdown — d021daa
 
 #### Manual
 
-- [x] 1.2 Requirements doc reads as a standalone spec someone could implement from without the Linear issue open
+- [x] 1.2 Requirements doc reads as a standalone spec someone could implement from without the Linear issue open — d021daa
 
 ### Phase 2: Secret Provisioning & Composite Action
 
 #### Automated
 
-- [ ] 2.1 `action.yml` is valid YAML
-- [ ] 2.2 Third-party actions pinned to a commit SHA with a version comment
+- [x] 2.1 `action.yml` is valid YAML
+- [x] 2.2 Third-party actions pinned to a commit SHA with a version comment
 
 #### Manual
 
