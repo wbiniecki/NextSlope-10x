@@ -610,7 +610,7 @@ existing is migrated.
 
 #### Manual
 
-- [ ] 2.3 Dry/manual run confirms `npm ci` resolves inside `packages/code-reviewer` and the CLI runs to completion
+- [x] 2.3 Dry/manual run confirms `npm ci` resolves inside `packages/code-reviewer` and the CLI runs to completion
 
 ### Phase 3: Consumer Workflow
 
@@ -621,7 +621,7 @@ existing is migrated.
 
 #### Manual
 
-- [ ] 3.3 `workflow_dispatch` run confirms the diff file is non-empty and matches expected changes
+- [x] 3.3 `workflow_dispatch` run confirms the diff file is non-empty and matches expected changes
 
 ### Phase 4: PR Comment & Label Side-Effects
 
@@ -631,9 +631,9 @@ existing is migrated.
 
 #### Manual
 
-- [ ] 4.2 Real draft PR shows exactly one label and exactly one new comment per push
-- [ ] 4.3 Adding `ai-cr:review` re-triggers a run and removes the label immediately
-- [ ] 4.4 Each comment's provenance footer names the commit SHA it reviewed
+- [x] 4.2 Real draft PR shows exactly one label and exactly one new comment per push
+- [x] 4.3 Adding `ai-cr:review` re-triggers a run and removes the label immediately
+- [x] 4.4 Each comment's provenance footer names the commit SHA it reviewed
 
 ### Phase 5: Promptfoo Eval Suite
 
@@ -650,10 +650,10 @@ existing is migrated.
 
 #### Manual
 
-- [ ] 6.1 Screenshot/log capture of the Actions pipeline view showing the push-triggered smoke run
-- [ ] 6.2 Job logs from the real-PR run
-- [ ] 6.3 The AI-review comment visible on the PR
-- [ ] 6.4 The label swap and `ai-cr:review` consumption observed live
+- [x] 6.1 Screenshot/log capture of the Actions pipeline view showing the push-triggered smoke run
+- [x] 6.2 Job logs from the real-PR run
+- [x] 6.3 The AI-review comment visible on the PR
+- [x] 6.4 The label swap and `ai-cr:review` consumption observed live
 
 ### Phase 7: Documentation & Governance
 
