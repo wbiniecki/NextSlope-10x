@@ -1,9 +1,10 @@
 ---
 change_id: code-review-agent
 title: Code review agent on Claude Agent SDK as a standalone packages/ package
-status: impl_reviewed
+status: archived
 created: 2026-08-07
-updated: 2026-08-07
+updated: 2026-08-08
+archived_at: 2026-08-08T07:49:07Z
 ---
 
 ## Notes
