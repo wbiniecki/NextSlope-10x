@@ -605,8 +605,8 @@ existing is migrated.
 
 #### Automated
 
-- [x] 2.1 `action.yml` is valid YAML
-- [x] 2.2 Third-party actions pinned to a commit SHA with a version comment
+- [x] 2.1 `action.yml` is valid YAML — 924d349
+- [x] 2.2 Third-party actions pinned to a commit SHA with a version comment — 924d349
 
 #### Manual
 
@@ -616,8 +616,8 @@ existing is migrated.
 
 #### Automated
 
-- [ ] 3.1 Workflow file is valid YAML
-- [ ] 3.2 `ci.yml` is untouched
+- [x] 3.1 Workflow file is valid YAML
+- [x] 3.2 `ci.yml` is untouched
 
 #### Manual
 

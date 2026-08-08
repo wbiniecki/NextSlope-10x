@@ -1,0 +1,92 @@
+name: AI code review
+
+# Deliberately separate from ci.yml and NOT a required check: ci.yml's Gradle gates are
+# deterministic, an LLM verdict is probabilistic, and folding them together would let a flaky
+# verdict block correct code. See context/changes/ci-cd-code-review/requirements.md.
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled]
+
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, tag, or SHA to review.
+        required: true
+      base:
+        description: Base ref the diff is computed against.
+        required: false
+        default: main
+
+  # TEMPORARY — removed in Phase 7 before this change merges. workflow_dispatch only fires for
+  # workflow files already on the default branch, so it cannot smoke-test review.yml before this
+  # change lands on main; a push event runs the workflow file from the pushed branch itself.
+  push:
+    branches: ['feature/10x-19-*']
+
+# Declaring any scope sets every unlisted one to none, so contents: read is required or the
+# checkout below fails on the first step. Labels go through the issues API (Phase 4).
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  Review:
+    # Label events are noisy: only ai-cr:review is a retry request, everything else (including
+    # this workflow's own ai-cr:passed/ai-cr:failed writes) must not spend an API call.
+    if: github.event.action != 'labeled' || github.event.label.name == 'ai-cr:review'
+    runs-on: ubuntu-latest
+    # Without this the job inherits the 6-hour default; a session hanging before the SDK's own
+    # budget guard trips would burn this private repo's monthly runner-minute quota.
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          # Full history: a shallow checkout has no merge base and yields an empty diff silently.
+          fetch-depth: 0
+          ref: >-
+            ${{ (github.event_name == 'pull_request' && github.event.pull_request.head.sha)
+            || (github.event_name == 'workflow_dispatch' && inputs.ref)
+            || github.sha }}
+
+      - name: Compute the merge-base diff
+        shell: bash
+        env:
+          # Read through env rather than inlined into the script: inputs.ref/base are
+          # caller-supplied on workflow_dispatch.
+          BASE_REF: >-
+            ${{ (github.event_name == 'pull_request' && github.base_ref)
+            || (github.event_name == 'workflow_dispatch' && inputs.base)
+            || 'main' }}
+          DIFF_FILE: ${{ runner.temp }}/pr.diff
+        run: |
+          set -euo pipefail
+          # set -euo pipefail rather than &&-chaining: a merge-base failure must fail the step
+          # loudly instead of leaving an absent diff the reviewer would report as invalid_input —
+          # a shell bug masquerading as a reviewer problem.
+          git fetch --no-tags origin "+refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF"
+          base_sha="$(git merge-base "origin/$BASE_REF" HEAD)"
+          git diff "$base_sha" HEAD > "$DIFF_FILE"
+
+          echo "Base ref: $BASE_REF ($base_sha)"
+          echo "Diff bytes: $(wc -c < "$DIFF_FILE")"
+          git diff --stat "$base_sha" HEAD
+
+      - name: Review the diff
+        id: review
+        uses: ./.github/actions/ai-reviewer
+        with:
+          api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # A path, never the diff text: $GITHUB_OUTPUT caps at 1 MB and its line-oriented
+          # parser corrupts a multi-line diff.
+          diff-file: ${{ runner.temp }}/pr.diff
+          # Empty on push and workflow_dispatch; declared for forward compatibility only.
+          pr-title: ${{ github.event.pull_request.title }}
+          pr-body: ${{ github.event.pull_request.body }}
