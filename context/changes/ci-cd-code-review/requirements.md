@@ -40,10 +40,37 @@ verdict enough confidence to be promoted.
 
 | Input | Required | Purpose |
 |---|---|---|
-| `api-key` | yes | `ANTHROPIC_API_KEY`, passed to the CLI step as an environment variable — never through `options.env` inside the SDK, which replaces rather than merges the subprocess environment |
+| `api-key` | one of | `ANTHROPIC_API_KEY` — a metered Claude Console key |
+| `oauth-token` | one of | `CLAUDE_CODE_OAUTH_TOKEN` — a subscription credential from `claude setup-token` |
 | `diff-file` | yes | Filesystem **path** to a unified diff on the runner |
 | `pr-title` | no | Declared for forward compatibility; not wired into the prompt today |
 | `pr-body` | no | Same |
+
+**Exactly one credential**, enforced by a guard step that runs before `npm ci` so a missing secret
+costs seconds rather than a full install. Supplying both is rejected rather than resolved by
+precedence: Claude Code ranks `ANTHROPIC_API_KEY` above `CLAUDE_CODE_OAUTH_TOKEN`, so it would
+silently pick the key and leave no way to tell which account paid for a verdict. The guard tests
+only emptiness, never a value.
+
+The credential reaches the model through the environment of the CLI step — never through
+`options.env` inside the SDK, which replaces rather than merges the subprocess environment and
+would drop `PATH` along with the credential. That the SDK sees it at all depends on `agent.ts`
+deliberately never setting `options.env` (trap 4 in `packages/code-reviewer/AGENTS.md`), which is
+what lets the spawned native binary inherit it.
+
+### Why this project uses the OAuth token
+
+There is no Anthropic Console org to mint an API key from, and no free alternative: GitHub Models —
+the standard zero-cost-inference-in-CI route via `GITHUB_TOKEN` — was fully retired on 2026-07-30,
+and pointing `ANTHROPIC_BASE_URL` at a gateway relocates the bill rather than removing it. A
+subscription OAuth token reuses the existing Enterprise seat at no additional cost.
+
+Two constraints come with it. The token expires after a year and must be re-minted. And Anthropic's
+Agent SDK documentation steers custom SDK-built agents toward API keys while blessing subscription
+OAuth for the official CLI and `anthropics/claude-code-action`; the narrow reading is that the
+restriction targets developers *offering* claude.ai login in a product, which a private single-author
+repository is not. The `api-key` input stays declared so switching back is a one-line workflow edit
+if that reading ever needs revisiting.
 
 The diff is passed as a path, never as an inline string. `$GITHUB_OUTPUT` has a 1 MB cap and a
 line-oriented parser that a multi-line diff corrupts, so the workflow writes the diff to a file under

@@ -44,6 +44,8 @@ fixtures score as expected — run manually, never wired into CI.
 | Composite action output shape | `verdict` (status string) **plus** `report-dir` | `render.ts`'s own doc comment requires posting `review.md` verbatim, which a single status output can't carry | Plan |
 | Promptfoo CI wiring | None — manual `npm run promptfoo` only | Matches the existing `npm run verify` cost posture ("costs money... never a watch task"); Linear's scope lists only the config file, not a workflow | Plan |
 | `review.json` schema | Left frozen; provenance added workflow-side only (commit SHA, not model) | Every CI need is already served by today's shape, so keeping the producer untouched means a Phase 3-6 failure can only be workflow-side | User |
+| CI credential | Subscription OAuth token (`CLAUDE_CODE_OAUTH_TOKEN`), not an API key | No Console org exists to mint a key from, and no free path remains (GitHub Models retired 2026-07-30); the token reuses the existing Enterprise seat at no extra cost | User (during Phase 2) |
+| Action credential surface | Accepts `api-key` **or** `oauth-token`, exactly one | Keeps the API-key path a one-line edit away if the SDK-docs steer toward keys ever needs honoring; rejecting both avoids a silent precedence win | User (during Phase 2) |
 
 ## Scope
 
