@@ -38,9 +38,14 @@ inputs:
     required: false
     default: ''
   node-version:
-    description: Node major to run the CLI on. The package requires >=20.6.0 for --import tsx/esm.
+    description: >-
+      Node major to run the CLI on. The package requires >=20.6.0 for --import tsx/esm, but the
+      binding constraint is npm's major, not Node's: `npm ci` refuses a lockfile whose dependency
+      tree a different npm major resolves differently. Node 24 ships npm 11, which is what writes
+      package-lock.json locally. Node 22 ships npm 10 and fails with "Missing <pkg> from lock file".
+      Re-check this pin whenever the local npm major moves.
     required: false
-    default: '22'
+    default: '24'
 
 outputs:
   verdict:

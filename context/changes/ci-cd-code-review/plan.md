@@ -639,12 +639,12 @@ existing is migrated.
 
 #### Automated
 
-- [x] 5.1 The provider loads under ESM/`tsx`: `node --check` plus an `import()` smoke
-- [x] 5.2 `npm test` still passes
+- [x] 5.1 The provider loads under ESM/`tsx`: `node --check` plus an `import()` smoke — 569472b
+- [x] 5.2 `npm test` still passes — 569472b
 
 #### Manual
 
-- [x] 5.3 `npm run promptfoo` produces a comparison table and all fixture assertions pass
+- [x] 5.3 `npm run promptfoo` produces a comparison table and all fixture assertions pass — 569472b
 
 ### Phase 6: End-to-End Verification
 
