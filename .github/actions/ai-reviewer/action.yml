@@ -103,28 +103,6 @@ runs:
       # optional dependency, and skipping it yields "Native CLI binary not found" at runtime.
       run: npm ci
 
-    # TEMPORARY — diagnostic for the "API Error: 400 (no body)" seen on the first real run.
-    # `npm run smoke` is the package's own isolation tool: smallest possible session, no
-    # outputFormat/structured output, and it prints apiKeySource plus the resolved model. If it
-    # succeeds while the review below still 400s, the credential is fine and the fault is in the
-    # structured-output request or the prompt size. Remove once diagnosed.
-    - name: Credential smoke (temporary diagnostic)
-      shell: bash
-      continue-on-error: true
-      working-directory: ${{ steps.resolve.outputs.package-dir }}
-      env:
-        API_KEY: ${{ inputs.api-key }}
-        OAUTH_TOKEN: ${{ inputs.oauth-token }}
-      run: |
-        set +e
-        if [[ -n "$API_KEY" ]]; then
-          export ANTHROPIC_API_KEY="$API_KEY"
-        else
-          export CLAUDE_CODE_OAUTH_TOKEN="$OAUTH_TOKEN"
-        fi
-        npm run smoke --silent
-        echo "smoke exited $?"
-
     - name: Review the diff
       id: review
       shell: bash

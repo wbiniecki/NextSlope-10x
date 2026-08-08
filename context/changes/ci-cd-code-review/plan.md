@@ -659,8 +659,8 @@ existing is migrated.
 
 #### Automated
 
-- [ ] 7.1 The temporary `push:` trigger is gone from `review.yml`
-- [ ] 7.2 `./gradlew build` behaves identically to before this change
+- [x] 7.1 The temporary `push:` trigger is gone from `review.yml`
+- [x] 7.2 `./gradlew build` behaves identically to before this change
 
 #### Manual
 

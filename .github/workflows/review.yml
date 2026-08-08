@@ -19,12 +19,6 @@ on:
         required: false
         default: main
 
-  # TEMPORARY — removed in Phase 7 before this change merges. workflow_dispatch only fires for
-  # workflow files already on the default branch, so it cannot smoke-test review.yml before this
-  # change lands on main; a push event runs the workflow file from the pushed branch itself.
-  push:
-    branches: ['feature/10x-19-*']
-
 # Declaring any scope sets every unlisted one to none, so contents: read is required or the
 # checkout below fails on the first step. Labels go through the issues API (Phase 4).
 permissions:
