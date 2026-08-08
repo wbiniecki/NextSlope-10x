@@ -46,6 +46,24 @@ jobs:
     # budget guard trips would burn this private repo's monthly runner-minute quota.
     timeout-minutes: 15
     steps:
+      # Consumed up front, before the review runs, so a maintainer sees their click register
+      # immediately instead of wondering whether it took: a one-shot button, not a state flag.
+      - name: Consume the ai-cr:review retry label
+        if: github.event.action == 'labeled' && github.event.label.name == 'ai-cr:review'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            try {
+              await github.rest.issues.removeLabel({
+                ...context.repo,
+                issue_number: context.payload.pull_request.number,
+                name: 'ai-cr:review',
+              });
+            } catch (error) {
+              // Someone may have removed it between the event and this step.
+              if (error.status !== 404) throw error;
+            }
+
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -83,10 +101,101 @@ jobs:
         id: review
         uses: ./.github/actions/ai-reviewer
         with:
-          api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Subscription credential from `claude setup-token`, not a metered API key: this repo
+          # has no Console org to mint one from. Swap to `api-key:` if that ever changes.
+          oauth-token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           # A path, never the diff text: $GITHUB_OUTPUT caps at 1 MB and its line-oriented
           # parser corrupts a multi-line diff.
           diff-file: ${{ runner.temp }}/pr.diff
           # Empty on push and workflow_dispatch; declared for forward compatibility only.
           pr-title: ${{ github.event.pull_request.title }}
           pr-body: ${{ github.event.pull_request.body }}
+
+      # The comment and label steps below are PR-only, so the job summary is where a push or
+      # workflow_dispatch smoke run's rendered report is read.
+      - name: Publish the report to the job summary
+        if: "!cancelled()"
+        shell: bash
+        env:
+          REPORT_DIR: ${{ steps.review.outputs.report-dir }}
+          VERDICT: ${{ steps.review.outputs.verdict }}
+        run: |
+          set -uo pipefail
+          if [ -n "${REPORT_DIR:-}" ] && [ -f "$REPORT_DIR/review.md" ]; then
+            cat "$REPORT_DIR/review.md" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No report was rendered (verdict: ${VERDICT:-none})." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Both side-effects need an issue_number, which no push or workflow_dispatch payload
+      # carries — hence the event guard on each. !cancelled() rather than always() so a verdict
+      # still lands as a label when a later step (the comment post) fails, while a push
+      # superseded by cancel-in-progress stays silent instead of reporting a run it aborted.
+      - name: Swap the pass/fail label
+        # Quoted: a bare leading "!" is a YAML tag indicator.
+        if: "!cancelled() && github.event_name == 'pull_request'"
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          VERDICT: ${{ steps.review.outputs.verdict }}
+        with:
+          script: |
+            const swap = {
+              passed: { add: 'ai-cr:passed', remove: 'ai-cr:failed' },
+              blocked: { add: 'ai-cr:failed', remove: 'ai-cr:passed' },
+            }[process.env.VERDICT];
+
+            // invalid_input and no_result mean no verdict was produced, so either label would be
+            // a claim this run never made. Leave whatever is there alone.
+            if (swap === undefined) {
+              core.info(`verdict=${process.env.VERDICT || 'none'} — leaving labels untouched.`);
+              return;
+            }
+
+            const issue_number = context.payload.pull_request.number;
+            await github.rest.issues.addLabels({
+              ...context.repo,
+              issue_number,
+              labels: [swap.add],
+            });
+
+            try {
+              await github.rest.issues.removeLabel({ ...context.repo, issue_number, name: swap.remove });
+            } catch (error) {
+              // 404 is the normal case: on a first run the counterpart label was never applied.
+              if (error.status !== 404) throw error;
+            }
+
+      - name: Post the review comment
+        if: "!cancelled() && github.event_name == 'pull_request'"
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          VERDICT: ${{ steps.review.outputs.verdict }}
+          REPORT_DIR: ${{ steps.review.outputs.report-dir }}
+          REVIEWED_SHA: ${{ github.event.pull_request.head.sha }}
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const { VERDICT, REPORT_DIR, REVIEWED_SHA } = process.env;
+
+            // No report exists for these two, so the comment explains the exit code instead.
+            const explanation = {
+              invalid_input: 'The reviewer exited `1` — invalid invocation or input, or a startup/auth failure before a session ran. No review was produced.',
+              no_result: 'The reviewer exited `2` — a session started but produced no usable result. No review was produced.',
+            };
+
+            const rendered = (VERDICT === 'passed' || VERDICT === 'blocked') && REPORT_DIR
+              ? fs.readFileSync(path.join(REPORT_DIR, 'review.md'), 'utf8')
+              : explanation[VERDICT] ?? `The review step did not complete (verdict: ${VERDICT || 'none'}).`;
+
+            // A new comment per push, never an upsert, so this footer is the only thing telling a
+            // reader which commit a given comment describes. It deliberately does not name the
+            // model: review.json carries no run provenance and the workflow passes no --model.
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const footer = `Reviewed commit \`${REVIEWED_SHA}\` · [workflow run](${runUrl})`;
+
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `${rendered.trimEnd()}\n\n---\n${footer}\n`,
+            });

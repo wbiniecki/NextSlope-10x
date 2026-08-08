@@ -616,8 +616,8 @@ existing is migrated.
 
 #### Automated
 
-- [x] 3.1 Workflow file is valid YAML
-- [x] 3.2 `ci.yml` is untouched
+- [x] 3.1 Workflow file is valid YAML — c2fa932
+- [x] 3.2 `ci.yml` is untouched — c2fa932
 
 #### Manual
 
@@ -627,7 +627,7 @@ existing is migrated.
 
 #### Automated
 
-- [ ] 4.1 Workflow file remains valid YAML
+- [x] 4.1 Workflow file remains valid YAML
 
 #### Manual
 
