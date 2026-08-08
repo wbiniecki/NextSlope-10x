@@ -46,6 +46,7 @@ fixtures score as expected — run manually, never wired into CI.
 | `review.json` schema | Left frozen; provenance added workflow-side only (commit SHA, not model) | Every CI need is already served by today's shape, so keeping the producer untouched means a Phase 3-6 failure can only be workflow-side | User |
 | CI credential | Subscription OAuth token (`CLAUDE_CODE_OAUTH_TOKEN`), not an API key | No Console org exists to mint a key from, and no free path remains (GitHub Models retired 2026-07-30); the token reuses the existing Enterprise seat at no extra cost | User (during Phase 2) |
 | Action credential surface | Accepts `api-key` **or** `oauth-token`, exactly one | Keeps the API-key path a one-line edit away if the SDK-docs steer toward keys ever needs honoring; rejecting both avoids a silent precedence win | User (during Phase 2) |
+| Reviewed diff scope | Lockfiles excluded (`package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`); nothing else | Reverses the original "no path filters" non-goal. Adding promptfoo grew `package-lock.json` by 474 KB, so this change's own PR diff (~581 KB) would trip the 200 KB `MAX_DIFF_BYTES` guard and review nothing — a lockfile no criterion applies to would have blocked review of all the hand-written code | User (during Phase 5) |
 
 ## Scope
 

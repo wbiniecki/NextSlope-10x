@@ -91,7 +91,14 @@ jobs:
           # a shell bug masquerading as a reviewer problem.
           git fetch --no-tags origin "+refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF"
           base_sha="$(git merge-base "origin/$BASE_REF" HEAD)"
-          git diff "$base_sha" HEAD > "$DIFF_FILE"
+          # Lockfiles are excluded and nothing else is. They are machine-generated, no review
+          # criterion can apply to them, and one dependency install produces a diff several times
+          # the CLI's 200 KB MAX_DIFF_BYTES guard — which would make every review on that PR exit 1
+          # and report invalid_input, reviewing none of the hand-written code.
+          git diff "$base_sha" HEAD -- . \
+            ':(exclude)**/package-lock.json' \
+            ':(exclude)**/pnpm-lock.yaml' \
+            ':(exclude)**/yarn.lock' > "$DIFF_FILE"
 
           echo "Base ref: $BASE_REF ($base_sha)"
           echo "Diff bytes: $(wc -c < "$DIFF_FILE")"

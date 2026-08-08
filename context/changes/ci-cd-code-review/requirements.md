@@ -79,8 +79,11 @@ line-oriented parser that a multi-line diff corrupts, so the workflow writes the
 ### To the workflow
 
 - The PR's merge-base diff, computed after `actions/checkout` with `fetch-depth: 0` (a shallow
-  checkout yields an empty diff silently). The full diff is used — no path filters. The CLI's own
-  `MAX_DIFF_BYTES` (200 KB) guard is the cost ceiling.
+  checkout yields an empty diff silently). **Lockfiles are the one exclusion** — `package-lock.json`,
+  `pnpm-lock.yaml`, `yarn.lock` — because they are machine-generated, no criterion can apply to
+  them, and a single dependency install produces a diff several times the CLI's `MAX_DIFF_BYTES`
+  (200 KB) guard, which would exit `1` and leave all the hand-written code in that PR unreviewed.
+  Nothing else is filtered; the guard remains the cost ceiling.
 - `secrets.ANTHROPIC_API_KEY`, provisioned as a repository secret.
 - Three repository labels that must exist before the first run: `ai-cr:passed`, `ai-cr:failed`,
   `ai-cr:review`.
