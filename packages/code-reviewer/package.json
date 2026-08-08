@@ -11,6 +11,8 @@
     "review": "node --import tsx/esm src/cli.ts",
     "verify": "node --import tsx/esm scripts/verify.ts",
     "smoke": "node --import tsx/esm scripts/smoke.ts",
+    "promptfoo": "node --import tsx/esm scripts/emit-schema.ts && NODE_OPTIONS='--import tsx/esm' promptfoo eval -c promptfoo/promptfooconfig.yaml",
+    "promptfoo:compare": "node --import tsx/esm scripts/emit-schema.ts && NODE_OPTIONS='--import tsx/esm' promptfoo eval -c promptfoo/promptfooconfig.compare.yaml",
     "test": "node --import tsx/esm --test test/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
@@ -22,6 +24,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "promptfoo": "^0.122.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }

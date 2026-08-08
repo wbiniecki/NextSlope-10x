@@ -627,7 +627,7 @@ existing is migrated.
 
 #### Automated
 
-- [x] 4.1 Workflow file remains valid YAML
+- [x] 4.1 Workflow file remains valid YAML — be8dde8
 
 #### Manual
 
@@ -639,12 +639,12 @@ existing is migrated.
 
 #### Automated
 
-- [ ] 5.1 The provider loads under ESM/`tsx`: `node --check` plus an `import()` smoke
-- [ ] 5.2 `npm test` still passes
+- [x] 5.1 The provider loads under ESM/`tsx`: `node --check` plus an `import()` smoke
+- [x] 5.2 `npm test` still passes
 
 #### Manual
 
-- [ ] 5.3 `npm run promptfoo` produces a comparison table and all fixture assertions pass
+- [x] 5.3 `npm run promptfoo` produces a comparison table and all fixture assertions pass
 
 ### Phase 6: End-to-End Verification
 

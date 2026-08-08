@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+
+# The default suite: measures the production review path and nothing else. Run it with
+# `npm run promptfoo`.
+#
+# Manual by design — real API calls on every row, never wired into a GitHub Actions workflow. It
+# measures prompt/model quality over time rather than gating any specific pull request, the same cost
+# posture as `npm run verify`.
+#
+# Every provider here authenticates the way the CI workflow does, through the subscription OAuth
+# token, so this file runs with no ANTHROPIC_API_KEY anywhere. That is why the raw-model comparison
+# lives in promptfooconfig.compare.yaml instead: promptfoo preflights every configured provider, so a
+# single API-key provider in this file would abort the whole run before the agent rows execute.
+
+description: NextSlope code reviewer — the production agent against the planted-defect fixtures
+
+prompts:
+  - id: file://prompt.js:agentPrompt
+    label: agent-prompt
+
+providers:
+  - id: file://provider.js
+    label: review-agent (production path)
+
+defaultTest:
+  options:
+    # Routed through the Agent SDK rather than a built-in grader, which would need an API key this
+    # project has no way to mint. See grader.js.
+    provider: file://grader.js
+  assert:
+    # Generated from src/schema.ts by scripts/emit-schema.ts on every run, never checked in — see
+    # that script for why a committed copy would drift.
+    - type: is-json
+      value: file://generated/verdict.schema.json
+
+    - type: javascript
+      value: file://assertions.js
+
+    # Prose is checked here and nowhere else: scripts/verify.ts deliberately matches on criterion
+    # ids only, because a probabilistic reviewer words the same finding differently every run. That
+    # leaves "the justification actually describes the defect" unmeasured, which is what this covers.
+    - type: llm-rubric
+      value: >-
+        The output is a code review of a unified diff. Every finding's message and every
+        justification must describe a defect that is actually visible in the reviewed diff, naming
+        the specific construct at fault (a file, a symbol, a configuration value). Fail the output if
+        any justification is generic boilerplate that would read identically for any diff, or if it
+        asserts a defect for a criterion this fixture does not plant one against. This fixture plants
+        defects against: {{fixture.expectedCriteria}}.
+
+tests: file://tests.yaml
