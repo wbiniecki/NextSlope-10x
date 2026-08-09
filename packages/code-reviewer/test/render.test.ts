@@ -75,6 +75,26 @@ describe("renderReport", () => {
 		assert.ok(row.includes("No test file is touched."));
 	});
 
+	// A model can mark a criterion `applicable: false` while still reporting a finding against it.
+	// The em dash must not survive that contradiction — the Blocking reasons section already names
+	// the criterion as the cause, so the score row should not read as "not assessed".
+	it("scores a criterion that carries a finding even when the model marked it not applicable", () => {
+		const report = reportWith([BLOCKING_FINDING]);
+		const scored = report.criteria.find(
+			(criterion) => criterion.id === BLOCKING_FINDING.criterionId,
+		) as CriterionScore;
+		const index = report.criteria.indexOf(scored);
+		report.criteria[index] = { ...scored, applicable: false };
+
+		const markdown = renderReport(report, { failOn: "high" });
+		const row = markdown
+			.split("\n")
+			.find((line) => line.startsWith(`| \`${scored.id}\``)) as string;
+
+		assert.doesNotMatch(row, /\| — \|/);
+		assert.match(row, /\/10/);
+	});
+
 	it("does not claim a clean sweep when no criterion applied at all", () => {
 		const report = reportWith([]);
 		report.criteria = report.criteria.map((criterion) => ({ ...criterion, applicable: false }));

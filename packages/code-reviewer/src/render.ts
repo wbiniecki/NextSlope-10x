@@ -27,7 +27,7 @@ export function renderReport(report: ReviewReport, options: RenderOptions = {}):
 		summaryLine(report, options.failOn),
 		"",
 		...blockingReasonsSection(report),
-		...criterionScoresSection(report.criteria),
+		...criterionScoresSection(report.criteria, report.findings),
 		...findingsSection(report.findings),
 	];
 
@@ -66,12 +66,13 @@ function blockingReasonsSection(report: ReviewReport): string[] {
 	return ["## Blocking reasons", "", ...report.reasons.map((reason) => `- ${reason}`), ""];
 }
 
-function criterionScoresSection(criteria: CriterionScore[]): string[] {
+function criterionScoresSection(criteria: CriterionScore[], findings: Finding[]): string[] {
 	// Rendered in the canonical criterion order rather than the order the model happened to emit,
 	// so two reports of the same diff are diffable line by line.
 	const ordered = [...criteria].sort(
 		(a, b) => CRITERION_IDS.indexOf(a.id) - CRITERION_IDS.indexOf(b.id),
 	);
+	const criteriaWithFindings = new Set(findings.map((finding) => finding.criterionId));
 
 	return [
 		"## Criterion scores",
@@ -80,7 +81,7 @@ function criterionScoresSection(criteria: CriterionScore[]): string[] {
 		"| --- | --- | --- |",
 		...ordered.map(
 			(criterion) =>
-				`| \`${criterion.id}\` | ${scoreCell(criterion)} | ${cell(criterion.justification)} |`,
+				`| \`${criterion.id}\` | ${scoreCell(criterion, criteriaWithFindings)} | ${cell(criterion.justification)} |`,
 		),
 		"",
 		"Scores are diagnostic. Only findings at or above the fail-on severity block the change.",
@@ -118,9 +119,16 @@ function findingsSection(findings: Finding[]): string[] {
 	return lines;
 }
 
-/** An em dash rather than a number, so "not applicable" cannot be misread as full compliance. */
-function scoreCell(criterion: CriterionScore): string {
-	return criterion.applicable ? `${criterion.score}/10` : "—";
+/**
+ * An em dash rather than a number, so "not applicable" cannot be misread as full compliance. A
+ * criterion carrying at least one finding is treated as applicable regardless of the model's
+ * `applicable` flag, so a contradictory report never shows an em dash for the criterion the
+ * Blocking reasons section names as the cause.
+ */
+function scoreCell(criterion: CriterionScore, criteriaWithFindings: Set<string>): string {
+	return criterion.applicable || criteriaWithFindings.has(criterion.id)
+		? `${criterion.score}/10`
+		: "—";
 }
 
 /** Model prose can contain newlines and pipes, either of which would break a table row. */

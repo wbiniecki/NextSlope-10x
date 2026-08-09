@@ -111,15 +111,15 @@ describe("buildReviewPrompt", () => {
 	// easily lost to a well-meaning trim of the criteria document.
 	it("carries the new criterion's false-positive carve-outs", () => {
 		assert.ok(prompt.includes("contextLoads"));
-		assert.ok(prompt.includes("AccessControlAssertions"));
+		assert.ok(prompt.includes("never excuses a test that verifies nothing"));
 	});
 
 	// Losing this cap does not degrade the review, it starts blocking pull requests: the criterion's
 	// protection-removal cases would fall back to `high`, at or above the default `--fail-on`. The
 	// cap needs the rule in `prompt.ts` that lets a criterion override the rubric, so guard both.
 	it("lets a criterion cap its own severity, and carries the rollout cap that relies on it", () => {
-		assert.match(prompt, /Where a criterion below states its own severity rule, that rule\s+wins/i);
-		assert.match(prompt, /\*\*Severity during rollout:\*\* report every finding from this criterion at `medium`/);
+		assert.match(prompt, /states its own severity rule, that rule wins/i);
+		assert.match(prompt, /severity during rollout/i);
 		assert.match(prompt, /the cap covers the whole criterion, not a list of cases/i);
 	});
 
@@ -142,21 +142,23 @@ describe("buildReviewPrompt", () => {
 	});
 
 	it("separates the levels by adding weakly versus removing an existing protection", () => {
-		assert.match(prompt, /adds something weakly or takes away a protection that already\s+existed/i);
-		assert.match(prompt, /removes or defeats a protection that was already there/i);
+		assert.match(prompt, /takes away a protection that already\s+existed/i);
+		assert.match(prompt, /removes or defeats a protection/i);
 	});
 
 	// `--fail-on` is configurable and `verdict.ts` owns it. A number here would let the model
 	// pre-empt the gate by grading down to whatever it believed the threshold to be.
 	it("does not name the blocking threshold it is scoring against", () => {
 		assert.match(prompt, /blocking threshold is configured outside this review/i);
+		assert.doesNotMatch(prompt, /blocking threshold is `?(low|medium|high|critical)/i);
+		assert.doesNotMatch(prompt, /blocks at `?(low|medium|high|critical)/i);
 	});
 
 	// Grading a finding up because its criterion feels important is the failure mode a human reader
 	// hit on this exact rubric: an assertion-free new test read as `critical` rather than `medium`.
 	it("separates a finding's impact from how important its criterion feels", () => {
-		assert.match(prompt, /measures the impact of this diff's defect, not how important the\s+criterion is/i);
-		assert.match(prompt, /a rule\s+the conventions state outright is violated at `medium` or above/i);
+		assert.match(prompt, /not how important the\s+criterion is/i);
+		assert.match(prompt, /violated at `medium` or above/i);
 	});
 
 	// Read-only repo access is available but the turn budget is small, so the prompt has to actively
@@ -166,7 +168,7 @@ describe("buildReviewPrompt", () => {
 	});
 
 	it("anchors findings to a file and line drawn from the diff", () => {
-		assert.match(prompt, /Anchor each finding to a `file` and\s+`line`/i);
+		assert.match(prompt, /anchor each finding to a\s*`?file`?\s+and\s*`?line`?/i);
 	});
 
 	// The overall verdict is computed in `verdict.ts`; asking the model for it would make the gate

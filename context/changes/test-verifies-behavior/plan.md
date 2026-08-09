@@ -761,17 +761,17 @@ fields rather than trying to validate the five-criterion snapshot with the new s
 
 #### Automated
 
-- [x] 4.1 `npm test` passes, including the id-lockstep test in both directions
-- [x] 4.2 `npm run typecheck` passes
-- [x] 4.3 The criteria-count assertion reads six and passes
-- [x] 4.4 A test asserts the new criterion's carve-out prose reaches the assembled prompt
-- [x] 4.5 No "five criteria" / "these five ids" prose remains outside the Phase 5 files
+- [x] 4.1 `npm test` passes, including the id-lockstep test in both directions — 387783e
+- [x] 4.2 `npm run typecheck` passes — 387783e
+- [x] 4.3 The criteria-count assertion reads six and passes — 387783e
+- [x] 4.4 A test asserts the new criterion's carve-out prose reaches the assembled prompt — 387783e
+- [x] 4.5 No "five criteria" / "these five ids" prose remains outside the Phase 5 files — 387783e
 
 #### Manual
 
-- [x] 4.6 Every carve-out checked against an example, including that the two-user base alone does not count
-- [x] 4.7 The criterion is decidable from a diff alone, with no repo read required
-- [x] 4.8 The all-medium rollout override clearly precedes the global default for this criterion
+- [x] 4.6 Every carve-out checked against an example, including that the two-user base alone does not count — 387783e
+- [x] 4.7 The criterion is decidable from a diff alone, with no repo read required — 387783e
+- [x] 4.8 The all-medium rollout override clearly precedes the global default for this criterion — 387783e
 
 ### Phase 5: Fixtures and Harness
 
