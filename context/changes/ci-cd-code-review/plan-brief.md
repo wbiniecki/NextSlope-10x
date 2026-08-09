@@ -37,7 +37,7 @@ fixtures score as expected — run manually, never wired into CI.
 | Label lifecycle | Swap pass/fail each run; auto-remove `ai-cr:review` after it triggers | Label state always reflects only the latest run; retry label behaves like a one-shot button | User |
 | CI cost overrides | Keep all CLI defaults (model, budget, fail-on) | One source of truth in `src/agent.ts`/`src/cli.ts`; local and CI runs score identically | User |
 | Oversized/inconclusive diffs (exit 1 or 2) | Comment explaining why, no label | Reuses the exit-code contract; a missing verdict must not produce a misleading pass/fail label | User (extended to exit 2 during planning for the same rationale) |
-| Diff scope | Full merge-base diff, no path filters | Matches what a human reviewer sees on the PR's Files-changed tab; the CLI's own 200KB cap already guards cost | User |
+| Diff scope | ~~Full merge-base diff, no path filters~~ — **superseded during Phase 5, see "Reviewed diff scope" below** | Matches what a human reviewer sees on the PR's Files-changed tab; the CLI's own 200KB cap already guards cost | User |
 | Requirements doc | Written as Phase 1, in the change folder | Keeps 10X-19 item 1's deliverable traceable alongside the design decisions that produced it | User |
 | Verification strategy | Cheap smoke run first, then one real PR | Minimizes wasted API spend across debugging iterations before the real end-to-end proof | User |
 | Smoke-run trigger | Temporary branch-scoped `push:`, not `workflow_dispatch` | `workflow_dispatch` only fires for workflow files already on the default branch, so it cannot run from the change branch; Phase 7 removes the temporary trigger | Plan review |
@@ -53,13 +53,15 @@ fixtures score as expected — run manually, never wired into CI.
 **In scope:** `context/changes/ci-cd-code-review/requirements.md`; `.github/actions/ai-reviewer`
 composite action; `.github/workflows/review.yml` (triggers, diff computation, concurrency, comment,
 label lifecycle); `packages/code-reviewer`'s promptfoo suite (config, custom provider, native
-provider comparison, assertions); the `ANTHROPIC_API_KEY` repo secret; end-to-end verification via
+provider comparison, assertions); the CI credential repo secret (`CLAUDE_CODE_OAUTH_TOKEN` as
+shipped — see "CI credential" in the decisions table); end-to-end verification via
 `workflow_dispatch` and one real PR; documentation updates to both `AGENTS.md` files.
 
 **Out of scope:** `anthropics/claude-code-action@v1`; any promptfoo CI workflow; making `review.yml`
 a required check; any change to `review.json`'s schema, the CLI's flags, or exit codes (see the
-accepted provenance limitation under Open Risks); diff path filtering; threshold/score calibration
-against real PR history; any Java/Gradle change.
+accepted provenance limitation under Open Risks); threshold/score calibration
+against real PR history; any Java/Gradle change. (Diff path filtering was originally out of scope
+and moved in during Phase 5 — see "Reviewed diff scope" in the decisions table.)
 
 ## Architecture / Approach
 

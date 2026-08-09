@@ -43,8 +43,12 @@ verdict enough confidence to be promoted.
 | `api-key` | one of | `ANTHROPIC_API_KEY` — a metered Claude Console key |
 | `oauth-token` | one of | `CLAUDE_CODE_OAUTH_TOKEN` — a subscription credential from `claude setup-token` |
 | `diff-file` | yes | Filesystem **path** to a unified diff on the runner |
-| `pr-title` | no | Declared for forward compatibility; not wired into the prompt today |
-| `pr-body` | no | Same |
+
+No `pr-title` / `pr-body`. Linear 10X-19 named them and they were declared here initially, but the
+prompt is built from the diff alone and nothing ever read them. They are the two classic
+script-injection carriers in GitHub Actions, and an unused attacker-controlled input that already
+looks wired invites the next contributor to interpolate it into a `run:` block. Re-add them when the
+prompt actually consumes them, passing through `env:` rather than `${{ }}` inside a script.
 
 **Exactly one credential**, enforced by a guard step that runs before `npm ci` so a missing secret
 costs seconds rather than a full install. Supplying both is rejected rather than resolved by
@@ -79,12 +83,16 @@ line-oriented parser that a multi-line diff corrupts, so the workflow writes the
 ### To the workflow
 
 - The PR's merge-base diff, computed after `actions/checkout` with `fetch-depth: 0` (a shallow
-  checkout yields an empty diff silently). **Lockfiles are the one exclusion** — `package-lock.json`,
-  `pnpm-lock.yaml`, `yarn.lock` — because they are machine-generated, no criterion can apply to
-  them, and a single dependency install produces a diff several times the CLI's `MAX_DIFF_BYTES`
-  (200 KB) guard, which would exit `1` and leave all the hand-written code in that PR unreviewed.
-  Nothing else is filtered; the guard remains the cost ceiling.
-- `secrets.ANTHROPIC_API_KEY`, provisioned as a repository secret.
+  checkout yields an empty diff silently). **Two exclusions**: lockfiles (`package-lock.json`,
+  `pnpm-lock.yaml`, `yarn.lock`) and `context/**`. No criterion can apply to either, so every byte
+  they contribute is budget spent buying nothing, and both are large enough to matter — a single
+  dependency install produces a lockfile diff several times the CLI's `MAX_DIFF_BYTES` (200 KB)
+  guard, and this repo's per-change plan/context markdown made up 68% of the reviewed bytes on this
+  workflow's own PR. Crossing the guard exits `1` and leaves all the hand-written code in that PR
+  unreviewed. Nothing else is filtered; the guard remains the cost ceiling.
+- `secrets.CLAUDE_CODE_OAUTH_TOKEN`, provisioned as a repository secret — a subscription token, not
+  a metered API key; see "Why this project uses the OAuth token" above. The composite action also
+  accepts an `api-key` input, so switching back is a one-line change, but it rejects both at once.
 - Three repository labels that must exist before the first run: `ai-cr:passed`, `ai-cr:failed`,
   `ai-cr:review`.
 
@@ -159,8 +167,9 @@ referencing the exit-code meaning instead of a rendered report — there is no r
 
 ### 2. Pass/fail label
 
-Exactly one of the pair is current at any time; the step runs with `if: always()` after the review so
-a label still lands even if the comment step fails.
+Exactly one of the pair is current at any time; the step runs with `if: !cancelled()` after the
+review so a label still lands even if the comment step fails, while a run superseded by
+`cancel-in-progress` stays silent instead of reporting a verdict it aborted.
 
 | `verdict` | Label action |
 |---|---|
@@ -194,10 +203,12 @@ wondering whether it took. It behaves like a one-shot button, not a state flag.
 Cost and safety guards on the job: `timeout-minutes: 15` (without it the job inherits the 6-hour
 default and a hung session would burn this private repo's runner-minute quota),
 `concurrency` keyed on the PR number with `cancel-in-progress: true` (a superseded push stops paying
-for both the runner and the API), and `permissions: contents: read, pull-requests: write,
-issues: write` — declaring any scope sets every unlisted one to `none`, so `contents: read` is
-required or `actions/checkout` fails on the first step. Labels go through the issues API, hence
-`issues: write`.
+for both the runner and the API), and `permissions: contents: read, pull-requests: write` —
+declaring any scope sets every unlisted one to `none`, so `contents: read` is required or
+`actions/checkout` fails on the first step. No `issues: write`: labels and comments reach the REST
+API through an `/issues/` route, but that path segment is not the permission scope, and
+`pull-requests: write` already covers both on a pull request. Every call the workflow makes is
+PR-gated, so the extra scope would only grant the ability to open and close real issues.
 
 Every third-party action is pinned to a full commit SHA with a trailing version comment, matching
 `ci.yml`'s existing convention.

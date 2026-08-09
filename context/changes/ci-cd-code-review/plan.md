@@ -384,7 +384,13 @@ for cheap side-by-side model comparison (raw model, no agent scaffolding), and t
 below for the actual regression gate against the agent that runs on PRs.
 
 **Contract**: `providers:` lists at least one `anthropic:messages:<model-id>` entry and
-`file://provider.js` (the custom provider). `prompts:` derived from
+`file://provider.js` (the custom provider). **Amended during implementation:** the two providers
+ship in two configs, not one. promptfoo preflights every configured provider, so a single
+API-key provider would abort a run that otherwise authenticates through the subscription OAuth
+token — and this project has no Console org to mint an `ANTHROPIC_API_KEY` from. The default
+`promptfooconfig.yaml` therefore carries only `file://provider.js` (the production path, the thing
+worth regression-gating), and the native raw-model column lives in `promptfooconfig.compare.yaml`
+behind `npm run promptfoo:compare`, opt-in and blocked until an API key exists. `prompts:` derived from
 `packages/code-reviewer/src/prompt.ts`'s `buildReviewPrompt` output for each fixture. `tests:` one
 entry per fixture in `packages/code-reviewer/fixtures/`, with `vars.expectedCriteria` sourced from
 `fixtures/expectations.json`. `defaultTest.assert` includes: `is-json` with `value` pointing at a
@@ -433,7 +439,7 @@ package's own `AGENTS.md` requires ESM throughout).
 
 #### Manual Verification:
 
-- `npm run promptfoo` produces a comparison table with both providers, and the custom-provider row's assertions pass against all three existing fixtures
+- `npm run promptfoo` produces a results table whose custom-provider row's assertions pass against all three existing fixtures. **Amended:** "with both providers" was dropped — see the amended contract above; the raw-model column is `npm run promptfoo:compare`, unrunnable without an `ANTHROPIC_API_KEY` this project cannot mint.
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase.
 
@@ -587,6 +593,56 @@ existing is migrated.
 - Prior change: `context/archive/2026-08-07-code-review-agent/plan-brief.md`
 - Linear: [10X-19](https://linear.app/10xnextslope/issue/10X-19/cicd-ai-code-review-on-every-pr-to-main-gha-workflow-composite-action) (this change), [10X-18](https://linear.app/10xnextslope/issue/10X-18/tooling-claude-agent-sdk-code-review-agent-as-an-independent) (prerequisite, done)
 
+## Amendments
+
+Decisions taken during implementation that reverse or extend what the sections above say. Recorded
+here because the plan body was otherwise left as written, so without this section the plan and the
+shipped code disagree.
+
+1. **Lockfiles are excluded from the reviewed diff.** Reverses "What We're NOT Doing" bullet 5
+   ("Not adding path filters..."). Adding promptfoo grew `package-lock.json` by 474 KB, so this
+   change's own PR diff (~581 KB) would have tripped `MAX_DIFF_BYTES` and reviewed none of the
+   hand-written code. `review.yml:92-95` excludes `package-lock.json`, `pnpm-lock.yaml`, and
+   `yarn.lock`; nothing else. Commit `fffe342`.
+
+2. **The CI credential is a subscription OAuth token, not an API key.** Supersedes the Phase 2
+   contract's required `api-key` input and its `env: ANTHROPIC_API_KEY` prescription. This repo has
+   no Console org to mint a metered key from. `action.yml` accepts `api-key` **or** `oauth-token`
+   and rejects both at once (Claude Code ranks the key above the token and would silently pick it);
+   `review.yml:107` passes `secrets.CLAUDE_CODE_OAUTH_TOKEN`. Commit `9a616c4`.
+
+3. **The action pins Node 24.** Not mentioned anywhere in the plan. `npm ci` rejects a lockfile
+   resolved by a different npm major, and `package-lock.json` was written by npm 11, so the runner's
+   Node major has to match. Exposed as a `node-version` input defaulting to `24`
+   (`action.yml:40-48`) so the pin is revisitable rather than buried. Commit `894ac24`.
+
+4. **`src/cli.ts` was touched after all.** "What We're NOT Doing" bullet 4 claims the producer stays
+   untouched so "a failure during Phases 3-6 can only be workflow-side." `cli.ts:74` widened
+   `const REVIEW_ROOT` to `export const REVIEW_ROOT` so `promptfoo/provider.js` can mirror the
+   production read scope instead of recomputing it — the exact divergence this plan warns about at
+   the Phase 5 provider contract. No schema, flag, or exit-code change, and no runtime behavior
+   change; the invariant as literally written is nonetheless no longer true.
+
+A fifth, smaller divergence: the Phase 4 side-effect steps use `if: "!cancelled()"` rather than the
+`always()` the contract names, so a push superseded by `cancel-in-progress` stays silent instead of
+reporting a run it aborted. Behaviorally identical otherwise; rationale is in `review.yml:131-134`.
+
+Two further amendments came out of the implementation review (`reviews/impl-review.md`):
+
+5. **`context/**` joins lockfiles in the excluded pathspec** (F5). Same reasoning as amendment 1,
+   measured rather than predicted: on this change's own PR, 68% of the reviewed bytes were
+   plan/context markdown that no criterion can score, putting the diff at 62% of `MAX_DIFF_BYTES`
+   before any code was counted. Excluding `context/**` drops it to 23%.
+
+6. **`issues: write` and the `pr-title`/`pr-body` inputs are gone** (F7). Both were specified —
+   the permission by the Phase 3 contract and Linear 10X-19's traps ("labels go through the issues
+   API"), the inputs by 10X-19 item 3 — and both turned out to be unnecessary. `pull-requests: write`
+   already covers labels and comments on a pull request; the `/issues/` segment in the REST route is
+   not the permission scope. The two inputs were never consumed by the prompt, and an unused
+   attacker-controlled input that already looks wired is the standard precondition for a GitHub
+   Actions script injection. **The permission removal is unproven locally** and needs one live PR
+   run to confirm the label swap still works; if it fails, restore `issues: write`.
+
 ## Progress
 
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles. See `references/progress-format.md`.
@@ -645,6 +701,9 @@ existing is migrated.
 #### Manual
 
 - [x] 5.3 `npm run promptfoo` produces a comparison table and all fixture assertions pass — 569472b
+  - Rescoped by impl review: verified for the production-agent provider only. The raw-model
+    comparison column ships as `npm run promptfoo:compare` and stays unverified until an
+    `ANTHROPIC_API_KEY` exists.
 
 ### Phase 6: End-to-End Verification
 

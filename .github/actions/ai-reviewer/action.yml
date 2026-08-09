@@ -25,18 +25,11 @@ inputs:
       Path to a unified diff on the runner. A path, never the diff text: $GITHUB_OUTPUT caps at
       1 MB and its parser is line-oriented, which a multi-line diff corrupts.
     required: true
-  pr-title:
-    description: >-
-      Pull request title. Declared for forward compatibility only — the review prompt does not
-      consume it today.
-    required: false
-    default: ''
-  pr-body:
-    description: >-
-      Pull request body. Declared for forward compatibility only — the review prompt does not
-      consume it today.
-    required: false
-    default: ''
+  # No pr-title / pr-body. Linear 10X-19 named them and they were declared here for forward
+  # compatibility, but nothing consumes them: the prompt is built from the diff alone. They are the
+  # two classic script-injection carriers in GitHub Actions, and an unused input that already looks
+  # wired is an invitation to interpolate it straight into a run: block. Re-add them when the prompt
+  # actually reads them, passing through env: rather than ${{ }} inside a script.
   node-version:
     description: >-
       Node major to run the CLI on. The package requires >=20.6.0 for --import tsx/esm, but the
@@ -56,6 +49,12 @@ outputs:
   report-dir:
     description: Directory containing review.json and review.md.
     value: ${{ steps.review.outputs.report-dir }}
+  exit-code:
+    description: >-
+      The CLI's raw exit code (0-3), for callers that want the number rather than the verdict
+      string. Declared because the review step writes it either way; branch on verdict instead
+      unless you specifically need the code.
+    value: ${{ steps.review.outputs.exit-code }}
 
 runs:
   using: composite
@@ -113,14 +112,20 @@ runs:
         DIFF_FILE: ${{ inputs.diff-file }}
         REPORT_DIR: ${{ runner.temp }}/ai-reviewer
       run: |
+        set -euo pipefail
+
+        # Setup runs under errexit deliberately. These are runner concerns, not review outcomes: a
+        # failing mkdir under `set +e` would let the script continue, the reviewer would fail to
+        # write its artifacts, and the step would report invalid_input — blaming the diff for a
+        # runner problem, the same misattribution the diff-computation step guards against.
+        mkdir -p "$REPORT_DIR"
+        echo "report-dir=$REPORT_DIR" >> "$GITHUB_OUTPUT"
+
         # GitHub invokes `shell: bash` as `bash --noprofile --norc -e -o pipefail`, so errexit is
         # already ON and `set -uo pipefail` does not clear it. Without this `set +e` the step aborts
         # the moment the reviewer exits non-zero and never reaches the mapping below, turning
         # documented outcomes 1-3 into an action failure and leaving `verdict` unset.
         set +e
-        set -uo pipefail
-        mkdir -p "$REPORT_DIR"
-        echo "report-dir=$REPORT_DIR" >> "$GITHUB_OUTPUT"
 
         # Exported rather than declared above so exactly one credential variable exists — an
         # empty ANTHROPIC_API_KEY alongside a real token invites a "which one authenticated?"

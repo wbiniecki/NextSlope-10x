@@ -12,8 +12,12 @@
  * `reason` back. The schema below forces exactly that shape, so a grader that rambles fails loudly
  * rather than being silently scored as a pass.
  *
- * Deliberately no `cwd`: unlike the review provider, the grader judges text it is given and has no
- * business reading the repository.
+ * Deliberately no `cwd`: unlike the review provider, the grader judges the text it is handed and has
+ * no reason to go looking at the repository. Note what that does and does not buy — `agent.ts` omits
+ * the option entirely when it is undefined, so the session falls back to the process cwd
+ * (`packages/code-reviewer/`) while `Read`/`Glob`/`Grep` stay granted. This narrows the read root
+ * away from the repo tree; it does not deny reads. If the grader ever needs to be genuinely
+ * contained, that is a `tools` change, not a `cwd` one.
  */
 import { z } from "zod";
 

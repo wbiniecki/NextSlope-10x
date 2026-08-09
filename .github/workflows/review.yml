@@ -20,11 +20,13 @@ on:
         default: main
 
 # Declaring any scope sets every unlisted one to none, so contents: read is required or the
-# checkout below fails on the first step. Labels go through the issues API (Phase 4).
+# checkout below fails on the first step. No issues: write despite the label and comment calls
+# routing through /issues/: that path segment is not the permission scope, and pull-requests: write
+# covers labels and comments on a pull request. Every call here is PR-gated, so the scope would only
+# ever buy the token the ability to open and close real issues.
 permissions:
   contents: read
   pull-requests: write
-  issues: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -85,14 +87,17 @@ jobs:
           # a shell bug masquerading as a reviewer problem.
           git fetch --no-tags origin "+refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF"
           base_sha="$(git merge-base "origin/$BASE_REF" HEAD)"
-          # Lockfiles are excluded and nothing else is. They are machine-generated, no review
-          # criterion can apply to them, and one dependency install produces a diff several times
-          # the CLI's 200 KB MAX_DIFF_BYTES guard — which would make every review on that PR exit 1
-          # and report invalid_input, reviewing none of the hand-written code.
+          # Two exclusions, both for the same reason: no review criterion can apply to them, so
+          # every byte they contribute is budget spent buying nothing. One dependency install
+          # produces a lockfile diff several times the CLI's 200 KB MAX_DIFF_BYTES guard, and the
+          # plan/context markdown this repo writes per change ran to 68% of the reviewed bytes on
+          # this workflow's own PR. Crossing the guard makes the review exit 1 and report
+          # invalid_input, leaving all the hand-written code in that PR unreviewed.
           git diff "$base_sha" HEAD -- . \
             ':(exclude)**/package-lock.json' \
             ':(exclude)**/pnpm-lock.yaml' \
-            ':(exclude)**/yarn.lock' > "$DIFF_FILE"
+            ':(exclude)**/yarn.lock' \
+            ':(exclude)context/**' > "$DIFF_FILE"
 
           echo "Base ref: $BASE_REF ($base_sha)"
           echo "Diff bytes: $(wc -c < "$DIFF_FILE")"
@@ -108,9 +113,6 @@ jobs:
           # A path, never the diff text: $GITHUB_OUTPUT caps at 1 MB and its line-oriented
           # parser corrupts a multi-line diff.
           diff-file: ${{ runner.temp }}/pr.diff
-          # Empty on push and workflow_dispatch; declared for forward compatibility only.
-          pr-title: ${{ github.event.pull_request.title }}
-          pr-body: ${{ github.event.pull_request.body }}
 
       # The comment and label steps below are PR-only, so the job summary is where a push or
       # workflow_dispatch smoke run's rendered report is read.
@@ -185,18 +187,45 @@ jobs:
               no_result: 'The reviewer exited `2` — a session started but produced no usable result. No review was produced.',
             };
 
-            const rendered = (VERDICT === 'passed' || VERDICT === 'blocked') && REPORT_DIR
-              ? fs.readFileSync(path.join(REPORT_DIR, 'review.md'), 'utf8')
-              : explanation[VERDICT] ?? `The review step did not complete (verdict: ${VERDICT || 'none'}).`;
-
             // A new comment per push, never an upsert, so this footer is the only thing telling a
             // reader which commit a given comment describes. It deliberately does not name the
             // model: review.json carries no run provenance and the workflow passes no --model.
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const footer = `Reviewed commit \`${REVIEWED_SHA}\` · [workflow run](${runUrl})`;
 
-            await github.rest.issues.createComment({
+            // The label step already ran, so an uncaught throw here would leave a verdict on the PR
+            // with nothing behind it. Both artifacts are written on exit 0 and 3 alike, so a missing
+            // report means something unexpected — point at the job summary, which holds the same
+            // rendered markdown, rather than dying with a stack trace.
+            let rendered;
+            if ((VERDICT === 'passed' || VERDICT === 'blocked') && REPORT_DIR) {
+              try {
+                rendered = fs.readFileSync(path.join(REPORT_DIR, 'review.md'), 'utf8');
+              } catch (error) {
+                core.warning(`Could not read the rendered report: ${error.message}`);
+                rendered = `The reviewer returned \`${VERDICT}\`, but its rendered report could not be read. See the [job summary](${runUrl}) for the raw output.`;
+              }
+            } else {
+              rendered = explanation[VERDICT] ?? `The review step did not complete (verdict: ${VERDICT || 'none'}).`;
+            }
+
+            const comment = {
               ...context.repo,
               issue_number: context.payload.pull_request.number,
               body: `${rendered.trimEnd()}\n\n---\n${footer}\n`,
-            });
+            };
+
+            // One retry, because the usual failure here is a transient 5xx or a secondary rate
+            // limit. A second failure is not swallowed: a silent PR would be worse than a red step,
+            // and the label is already applied, so the run has to say the comment never landed.
+            try {
+              await github.rest.issues.createComment(comment);
+            } catch (error) {
+              core.warning(`Posting the review comment failed (${error.status ?? 'no status'}), retrying once.`);
+              await new Promise((resolve) => setTimeout(resolve, 5000));
+              try {
+                await github.rest.issues.createComment(comment);
+              } catch (retryError) {
+                core.setFailed(`Could not post the review comment: ${retryError.message}. The rendered report is in this run's job summary.`);
+              }
+            }
