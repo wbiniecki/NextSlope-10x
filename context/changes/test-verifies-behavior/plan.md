@@ -747,31 +747,31 @@ fields rather than trying to validate the five-criterion snapshot with the new s
 
 #### Automated
 
-- [x] 3.1 `npm test` passes
-- [x] 3.2 `npm run typecheck` passes
-- [x] 3.3 A test asserts all four severity names appear in the prompt
-- [x] 3.4 A test asserts the prompt distinguishes severity from score
-- [x] 3.5 The existing "no overall pass/fail requested" assertion still passes
+- [x] 3.1 `npm test` passes — 39aa1e3
+- [x] 3.2 `npm run typecheck` passes — 39aa1e3
+- [x] 3.3 A test asserts all four severity names appear in the prompt — 39aa1e3
+- [x] 3.4 A test asserts the prompt distinguishes severity from score — 39aa1e3
+- [x] 3.5 The existing "no overall pass/fail requested" assertion still passes — 39aa1e3
 
 #### Manual
 
-- [x] 3.6 The four levels read as mutually exclusive on the add-weakly vs remove-protection axis
+- [x] 3.6 The four levels read as mutually exclusive on the add-weakly vs remove-protection axis — 39aa1e3
 
 ### Phase 4: The Sixth Criterion
 
 #### Automated
 
-- [ ] 4.1 `npm test` passes, including the id-lockstep test in both directions
-- [ ] 4.2 `npm run typecheck` passes
-- [ ] 4.3 The criteria-count assertion reads six and passes
-- [ ] 4.4 A test asserts the new criterion's carve-out prose reaches the assembled prompt
-- [ ] 4.5 No "five criteria" / "these five ids" prose remains outside the Phase 5 files
+- [x] 4.1 `npm test` passes, including the id-lockstep test in both directions
+- [x] 4.2 `npm run typecheck` passes
+- [x] 4.3 The criteria-count assertion reads six and passes
+- [x] 4.4 A test asserts the new criterion's carve-out prose reaches the assembled prompt
+- [x] 4.5 No "five criteria" / "these five ids" prose remains outside the Phase 5 files
 
 #### Manual
 
-- [ ] 4.6 Every carve-out checked against an example, including that the two-user base alone does not count
-- [ ] 4.7 The criterion is decidable from a diff alone, with no repo read required
-- [ ] 4.8 The all-medium rollout override clearly precedes the global default for this criterion
+- [x] 4.6 Every carve-out checked against an example, including that the two-user base alone does not count
+- [x] 4.7 The criterion is decidable from a diff alone, with no repo read required
+- [x] 4.8 The all-medium rollout override clearly precedes the global default for this criterion
 
 ### Phase 5: Fixtures and Harness
 

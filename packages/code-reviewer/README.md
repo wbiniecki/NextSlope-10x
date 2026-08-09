@@ -1,10 +1,10 @@
 # NextSlope code reviewer
 
 Reviews a unified diff against NextSlope's own conventions and writes a machine-readable verdict
-plus a human-readable summary. It scores five criteria derived from this repo's hard rules —
+plus a human-readable summary. It scores six criteria derived from this repo's hard rules —
 Flyway forward-only migrations, `ddl-auto=validate`, constructor injection, principal-scoped access
-control, and the E2E testing conventions — and blocks on findings at or above a severity threshold
-you choose.
+control, the E2E testing conventions, and tests that can actually fail — and blocks on findings at
+or above a severity threshold you choose.
 
 It is developer tooling. The package sits outside the Gradle build, is not in `settings.gradle`, and
 is not part of the deployed artifact.

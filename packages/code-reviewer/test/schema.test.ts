@@ -148,9 +148,9 @@ describe("reviewReportSchema", () => {
 });
 
 describe("criterion and severity vocabularies", () => {
-	it("enumerates five distinct criteria", () => {
-		assert.equal(CRITERION_IDS.length, 5);
-		assert.equal(new Set(CRITERION_IDS).size, 5);
+	it("enumerates six distinct criteria", () => {
+		assert.equal(CRITERION_IDS.length, 6);
+		assert.equal(new Set(CRITERION_IDS).size, 6);
 	});
 
 	// `verdict.ts` compares severities by index against `--fail-on`, so the order is behavior.

@@ -27,6 +27,9 @@ export const CRITERION_IDS = [
 	"constructor-injection",
 	"access-control-scoping",
 	"e2e-conventions",
+	// Appended rather than inserted: `render.ts` orders the score table by `CRITERION_IDS.indexOf`,
+	// so position here is presentation order in every PR comment.
+	"test-verifies-behavior",
 ] as const;
 
 /** Ascending order is load-bearing: `verdict.ts` compares by index against `--fail-on`. */
