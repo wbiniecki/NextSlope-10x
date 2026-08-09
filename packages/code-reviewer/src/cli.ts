@@ -71,7 +71,7 @@ const CRITERIA_PATH = fileURLToPath(new URL("../prompts/criteria.md", import.met
  * optional enrichment for the rare ambiguous case — every criterion is answerable from the diff — so
  * a mistaken path degrades to "no extra evidence" rather than a failed review.
  */
-const REVIEW_ROOT = fileURLToPath(new URL("../../../src/", import.meta.url));
+export const REVIEW_ROOT = fileURLToPath(new URL("../../../src/", import.meta.url));
 
 export const USAGE = [
 	"Usage: npm run review -- --diff-file <path> [options]",

@@ -53,6 +53,11 @@ out/
 packages/**/node_modules/
 packages/**/dist/
 
+### Promptfoo working files — the JSON Schema is regenerated from src/schema.ts on ###
+### every run, so a committed copy could only ever be a stale second source.       ###
+packages/**/promptfoo/generated/
+.promptfoo/
+
 ### Code-reviewer artifacts — unanchored: --out defaults to the process cwd, ###
 ### so these land wherever the CLI is invoked from, not just in the package.  ###
 review.json

@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+
+# The two-layer comparison: the production agent side by side with the same model stripped of all
+# agent scaffolding. Run it with `npm run promptfoo:compare`.
+#
+# REQUIRES ANTHROPIC_API_KEY. promptfoo's native `anthropic:` provider speaks to the API directly and
+# has no path to the subscription OAuth token the workflow and the default suite use, so this file
+# only runs where a metered Console key exists. It is split out precisely so its credential need
+# cannot block the default suite: promptfoo preflights every configured provider and aborts the whole
+# run when one is unauthenticated.
+#
+# What the comparison is for: the native provider measures the raw model, while what reviews pull
+# requests is an agent with a scoped read root, a restricted tool set, and schema-enforced output.
+# The gap between the two rows is the value that scaffolding adds — and the evidence for whether a
+# cheaper model could replace it.
+
+description: NextSlope code reviewer — production agent vs. raw model
+
+prompts:
+  - id: file://prompt.js:agentPrompt
+    label: agent-prompt
+  - id: file://prompt.js:rawModelPrompt
+    label: raw-model-prompt
+
+providers:
+  - id: file://provider.js
+    label: review-agent (production path)
+    prompts:
+      - agent-prompt
+
+  - id: anthropic:messages:claude-sonnet-5
+    label: raw-model (no agent scaffolding)
+    prompts:
+      - raw-model-prompt
+    config:
+      max_tokens: 8192
+
+defaultTest:
+  options:
+    # The same Agent-SDK grader the default suite uses, so a rubric verdict means the same thing in
+    # both files even though one of the providers here is a plain API call.
+    provider: file://grader.js
+  assert:
+    - type: is-json
+      value: file://generated/verdict.schema.json
+
+    - type: javascript
+      value: file://assertions.js
+
+    - type: llm-rubric
+      value: >-
+        The output is a code review of a unified diff. Every finding's message and every
+        justification must describe a defect that is actually visible in the reviewed diff, naming
+        the specific construct at fault (a file, a symbol, a configuration value). Fail the output if
+        any justification is generic boilerplate that would read identically for any diff, or if it
+        asserts a defect for a criterion this fixture does not plant one against. This fixture plants
+        defects against: {{fixture.expectedCriteria}}.
+
+tests: file://tests.yaml

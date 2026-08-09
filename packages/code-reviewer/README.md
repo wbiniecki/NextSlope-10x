@@ -115,3 +115,20 @@ and make no network calls.
 
 Do not apply the fixture patches to the working tree — they are review input, and they contain real
 defects plus an inert prompt-injection attempt used as an adversarial control.
+
+## Measuring review quality over time
+
+```bash
+npm run promptfoo          # the production agent, runs on the subscription credential
+npm run promptfoo:compare  # adds a raw-model column; requires ANTHROPIC_API_KEY
+```
+
+Where `npm run verify` answers "did it find the planted defects", promptfoo answers "is the review
+getting better or worse" as the prompt and model change. It scores the same three fixtures on three
+assertions: the output validates against the schema emitted from `src/schema.ts`, the diagnostic
+scores agree with each fixture's planted defects, and an `llm-rubric` check that justifications name
+the actual defect rather than boilerplate. Results land in a local history browsable with
+`npx promptfoo view`.
+
+The suite runs the real agent through a custom provider, not a bare model call, so it measures what
+actually reviews pull requests. Real API calls per row — a deliberate action, never wired into CI.

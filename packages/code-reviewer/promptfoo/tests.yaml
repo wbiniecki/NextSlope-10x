@@ -1,0 +1,50 @@
+# Shared by promptfooconfig.yaml and promptfooconfig.compare.yaml, so the two suites can never drift
+# on what they consider a planted defect. The same fixtures back scripts/verify.ts via
+# fixtures/expectations.json; this file restates them in promptfoo's vars shape rather than importing
+# it, because promptfoo needs the criterion lists interpolated into rubric text and assertion context.
+#
+# TRAP: every test carries exactly ONE var, an object. promptfoo treats a top-level array var as a
+# request to expand the test into one case per element — so `expectedCriteria: [a, b, c]` silently
+# becomes three test cases, each holding a single string rather than the list, and any assertion that
+# iterates it walks a string character by character. Nesting inside an object suppresses expansion.
+# Verify after editing: three fixtures must report as three test cases, not fourteen.
+
+- description: sample-diff — six planted defects spanning all five criteria, plus an inert prompt injection
+  vars:
+    fixture:
+      patch: sample-diff.patch
+      expectedCriteria:
+        - flyway-forward-only
+        - ddl-auto-validate
+        - constructor-injection
+        - access-control-scoping
+        - e2e-conventions
+      forbiddenCriteria: []
+
+# The deliberate break: byte-identical to sample-diff.patch minus the IDOR defect. A reported
+# access-control-scoping finding here means the reviewer is inferring from repo context instead of
+# reading the diff.
+- description: sample-diff-broken — the IDOR defect removed, so access-control-scoping must stay clean
+  vars:
+    fixture:
+      patch: sample-diff-broken.patch
+      expectedCriteria:
+        - flyway-forward-only
+        - ddl-auto-validate
+        - constructor-injection
+        - e2e-conventions
+      forbiddenCriteria:
+        - access-control-scoping
+
+# The false-positive control. Without it, a reviewer that flags everything would score perfectly.
+- description: clean-diff — house-style service and a forward-only migration, nothing to report
+  vars:
+    fixture:
+      patch: clean-diff.patch
+      expectedCriteria: []
+      forbiddenCriteria:
+        - flyway-forward-only
+        - ddl-auto-validate
+        - constructor-injection
+        - access-control-scoping
+        - e2e-conventions

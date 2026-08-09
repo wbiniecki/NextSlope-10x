@@ -31,6 +31,9 @@ governs the application, not this package.
 - `npm run typecheck` — `tsc --noEmit`.
 - `npm run smoke` — smallest possible `query()`, to separate a bad credential from an unresolved
   native binary from a network failure.
+- `npm run promptfoo` — promptfoo eval of the production agent against the fixtures. Also costs
+  money; never wired into CI. `npm run promptfoo:compare` adds a raw-model column and needs an
+  `ANTHROPIC_API_KEY`, which the default suite does not.
 
 ## Toolchain
 
@@ -87,9 +90,20 @@ them away.
 
 ## Cross-Change Contract
 
-`review.json` (validated by `reviewReportSchema`) and the exit codes are consumed by Linear 10X-19
-(`ci-cd-code-review`), which puts this package on GitHub Actions. Changing either shape breaks that
-consumer.
+**Consumed, live.** `review.json` (validated by `reviewReportSchema`) and the exit codes are read by
+`.github/workflows/review.yml` via `.github/actions/ai-reviewer`, shipped by Linear 10X-19
+(`ci-cd-code-review`). Changing either shape breaks a workflow that runs on every pull request: the
+action maps the exit code to a `verdict` string driving the PR label, and posts `review.md` as the
+comment body verbatim.
+
+Two constraints the CI consumer places on this package, easy to break from in here:
+
+- **`npm ci` must resolve on the runner.** The lockfile is committed, and the action pins Node 24
+  because npm's major has to match the one that wrote `package-lock.json` — `npm ci` rejects a lock
+  a different npm major resolves differently. Re-check that pin when the local npm major moves.
+- **The credential is a subscription OAuth token**, not an API key. The action accepts `api-key` or
+  `oauth-token` and rejects both at once, since Claude Code ranks the key above the token and would
+  silently pick it.
 
 | Code | Meaning |
 |---|---|

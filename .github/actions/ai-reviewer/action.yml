@@ -1,0 +1,162 @@
+name: AI code reviewer
+description: >-
+  Runs the packages/code-reviewer CLI against a unified diff and reports the outcome as a verdict
+  string plus the directory holding review.json / review.md.
+
+# Self-contained on purpose: the action owns Node, npm, and the CLI so the calling workflow only
+# has to know about GitHub's PR surface. See context/changes/ci-cd-code-review/requirements.md.
+
+inputs:
+  api-key:
+    description: >-
+      Anthropic API key, forwarded as ANTHROPIC_API_KEY. Supply exactly one of api-key or
+      oauth-token.
+    required: false
+    default: ''
+  oauth-token:
+    description: >-
+      Subscription OAuth token from `claude setup-token`, forwarded as CLAUDE_CODE_OAUTH_TOKEN.
+      Authenticates against a Pro/Max/Team/Enterprise plan instead of a metered API key. Supply
+      exactly one of api-key or oauth-token.
+    required: false
+    default: ''
+  diff-file:
+    description: >-
+      Path to a unified diff on the runner. A path, never the diff text: $GITHUB_OUTPUT caps at
+      1 MB and its parser is line-oriented, which a multi-line diff corrupts.
+    required: true
+  # No pr-title / pr-body. Linear 10X-19 named them and they were declared here for forward
+  # compatibility, but nothing consumes them: the prompt is built from the diff alone. They are the
+  # two classic script-injection carriers in GitHub Actions, and an unused input that already looks
+  # wired is an invitation to interpolate it straight into a run: block. Re-add them when the prompt
+  # actually reads them, passing through env: rather than ${{ }} inside a script.
+  node-version:
+    description: >-
+      Node major to run the CLI on. The package requires >=20.6.0 for --import tsx/esm, but the
+      binding constraint is npm's major, not Node's: `npm ci` refuses a lockfile whose dependency
+      tree a different npm major resolves differently. Node 24 ships npm 11, which is what writes
+      package-lock.json locally. Node 22 ships npm 10 and fails with "Missing <pkg> from lock file".
+      Re-check this pin whenever the local npm major moves.
+    required: false
+    default: '24'
+
+outputs:
+  verdict:
+    description: >-
+      One of passed | invalid_input | no_result | blocked, mapped from the CLI's exit code
+      (0/1/2/3). Codes 1 and 2 mean no usable verdict was produced.
+    value: ${{ steps.review.outputs.verdict }}
+  report-dir:
+    description: Directory containing review.json and review.md.
+    value: ${{ steps.review.outputs.report-dir }}
+  exit-code:
+    description: >-
+      The CLI's raw exit code (0-3), for callers that want the number rather than the verdict
+      string. Declared because the review step writes it either way; branch on verdict instead
+      unless you specifically need the code.
+    value: ${{ steps.review.outputs.exit-code }}
+
+runs:
+  using: composite
+  steps:
+    # Fails before npm ci rather than after, so a missing secret costs seconds instead of a full
+    # install. Only emptiness is ever tested — no credential value reaches the log.
+    - name: Check exactly one credential was supplied
+      shell: bash
+      env:
+        API_KEY: ${{ inputs.api-key }}
+        OAUTH_TOKEN: ${{ inputs.oauth-token }}
+      run: |
+        set -euo pipefail
+        if [[ -n "$API_KEY" && -n "$OAUTH_TOKEN" ]]; then
+          # Claude Code would silently prefer the API key (its auth precedence ranks the key
+          # above the OAuth token), leaving no way to tell which account paid for a verdict.
+          echo "::error::Supply exactly one of api-key or oauth-token, not both." >&2
+          exit 1
+        fi
+        if [[ -z "$API_KEY" && -z "$OAUTH_TOKEN" ]]; then
+          echo "::error::No credential supplied. Set either the api-key or the oauth-token input." >&2
+          exit 1
+        fi
+
+    - name: Resolve the reviewer package directory
+      id: resolve
+      shell: bash
+      run: |
+        set -euo pipefail
+        # The action sits at .github/actions/ai-reviewer, so the package it wraps is three levels
+        # up and then into packages/. Resolved from github.action_path rather than
+        # github.workspace so the action does not depend on where the caller checked out.
+        package_dir="$(cd "${{ github.action_path }}/../../../packages/code-reviewer" && pwd)"
+        echo "package-dir=$package_dir" >> "$GITHUB_OUTPUT"
+
+    - name: Set up Node
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install reviewer dependencies
+      shell: bash
+      working-directory: ${{ steps.resolve.outputs.package-dir }}
+      # Never --omit=optional: the SDK's native Claude Code binary ships as a per-platform
+      # optional dependency, and skipping it yields "Native CLI binary not found" at runtime.
+      run: npm ci
+
+    - name: Review the diff
+      id: review
+      shell: bash
+      working-directory: ${{ steps.resolve.outputs.package-dir }}
+      env:
+        API_KEY: ${{ inputs.api-key }}
+        OAUTH_TOKEN: ${{ inputs.oauth-token }}
+        DIFF_FILE: ${{ inputs.diff-file }}
+        REPORT_DIR: ${{ runner.temp }}/ai-reviewer
+      run: |
+        set -euo pipefail
+
+        # Setup runs under errexit deliberately. These are runner concerns, not review outcomes: a
+        # failing mkdir under `set +e` would let the script continue, the reviewer would fail to
+        # write its artifacts, and the step would report invalid_input — blaming the diff for a
+        # runner problem, the same misattribution the diff-computation step guards against.
+        mkdir -p "$REPORT_DIR"
+        echo "report-dir=$REPORT_DIR" >> "$GITHUB_OUTPUT"
+
+        # GitHub invokes `shell: bash` as `bash --noprofile --norc -e -o pipefail`, so errexit is
+        # already ON and `set -uo pipefail` does not clear it. Without this `set +e` the step aborts
+        # the moment the reviewer exits non-zero and never reaches the mapping below, turning
+        # documented outcomes 1-3 into an action failure and leaving `verdict` unset.
+        set +e
+
+        # Exported rather than declared above so exactly one credential variable exists — an
+        # empty ANTHROPIC_API_KEY alongside a real token invites a "which one authenticated?"
+        # question that emptiness semantics shouldn't have to answer. The SDK reaches these
+        # because agent.ts never sets options.env, so the native subprocess inherits them
+        # (trap 4 in the package's AGENTS.md).
+        if [[ -n "$API_KEY" ]]; then
+          export ANTHROPIC_API_KEY="$API_KEY"
+        else
+          export CLAUDE_CODE_OAUTH_TOKEN="$OAUTH_TOKEN"
+        fi
+
+        # Exit codes 1-3 are meaningful outcomes for the caller to branch on, not action
+        # failures, so `set -e` stays off and the numeric code is captured explicitly.
+        # `continue-on-error: true` would expose only success/failure and `cmd || true` would
+        # discard $? — either collapses the four-way verdict into pass/fail and silently drops
+        # the "no misleading label on a missing verdict" behaviour.
+        npm run review --silent -- --diff-file "$DIFF_FILE" --out "$REPORT_DIR" --verbose
+        code=$?
+
+        case "$code" in
+          0) verdict=passed ;;
+          1) verdict=invalid_input ;;
+          2) verdict=no_result ;;
+          3) verdict=blocked ;;
+          *)
+            echo "::error::Reviewer exited $code, outside the documented 0-3 contract." >&2
+            exit 1
+            ;;
+        esac
+
+        echo "Reviewer exited $code -> verdict=$verdict"
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        echo "verdict=$verdict" >> "$GITHUB_OUTPUT"
