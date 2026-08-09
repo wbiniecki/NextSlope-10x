@@ -777,17 +777,17 @@ fields rather than trying to validate the five-criterion snapshot with the new s
 
 #### Automated
 
-- [ ] 5.1 `npm test` passes
-- [ ] 5.2 `npm run typecheck` passes
-- [ ] 5.3 `git apply --check` confirms the new patch is well-formed (validity check only, never applied)
-- [ ] 5.4 `promptfoo/tests.yaml` yields exactly four test cases, confirming no var expansion
-- [ ] 5.5 Expectations parse, match all four patches, and structured ranges target added fixture lines
+- [x] 5.1 `npm test` passes
+- [x] 5.2 `npm run typecheck` passes
+- [x] 5.3 `git apply --check` confirms the new patch is well-formed (validity check only, never applied)
+- [x] 5.4 `promptfoo/tests.yaml` yields exactly four test cases, confirming no var expansion
+- [x] 5.5 Expectations parse, match all four patches, and structured ranges target added fixture lines
 
 #### Manual
 
-- [ ] 5.6 The `assertThrows` decoy is genuinely correct by the criterion's carve-outs
-- [ ] 5.7 Criterion lists do not overlap; the new fixture declares 3 medium and 1 decoy range
-- [ ] 5.8 The patch was never applied to the working tree
+- [x] 5.6 The `assertThrows` decoy is genuinely correct by the criterion's carve-outs
+- [x] 5.7 Criterion lists do not overlap; the new fixture declares 3 medium and 1 decoy range
+- [x] 5.8 The patch was never applied to the working tree
 
 ### Phase 6: Paid Verification and Hand-off
 
