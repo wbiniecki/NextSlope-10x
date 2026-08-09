@@ -731,31 +731,31 @@ fields rather than trying to validate the five-criterion snapshot with the new s
 
 #### Automated
 
-- [x] 2.1 `npm test` passes
-- [x] 2.2 `npm run typecheck` passes
-- [x] 2.3 A test asserts the schema rejects a criterion score with no `applicable` field
-- [x] 2.4 A test asserts an em dash renders in place of a score for a not-applicable criterion
-- [x] 2.5 A test asserts the all-not-applicable summary drops "no findings" and still reads as passed
+- [x] 2.1 `npm test` passes — 4a91930
+- [x] 2.2 `npm run typecheck` passes — 4a91930
+- [x] 2.3 A test asserts the schema rejects a criterion score with no `applicable` field — 4a91930
+- [x] 2.4 A test asserts an em dash renders in place of a score for a not-applicable criterion — 4a91930
+- [x] 2.5 A test asserts the all-not-applicable summary drops "no findings" and still reads as passed — 4a91930
 
 #### Manual
 
-- [x] 2.6 The rendered table remains valid GitHub-flavored markdown with the em dash in place
-- [x] 2.7 The prompt's `applicable` paragraph blocks the escape-hatch reading
-- [x] 2.8 The raw-model instruction and README example include `applicable` and its N/A semantics
+- [x] 2.6 The rendered table remains valid GitHub-flavored markdown with the em dash in place — 4a91930
+- [x] 2.7 The prompt's `applicable` paragraph blocks the escape-hatch reading — 4a91930
+- [x] 2.8 The raw-model instruction and README example include `applicable` and its N/A semantics — 4a91930
 
 ### Phase 3: Global Severity Rubric
 
 #### Automated
 
-- [ ] 3.1 `npm test` passes
-- [ ] 3.2 `npm run typecheck` passes
-- [ ] 3.3 A test asserts all four severity names appear in the prompt
-- [ ] 3.4 A test asserts the prompt distinguishes severity from score
-- [ ] 3.5 The existing "no overall pass/fail requested" assertion still passes
+- [x] 3.1 `npm test` passes
+- [x] 3.2 `npm run typecheck` passes
+- [x] 3.3 A test asserts all four severity names appear in the prompt
+- [x] 3.4 A test asserts the prompt distinguishes severity from score
+- [x] 3.5 The existing "no overall pass/fail requested" assertion still passes
 
 #### Manual
 
-- [ ] 3.6 The four levels read as mutually exclusive on the add-weakly vs remove-protection axis
+- [x] 3.6 The four levels read as mutually exclusive on the add-weakly vs remove-protection axis
 
 ### Phase 4: The Sixth Criterion
 

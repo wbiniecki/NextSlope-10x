@@ -9,7 +9,7 @@ import {
 	diffEndMarker,
 	parseCriterionIds,
 } from "../src/prompt.ts";
-import { CRITERION_IDS } from "../src/schema.ts";
+import { CRITERION_IDS, SEVERITIES } from "../src/schema.ts";
 
 /** Fixed so assertions stay deterministic; the CLI supplies a random one per run. */
 const NONCE = "0123456789abcdef01234567";
@@ -110,6 +110,37 @@ describe("buildReviewPrompt", () => {
 	it("asks for every criterion to be scored, including unviolated ones", () => {
 		assert.match(prompt, /including the ones the diff does\s+not violate/i);
 		assert.match(prompt, /empty findings list/i);
+	});
+
+	// Severity is the field the gate actually reads, and the prompt said nothing at all about how to
+	// choose one until the rubric landed. Guard it the way the score guidance is already guarded.
+	it("anchors every severity level the gate can compare against", () => {
+		for (const severity of SEVERITIES) {
+			assert.ok(prompt.includes(`\`${severity}\` —`), `prompt should anchor ${severity}`);
+		}
+	});
+
+	it("distinguishes severity, which decides blocking, from the diagnostic score", () => {
+		assert.match(prompt, /unlike the score, severity is what decides whether\s+this change is blocked/i);
+		assert.match(prompt, /Scores are diagnostic reporting/i);
+	});
+
+	it("separates the levels by adding weakly versus removing an existing protection", () => {
+		assert.match(prompt, /adds something weakly or takes away a protection that already\s+existed/i);
+		assert.match(prompt, /removes or defeats a protection that was already there/i);
+	});
+
+	// `--fail-on` is configurable and `verdict.ts` owns it. A number here would let the model
+	// pre-empt the gate by grading down to whatever it believed the threshold to be.
+	it("does not name the blocking threshold it is scoring against", () => {
+		assert.match(prompt, /blocking threshold is configured outside this review/i);
+	});
+
+	// Grading a finding up because its criterion feels important is the failure mode a human reader
+	// hit on this exact rubric: an assertion-free new test read as `critical` rather than `medium`.
+	it("separates a finding's impact from how important its criterion feels", () => {
+		assert.match(prompt, /measures the impact of this diff's defect, not how important the\s+criterion is/i);
+		assert.match(prompt, /a rule\s+the conventions state outright is violated at `medium` or above/i);
 	});
 
 	// Read-only repo access is available but the turn budget is small, so the prompt has to actively
