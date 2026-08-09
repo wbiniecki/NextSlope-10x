@@ -45,7 +45,12 @@ const SAMPLE_DIFF = [
 
 function verdictWith(findings: Finding[]): Verdict {
 	return {
-		criteria: CRITERION_IDS.map((id) => ({ id, score: 8, justification: `Scored ${id}.` })),
+		criteria: CRITERION_IDS.map((id) => ({
+			id,
+			applicable: true,
+			score: 8,
+			justification: `Scored ${id}.`,
+		})),
 		findings,
 	};
 }

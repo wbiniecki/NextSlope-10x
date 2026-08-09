@@ -43,11 +43,24 @@ export type Severity = (typeof SEVERITIES)[number];
  */
 export const criterionScoreSchema = z.object({
 	id: z.enum(CRITERION_IDS).describe("Identifier of the criterion being scored."),
+	applicable: z
+		.boolean()
+		.describe(
+			"False only when the diff contains nothing this criterion governs. A criterion that " +
+				"governs anything the diff touches is scored normally, even when unviolated.",
+		),
+	// No refinement ties `score` to `applicable`. A refinement would not survive into
+	// `verdictJsonSchema`, so the model would never see the constraint and it would surface only
+	// as a failed review at the `cli.ts` parse boundary — a run that cost money and produced
+	// nothing. The score stays a plain 1..10 integer and is simply meaningless when not applicable.
 	score: z
 		.int()
 		.min(1)
 		.max(10)
-		.describe("1 = severe non-compliance, 10 = full compliance. Diagnostic only."),
+		.describe(
+			"1 = severe non-compliance, 10 = full compliance. Diagnostic only, and carries no " +
+				"meaning when applicable is false.",
+		),
 	justification: z
 		.string()
 		.min(1)

@@ -42,9 +42,20 @@ function summaryLine(report: ReviewReport, failOn: Severity | undefined): string
 		return `**Blocked** — ${plural(report.reasons.length, "blocking finding")} at or above ${threshold}, out of ${total}.`;
 	}
 
-	return report.findings.length === 0
-		? "**Passed** — no findings."
-		: `**Passed** — ${total}, all below ${threshold}.`;
+	if (report.findings.length > 0) {
+		return `**Passed** — ${total}, all below ${threshold}.`;
+	}
+
+	// "No findings" on an all-not-applicable run would read as a clean sweep of compliant criteria
+	// when in fact nothing was assessed. The bold word stays `Passed` either way: it is tied to the
+	// exit code that drives the PR label, and a third word would make the comment contradict it.
+	return noCriterionApplied(report.criteria)
+		? "**Passed** — no criterion applied to this diff."
+		: "**Passed** — no findings.";
+}
+
+function noCriterionApplied(criteria: CriterionScore[]): boolean {
+	return criteria.length > 0 && criteria.every((criterion) => !criterion.applicable);
 }
 
 function blockingReasonsSection(report: ReviewReport): string[] {
@@ -69,7 +80,7 @@ function criterionScoresSection(criteria: CriterionScore[]): string[] {
 		"| --- | --- | --- |",
 		...ordered.map(
 			(criterion) =>
-				`| \`${criterion.id}\` | ${criterion.score}/10 | ${cell(criterion.justification)} |`,
+				`| \`${criterion.id}\` | ${scoreCell(criterion)} | ${cell(criterion.justification)} |`,
 		),
 		"",
 		"Scores are diagnostic. Only findings at or above the fail-on severity block the change.",
@@ -105,6 +116,11 @@ function findingsSection(findings: Finding[]): string[] {
 	}
 
 	return lines;
+}
+
+/** An em dash rather than a number, so "not applicable" cannot be misread as full compliance. */
+function scoreCell(criterion: CriterionScore): string {
+	return criterion.applicable ? `${criterion.score}/10` : "—";
 }
 
 /** Model prose can contain newlines and pipes, either of which would break a table row. */

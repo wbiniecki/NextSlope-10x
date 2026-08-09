@@ -15,6 +15,7 @@ function wellFormedVerdict(): Verdict {
 	return {
 		criteria: CRITERION_IDS.map((id, index) => ({
 			id,
+			applicable: true,
 			score: index + 5,
 			justification: `Scored from the diff for ${id}.`,
 		})),
@@ -78,6 +79,20 @@ describe("verdictSchema", () => {
 		const raw = JSON.parse(JSON.stringify(verdict));
 		raw.criteria[0].id = "no-such-criterion";
 		assert.equal(verdictSchema.safeParse(raw).success, false);
+	});
+
+	// Required rather than defaulted: a model that omits the field has told us nothing, and
+	// silently reading that as "applicable" is how a criterion nobody assessed ends up scored.
+	it("rejects a criterion score with no applicable field", () => {
+		const raw = JSON.parse(JSON.stringify(wellFormedVerdict()));
+		delete raw.criteria[0].applicable;
+		assert.equal(verdictSchema.safeParse(raw).success, false);
+	});
+
+	it("accepts a criterion marked not applicable, score and all", () => {
+		const raw = JSON.parse(JSON.stringify(wellFormedVerdict()));
+		raw.criteria[0].applicable = false;
+		assert.equal(verdictSchema.safeParse(raw).success, true);
 	});
 
 	it("rejects a non-integer or out-of-range score", () => {

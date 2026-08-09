@@ -39,7 +39,8 @@ export function rawModelPrompt({ vars }) {
 		"",
 		"Return only a single JSON object and nothing else — no prose before or after it, no markdown",
 		'code fence. It must have exactly two keys: "criteria" (one entry per criterion, each with',
-		'"id", an integer "score" from 1 to 10, and a "justification") and "findings" (possibly empty,',
-		'each entry with "file", an integer "line", "criterionId", "severity", and "message").',
+		'"id", a boolean "applicable", an integer "score" from 1 to 10, and a "justification") and',
+		'"findings" (possibly empty, each entry with "file", an integer "line", "criterionId",',
+		'"severity", and "message").',
 	].join("\n");
 }

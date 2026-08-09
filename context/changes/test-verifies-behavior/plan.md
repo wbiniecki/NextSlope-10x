@@ -716,32 +716,32 @@ fields rather than trying to validate the five-criterion snapshot with the new s
 
 #### Automated
 
-- [x] 1.1 `npm test` and `npm run typecheck` pass on the unmodified package, and both logs are captured
-- [x] 1.2 All three baseline fixture directories retain a run log, schema-valid JSON, and rendered markdown
-- [x] 1.3 `baseline/promptfoo.log` exists, non-empty, records exactly three test cases
-- [x] 1.4 `git status` shows no modification under `src/`, `prompts/`, or `fixtures/`
+- [x] 1.1 `npm test` and `npm run typecheck` pass on the unmodified package, and both logs are captured — e1005c9
+- [x] 1.2 All three baseline fixture directories retain a run log, schema-valid JSON, and rendered markdown — e1005c9
+- [x] 1.3 `baseline/promptfoo.log` exists, non-empty, records exactly three test cases — e1005c9
+- [x] 1.4 `git status` shows no modification under `src/`, `prompts/`, or `fixtures/` — e1005c9
 
 #### Manual
 
-- [x] 1.5 `baseline/notes.md` records resolved model, per-fixture turns, and per-fixture cost
-- [x] 1.6 The spend is acknowledged as expected
-- [x] 1.7 Linear 10X-20 shows **In Progress**
+- [x] 1.5 `baseline/notes.md` records resolved model, per-fixture turns, and per-fixture cost — e1005c9
+- [x] 1.6 The spend is acknowledged as expected — e1005c9
+- [x] 1.7 Linear 10X-20 shows **In Progress** — e1005c9
 
 ### Phase 2: `applicable` End-to-End
 
 #### Automated
 
-- [ ] 2.1 `npm test` passes
-- [ ] 2.2 `npm run typecheck` passes
-- [ ] 2.3 A test asserts the schema rejects a criterion score with no `applicable` field
-- [ ] 2.4 A test asserts an em dash renders in place of a score for a not-applicable criterion
-- [ ] 2.5 A test asserts the all-not-applicable summary drops "no findings" and still reads as passed
+- [x] 2.1 `npm test` passes
+- [x] 2.2 `npm run typecheck` passes
+- [x] 2.3 A test asserts the schema rejects a criterion score with no `applicable` field
+- [x] 2.4 A test asserts an em dash renders in place of a score for a not-applicable criterion
+- [x] 2.5 A test asserts the all-not-applicable summary drops "no findings" and still reads as passed
 
 #### Manual
 
-- [ ] 2.6 The rendered table remains valid GitHub-flavored markdown with the em dash in place
-- [ ] 2.7 The prompt's `applicable` paragraph blocks the escape-hatch reading
-- [ ] 2.8 The raw-model instruction and README example include `applicable` and its N/A semantics
+- [x] 2.6 The rendered table remains valid GitHub-flavored markdown with the em dash in place
+- [x] 2.7 The prompt's `applicable` paragraph blocks the escape-hatch reading
+- [x] 2.8 The raw-model instruction and README example include `applicable` and its N/A semantics
 
 ### Phase 3: Global Severity Rubric
 

@@ -59,7 +59,10 @@ injection away from a published PR comment.
 
 ```jsonc
 {
-  "criteria": [{ "id": "flyway-forward-only", "score": 3, "justification": "…" }],
+  "criteria": [
+    { "id": "flyway-forward-only", "applicable": true, "score": 3, "justification": "…" },
+    { "id": "e2e-conventions", "applicable": false, "score": 10, "justification": "…" }
+  ],
   "findings": [
     {
       "file": "src/main/resources/db/migration/V3__create_preference_profiles.sql",
@@ -76,6 +79,11 @@ injection away from a published PR comment.
 
 Scores are diagnostic only — they never move `passed`. Read `passed` rather than re-deriving it
 from `findings` and a threshold you would have to duplicate.
+
+`applicable: false` means the diff contained nothing that criterion governs. Its integer `score` is
+retained only because the schema requires one and carries no meaning — `review.md` renders an em
+dash rather than a number for such an entry, so "not assessed" is never mistaken for "fully
+compliant".
 
 **`review.md`** — the same report as plain GitHub-flavored markdown: verdict line, blocking reasons,
 a criterion score table, then findings grouped by file with line anchors. It is meant to be pasted
