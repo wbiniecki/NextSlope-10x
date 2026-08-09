@@ -1,0 +1,13 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @nextslope/code-reviewer@0.1.0 review
+> node --import tsx/esm src/cli.ts --diff-file fixtures/clean-diff.patch --out /Users/binieckw/projects/training/10xDevs/NextSlope/context/changes/test-verifies-behavior/baseline/fixtures/clean-diff --verbose
+
+diff: /Users/binieckw/projects/training/10xDevs/NextSlope/packages/code-reviewer/fixtures/clean-diff.patch (2136 bytes, limit 200000)
+configured model: claude-sonnet-5, budget: $0.50, max turns: 3
+fail-on: high
+resolved model: claude-sonnet-5 (2.1.224)
+turns: 2, total cost: $0.0522
+modelUsage: {"claude-haiku-4-5-20251001":{"inputTokens":4067,"outputTokens":15,"cacheReadInputTokens":0,"cacheCreationInputTokens":0,"webSearchRequests":0,"costUSD":0.004142000000000001,"contextWindow":200000,"maxOutputTokens":32000,"canonicalModel":"claude-haiku-4-5","provider":"firstParty"},"claude-sonnet-5":{"inputTokens":2,"outputTokens":1080,"cacheReadInputTokens":3850,"cacheCreationInputTokens":5119,"webSearchRequests":0,"costUSD":0.048075,"contextWindow":1000000,"maxOutputTokens":64000,"canonicalModel":"claude-sonnet-5","provider":"firstParty"}}
+Wrote /Users/binieckw/projects/training/10xDevs/NextSlope/context/changes/test-verifies-behavior/baseline/fixtures/clean-diff/review.json and /Users/binieckw/projects/training/10xDevs/NextSlope/context/changes/test-verifies-behavior/baseline/fixtures/clean-diff/review.md
+Passed — no findings at or above high.

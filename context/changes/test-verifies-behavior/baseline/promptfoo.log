@@ -1,0 +1,64 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @nextslope/code-reviewer@0.1.0 promptfoo
+> node --import tsx/esm scripts/emit-schema.ts && NODE_OPTIONS='--import tsx/esm' promptfoo eval -c promptfoo/promptfooconfig.yaml
+
+Wrote /Users/binieckw/projects/training/10xDevs/NextSlope/packages/code-reviewer/promptfoo/generated/verdict.schema.json
+(node:88497) ExperimentalWarning: DecompressInterceptor is experimental and subject to change
+(Use `node --trace-warnings ...` to show where the warning was created)
+Starting evaluation eval-LbU-2026-08-09T18:35:24
+Running 3 test cases (up to 4 at a time)...
+
+┌────────────────────────────────────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ fixture                                                    │ [review-agent (production path)] agent-prompt              │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ {                                                          │ [PASS]                                                     │
+│   "patch": "sample-diff.patch",                            │ {"criteria":[{"id":"flyway-forward-only","score":1,"justi… │
+│   "expectedCriteria": [                                    │ separate violations of forward-only migrations: (1)        │
+│     "flyway-forward-only",                                 │ V3__create_preference_profiles.sql, an already-applied     │
+│     "ddl-auto-validate",                                   │ migration, is directly edited to add a display_nickname    │
+│     "constructor-injection",                               │ column inste...                                            │
+│     "access-control-scoping",                              │                                                            │
+│     "e2e-conventions"                                      │                                                            │
+│   ],                                                       │                                                            │
+│   "forbiddenCriteria": []                                  │                                                            │
+│ }                                                          │                                                            │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ {                                                          │ [FAIL]                                                     │
+│   "patch": "sample-diff-broken.patch",                     │ {"criteria":[{"id":"flyway-forward-only","score":2,"justi… │
+│   "expectedCriteria": [                                    │ diff modifies V3__create_preference_profiles.sql, an       │
+│     "flyway-forward-only",                                 │ already-applied migration, by adding a display_nickname    │
+│     "ddl-auto-validate",                                   │ column (should have been a new V7 migration). It also adds │
+│     "constructor-injection",                               │ a new V...                                                 │
+│     "e2e-conventions"                                      │                                                            │
+│   ],                                                       │                                                            │
+│   "forbiddenCriteria": [                                   │                                                            │
+│     "access-control-scoping"                               │                                                            │
+│   ]                                                        │                                                            │
+│ }                                                          │                                                            │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ {                                                          │ [PASS]                                                     │
+│   "patch": "clean-diff.patch",                             │ {"criteria":[{"id":"flyway-forward-only","score":10,"just… │
+│   "expectedCriteria": [],                                  │ a new file V6__add_visited_resorts_user_index.sql is added │
+│   "forbiddenCriteria": [                                   │ (marked 'new file mode'); no existing V1-V5 migration is   │
+│     "flyway-forward-only",                                 │ touched. The DDL used (CREATE INDEX ... ON table           │
+│     "ddl-auto-validate",                                   │ (column)...                                                │
+│     "constructor-injection",                               │                                                            │
+│     "access-control-scoping",                              │                                                            │
+│     "e2e-conventions"                                      │                                                            │
+│   ]                                                        │                                                            │
+│ }                                                          │                                                            │
+└────────────────────────────────────────────────────────────┴────────────────────────────────────────────────────────────┘
+✓ Eval complete (ID: eval-LbU-2026-08-09T18:35:24)
+
+» View results: promptfoo view
+» Share with your team: https://promptfoo.app
+» Feedback: https://promptfoo.dev/feedback
+
+
+Results:
+  ✓ 2 passed (66.67%)
+  ✗ 1 failed (33.33%)
+  0 errors (0%)
+Duration: 1m 10s (concurrency: 4)
+

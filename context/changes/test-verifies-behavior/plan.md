@@ -716,16 +716,16 @@ fields rather than trying to validate the five-criterion snapshot with the new s
 
 #### Automated
 
-- [ ] 1.1 `npm test` and `npm run typecheck` pass on the unmodified package, and both logs are captured
-- [ ] 1.2 All three baseline fixture directories retain a run log, schema-valid JSON, and rendered markdown
-- [ ] 1.3 `baseline/promptfoo.log` exists, non-empty, records exactly three test cases
-- [ ] 1.4 `git status` shows no modification under `src/`, `prompts/`, or `fixtures/`
+- [x] 1.1 `npm test` and `npm run typecheck` pass on the unmodified package, and both logs are captured
+- [x] 1.2 All three baseline fixture directories retain a run log, schema-valid JSON, and rendered markdown
+- [x] 1.3 `baseline/promptfoo.log` exists, non-empty, records exactly three test cases
+- [x] 1.4 `git status` shows no modification under `src/`, `prompts/`, or `fixtures/`
 
 #### Manual
 
-- [ ] 1.5 `baseline/notes.md` records resolved model, per-fixture turns, and per-fixture cost
-- [ ] 1.6 The spend is acknowledged as expected
-- [ ] 1.7 Linear 10X-20 shows **In Progress**
+- [x] 1.5 `baseline/notes.md` records resolved model, per-fixture turns, and per-fixture cost
+- [x] 1.6 The spend is acknowledged as expected
+- [x] 1.7 Linear 10X-20 shows **In Progress**
 
 ### Phase 2: `applicable` End-to-End
 

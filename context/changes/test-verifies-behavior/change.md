@@ -1,7 +1,7 @@
 ---
 change_id: test-verifies-behavior
 title: Sixth gating criterion for tests that cannot fail, plus applicable flag and severity rubric
-status: planned
+status: implementing
 created: 2026-08-09
 updated: 2026-08-09
 archived_at: null
