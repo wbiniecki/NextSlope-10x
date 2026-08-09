@@ -8,9 +8,9 @@
     "with `applicable: false`. Same semantics as the other two lists — a criterion absent from it is",
     "not asserted on — and the whole field is optional.",
     "`expectedFindings` and `forbiddenFindingRanges` go one level finer, and are also optional. Each",
-    "expected entry names a `criterionId`, a `severity`, and an inclusive `[start, end]` `lineRange`",
-    "of post-change line numbers, and must match exactly one finding one-to-one. Each forbidden entry",
-    "names a `criterionId` and a range no finding for that criterion may fall inside. Ranges, not",
+    "expected entry names a `criterionId`, a `severity`, a `file`, and an inclusive `[start, end]`",
+    "`lineRange` of post-change line numbers, and must match exactly one finding one-to-one. Each",
+    "forbidden entry names a `criterionId`, a `file`, and a range no finding may fall inside. Ranges, not",
     "message text, because a probabilistic reviewer rewords the same finding every run — but the line",
     "it anchors to is fixed by the static patch."
   ],
@@ -71,18 +71,21 @@
         {
           "criterionId": "test-verifies-behavior",
           "severity": "medium",
+          "file": "src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java",
           "lineRange": [29, 36],
           "note": "protection removal: assertThat(breakdown.alignDiff()).isEqualTo(1.0, ...) weakened in place to a bare isNotNull() on line 35. medium under the rollout cap, not high."
         },
         {
           "criterionId": "test-verifies-behavior",
           "severity": "medium",
+          "file": "src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java",
           "lineRange": [37, 41],
           "note": "protection removal: @Disabled added on line 38 with no replacement coverage anywhere in the diff. medium under the rollout cap, not high."
         },
         {
           "criterionId": "test-verifies-behavior",
           "severity": "medium",
+          "file": "src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java",
           "lineRange": [81, 90],
           "note": "additive weakness: a new @Test that builds a fixture, reads two values into locals, and never asserts."
         }
@@ -90,6 +93,7 @@
       "forbiddenFindingRanges": [
         {
           "criterionId": "test-verifies-behavior",
+          "file": "src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java",
           "lineRange": [91, 97],
           "note": "the decoy: a new test whose entire body is assertThrows. Explicitly not a violation, so any finding here is a true false positive."
         }

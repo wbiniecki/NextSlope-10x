@@ -21,8 +21,8 @@ function inRange(line, range) {
 	return Array.isArray(range) && line >= range[0] && line <= range[1];
 }
 
-function describeRange(criterionId, range) {
-	return `${criterionId} @ ${range?.[0]}-${range?.[1]}`;
+function describeRange(target) {
+	return `${target.criterionId} @ ${target.file}:${target.lineRange?.[0]}-${target.lineRange?.[1]}`;
 }
 
 export default function assertCriterionScores(output, context) {
@@ -79,6 +79,11 @@ export default function assertCriterionScores(output, context) {
 		// reporting one — and it would silently exempt the entry from the ceiling below.
 		if (entry.applicable === false) {
 			problems.push(`${id} came back not applicable on a fixture that plants a defect against it`);
+		} else if (typeof entry.score !== "number") {
+			// Explicit, because the comparisons below would pass vacuously: `undefined > 5` and
+			// `undefined < 6` are both false. Unlike verify.ts this reads raw model output, not
+			// zod-validated output, so a missing score is reachable here.
+			problems.push(`${id} carries no numeric score`);
 		} else if (entry.score > PLANTED_DEFECT_MAX_SCORE) {
 			problems.push(`${id} scored ${entry.score}, above the ${PLANTED_DEFECT_MAX_SCORE} ceiling for a criterion this fixture plants a defect against`);
 		}
@@ -88,7 +93,12 @@ export default function assertCriterionScores(output, context) {
 	// scored down. Without this the suite would reward a reviewer that scores everything low.
 	for (const id of forbidden) {
 		const entry = criterionById.get(id);
-		if (entry !== undefined && entry.applicable !== false && entry.score < UNVIOLATED_CRITERION_MIN_SCORE) {
+		if (entry === undefined || entry.applicable === false) {
+			continue;
+		}
+		if (typeof entry.score !== "number") {
+			problems.push(`${id} carries no numeric score`);
+		} else if (entry.score < UNVIOLATED_CRITERION_MIN_SCORE) {
 			problems.push(`${id} scored ${entry.score}, below the ${UNVIOLATED_CRITERION_MIN_SCORE} floor for a criterion this fixture does not violate`);
 		}
 	}
@@ -113,12 +123,13 @@ export default function assertCriterionScores(output, context) {
 			return (
 				finding?.criterionId === wanted.criterionId &&
 				finding?.severity === wanted.severity &&
+				finding?.file === wanted.file &&
 				inRange(finding?.line, wanted.lineRange)
 			);
 		});
 
 		if (hit === undefined) {
-			problems.push(`no ${wanted.severity} finding for ${describeRange(wanted.criterionId, wanted.lineRange)}`);
+			problems.push(`no ${wanted.severity} finding for ${describeRange(wanted)}`);
 		} else {
 			unconsumed.delete(hit);
 		}
@@ -126,8 +137,12 @@ export default function assertCriterionScores(output, context) {
 
 	for (const banned of forbiddenFindingRanges) {
 		for (const finding of findings) {
-			if (finding?.criterionId === banned.criterionId && inRange(finding?.line, banned.lineRange)) {
-				problems.push(`${describeRange(banned.criterionId, banned.lineRange)} is a false positive, reported at line ${finding.line}`);
+			if (
+				finding?.criterionId === banned.criterionId &&
+				finding?.file === banned.file &&
+				inRange(finding?.line, banned.lineRange)
+			) {
+				problems.push(`${describeRange(banned)} is a false positive, reported at line ${finding.line}`);
 			}
 		}
 	}

@@ -77,16 +77,20 @@
         # isEqualTo(1.0, within(EPS)) weakened in place to a bare isNotNull() on line 35.
         - criterionId: test-verifies-behavior
           severity: medium
+          file: src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java
           lineRange: [29, 36]
         # @Disabled added on line 38 with no replacement coverage in the diff.
         - criterionId: test-verifies-behavior
           severity: medium
+          file: src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java
           lineRange: [37, 41]
         # A new @Test that builds a fixture, reads two values into locals, and never asserts.
         - criterionId: test-verifies-behavior
           severity: medium
+          file: src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java
           lineRange: [81, 90]
       forbiddenFindingRanges:
         # The decoy: a test whose entire body is assertThrows is explicitly not a violation.
         - criterionId: test-verifies-behavior
+          file: src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java
           lineRange: [91, 97]

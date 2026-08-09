@@ -62,6 +62,12 @@ packages/**/promptfoo/generated/
 ### so these land wherever the CLI is invoked from, not just in the package.  ###
 review.json
 review.md
+### Deliberately retained evidence is the exception. A change's baseline and verification ###
+### runs are committed proof a plan reads back later, not incidental run output.          ###
+!context/changes/**/review.json
+!context/changes/**/review.md
+!context/archive/**/review.json
+!context/archive/**/review.md
 
 ### Secrets — any dotenv file, at any depth ###
 .env

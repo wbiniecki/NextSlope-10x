@@ -35,6 +35,16 @@ at `medium` so it reports on every PR without blocking under `--fail-on high`. P
 protection-removal cases (assertion weakened in place, `@Disabled` with no replacement, swallowed
 exception) to `high` only once the false-positive rate against real PRs earns it.
 
+**Before spending in Phase 6, know the one failure mode that is not a review-quality failure.** The
+new fixture's `expectedFindings` ranges are deliberately tight, and a miss is more likely to be an
+anchoring disagreement than a criterion defect. `[37, 41]` covers the `@Disabled` line, `@Test`, and
+the method signature but not the disabled test's body, and a reviewer anchoring that finding to the
+now-dead assertion — or to the added `import ...Disabled` on line 9 — is not wrong. The forbidden
+decoy range starts at line 91, the blank line immediately after the assertion-free test's closing
+brace, so a one-line slip fails twice: unmatched expectation *and* false-positive hit. If Phase 6
+fails only on ranges, say so in `comparison.md` and widen them; do not read it as the criterion
+misfiring. Decided in `reviews/impl-review-phase-5.md` → F6.
+
 Dropped from scope after consideration, recorded so they are not rediscovered: an advisory criterion
 tier (no members once this criterion gates) and `internal-consistency` / plan-conformance checking
 (needs `--plan-file` plumbing and overlaps `/10x-impl-review`).
