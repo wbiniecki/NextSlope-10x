@@ -146,6 +146,19 @@ describe("buildReviewPrompt", () => {
 		assert.match(prompt, /removes or defeats a protection/i);
 	});
 
+	// The axis alone left the medium/high boundary undecidable for a pure addition that is also
+	// unsafe — measured in Phase 6, where one identical hunk drew both severities across two runs.
+	// The first attempt at this tie-break said "reachable and wrong rather than merely risky", and
+	// the model attached "reachable" to the artifact instead of the failure: it wrote that a
+	// migration "risks failing" and graded it `high` anyway. So the operative test is now the
+	// hedging vocabulary itself, which is the part the model actually writes down.
+	it("breaks the medium/high tie on a pure addition without touching the critical anchors", () => {
+		assert.match(prompt, /nothing that worked before is\s+removed, weakened, or defeated/i);
+		assert.match(prompt, /risks, could, or may cause a failure, it is `medium`/i);
+		assert.match(prompt, /definitely present in the merged change/i);
+		assert.match(prompt, /`critical` anchors above are unaffected/i);
+	});
+
 	// `--fail-on` is configurable and `verdict.ts` owns it. A number here would let the model
 	// pre-empt the gate by grading down to whatever it believed the threshold to be.
 	it("does not name the blocking threshold it is scoring against", () => {

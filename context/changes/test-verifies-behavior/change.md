@@ -45,6 +45,22 @@ brace, so a one-line slip fails twice: unmatched expectation *and* false-positiv
 fails only on ranges, say so in `comparison.md` and widen them; do not read it as the criterion
 misfiring. Decided in `reviews/impl-review-phase-5.md` → F6.
 
+**Phase 6 outcome, and the one deliberate gate change.** The F6 range risk never materialized — all
+three findings anchored inside their tight ranges on all three paid runs. What did happen: two
+existing findings crossed the `--fail-on high` boundary on the first run, firing the contract's
+revise-and-confirm branch. It took two attempts. The first tie-break was falsified by its own
+confirmation run (the model attached "reachable" to the artifact instead of the failure and graded a
+self-described "risk" as `high`); the reworded one, which makes the model's own hedging vocabulary
+the test, held across both fixtures and matched all six pre-registered predictions.
+
+Against the shipped prompt exactly one crossing remains, deliberately: **field injection is now
+`medium`, not `high`**, so a PR whose only defect is field injection is reported but no longer
+blocked under `--fail-on high`. That is the rubric working — field injection removes no protection
+and breaks nothing — and the baseline's `high` was improvised against no rubric at all. If it should
+block, the fix is a per-criterion anchor on `constructor-injection`, not a global rubric change.
+Full evidence and the four earned follow-ups (turn/budget ceilings, per-criterion anchors, two
+unasserted N/A declarations, the deferred `high` promotion) are in `verification/comparison.md`.
+
 Dropped from scope after consideration, recorded so they are not rediscovered: an advisory criterion
 tier (no members once this criterion gates) and `internal-consistency` / plan-conformance checking
 (needs `--plan-file` plumbing and overlaps `/10x-impl-review`).

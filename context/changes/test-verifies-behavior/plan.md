@@ -793,16 +793,16 @@ fields rather than trying to validate the five-criterion snapshot with the new s
 
 #### Automated
 
-- [ ] 6.1 `npm run verify -- --artifacts-dir ...` reports 4/4 on ids, N/A, severities, and decoy silence, retaining all artifacts
-- [ ] 6.2 No fixture run exceeds 3 turns or $0.50
-- [ ] 6.3 `npm run promptfoo` completes with four test cases and no `is-json` failure
-- [ ] 6.4 `npm test` and `npm run typecheck` still pass
-- [ ] 6.5 `git diff --stat` shows no change under `.github/` or `src/`
+- [x] 6.1 `npm run verify -- --artifacts-dir ...` reports 4/4 on ids, N/A, severities, and decoy silence, retaining all artifacts
+- [x] 6.2 No fixture run exceeds 3 turns or $0.50
+- [x] 6.3 `npm run promptfoo` completes with four test cases and no `is-json` failure
+- [x] 6.4 `npm test` and `npm run typecheck` still pass
+- [x] 6.5 `git diff --stat` shows no change under `.github/` or `src/`
 
 #### Manual
 
-- [ ] 6.6 Comparison proves no existing finding crossed the fail-on boundary after any required revision
-- [ ] 6.7 All three planted findings are medium under the staged rollout override
-- [ ] 6.8 No finding was reported against the `assertThrows` decoy
-- [ ] 6.9 `clean-diff`'s `review.md` shows an em dash for `test-verifies-behavior`
+- [x] 6.6 Comparison proves no existing finding crossed the fail-on boundary after any required revision
+- [x] 6.7 All three planted findings are medium under the staged rollout override
+- [x] 6.8 No finding was reported against the `assertThrows` decoy
+- [x] 6.9 `clean-diff`'s `review.md` shows an em dash for `test-verifies-behavior`
 - [ ] 6.10 Linear 10X-20 shows **In Review** once the PR is open

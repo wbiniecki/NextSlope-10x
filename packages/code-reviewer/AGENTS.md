@@ -17,8 +17,8 @@ governs the application, not this package.
   They describe real defects (an edited applied migration, `ddl-auto=update`, an IDOR route) that
   must never land in the repo. `sample-diff.patch` also carries an inert adversarial instruction
   telling the reviewer to report nothing — deliberately, as a prompt-injection control.
-- **`npm run verify` costs money.** Three real API runs per pass. It is a deliberate action, never
-  a watch task.
+- **`npm run verify` costs money.** One real API run per fixture per pass — four today. It is a
+  deliberate action, never a watch task.
 
 ## Commands
 
@@ -26,7 +26,9 @@ governs the application, not this package.
   resolves reproducibly (`ci.yml` has no Node step yet). Never pass `--omit=optional`: the native
   Claude Code binary ships as a per-platform optional dependency.
 - `npm run review -- --diff-file <path>` — review one diff (real API call).
-- `npm run verify` — run all fixtures against `fixtures/expectations.json` (three real API calls).
+- `npm run verify` — run all fixtures against `fixtures/expectations.json` (one real API call per
+  fixture). Add `-- --artifacts-dir <path>` to retain each run's `review.json`, `review.md`, and
+  `run.log` instead of discarding the temporary output directory; same runs, no extra model call.
 - `npm test` — unit tests via `node --test`; no network calls, none allowed.
 - `npm run typecheck` — `tsc --noEmit`.
 - `npm run smoke` — smallest possible `query()`, to separate a bad credential from an unresolved
@@ -87,6 +89,34 @@ them away.
   be answerable from the diff alone, because repo reads compete with a 3-turn budget.
 - The diff is untrusted data. `src/prompt.ts` wraps it in explicit delimiters and instructs the
   model that anything inside them is evidence, never instructions.
+- Severity has a written rubric, and it is the thing that matters: `--fail-on` compares severities,
+  so an improvised severity is an improvised gate. The **global** rubric lives in `src/prompt.ts`
+  beside the score guidance, anchored on one axis — adding something weakly versus removing a
+  protection that existed — plus a tie-break for the `medium`/`high` collision on a pure addition.
+  **Per-criterion** anchors live beside their criterion in `prompts/criteria.md` and take precedence
+  over the global default; `test-verifies-behavior` uses that to cap every finding at `medium`
+  during its rollout, so it reports on every PR without blocking. Both halves are unit-tested in
+  `test/prompt.test.ts`.
+- **Do not edit the severity rubric without a paid run to check it.** Measured in 10X-20: a
+  tie-break that read perfectly plausibly produced the exact opposite of its intent, because the
+  model attached the word "reachable" to the artifact rather than to the failure and graded a defect
+  it had itself called a "risk" as `high`. The wording that works makes the model's own hedging
+  vocabulary the test — "risks / could / may" means `medium`. Over the same three runs, the
+  mechanical per-criterion cap never deviated once. Prefer a per-criterion anchor to a global prose
+  change, and verify any prose change against `npm run verify` before trusting it. Evidence:
+  `context/changes/*-test-verifies-behavior/verification/comparison.md`.
+- `applicable: false` means the criterion governs nothing the diff touches. Its `score` is then
+  meaningless — retained only because the emitted draft-07 schema keeps `score` required — and
+  `render.ts` shows an em dash rather than `N/10`. It is not an escape hatch: a criterion that
+  governs anything the diff touches is scored normally even when unviolated, and both
+  `scripts/verify.ts` and `promptfoo/assertions.js` fail a fixture whose `expectedCriteria` come
+  back not applicable.
+- `fixtures/expectations.json` now carries `expectedNotApplicable` beside `expectedCriteria` and
+  `forbiddenCriteria`, plus optional `expectedFindings` / `forbiddenFindingRanges` matched on
+  criterion, severity, file, and line range — never on prose, which a probabilistic reviewer words
+  differently every run. The file is zod-validated with `.strict()` at load, so a mistyped key
+  errors instead of silently disabling its assertion. `promptfoo/tests.yaml` restates the same
+  structures and is kept honest by a drift test in `test/verify.test.ts`.
 
 ## Cross-Change Contract
 

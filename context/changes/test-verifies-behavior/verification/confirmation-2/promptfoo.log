@@ -1,0 +1,75 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @nextslope/code-reviewer@0.1.0 promptfoo
+> node --import tsx/esm scripts/emit-schema.ts && NODE_OPTIONS='--import tsx/esm' promptfoo eval -c promptfoo/promptfooconfig.yaml
+
+Wrote /Users/binieckw/projects/training/10xDevs/NextSlope/packages/code-reviewer/promptfoo/generated/verdict.schema.json
+(node:81989) ExperimentalWarning: DecompressInterceptor is experimental and subject to change
+(Use `node --trace-warnings ...` to show where the warning was created)
+Starting evaluation eval-ixW-2026-08-09T22:51:51
+Running 4 test cases (up to 4 at a time)...
+
+┌────────────────────────────────────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ fixture                                                    │ [review-agent (production path)] agent-prompt              │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ {                                                          │ [PASS]                                                     │
+│   "patch": "sample-diff.patch",                            │ {"criteria":[{"id":"flyway-forward-only","applicable":tru… │
+│   "expectedCriteria": [                                    │ distinct violations: (1)                                   │
+│     "flyway-forward-only",                                 │ V3__create_preference_profiles.sql, an already-applied     │
+│     "ddl-auto-validate",                                   │ migration, is modified in place to add a display_nickname  │
+│     "constructor-injection",                               │ column instead of s...                                     │
+│     "access-control-scoping",                              │                                                            │
+│     "e2e-conventions"                                      │                                                            │
+│   ],                                                       │                                                            │
+│   "forbiddenCriteria": [                                   │                                                            │
+│     "test-verifies-behavio...                              │                                                            │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ {                                                          │ [PASS]                                                     │
+│   "patch": "sample-diff-broken.patch",                     │ {"criteria":[{"id":"flyway-forward-only","applicable":tru… │
+│   "expectedCriteria": [                                    │ is an existing, already-applied migration (no 'new file    │
+│     "flyway-forward-only",                                 │ mode' marker) and the diff adds a display_nickname column  │
+│     "ddl-auto-validate",                                   │ directly to ...                                            │
+│     "constructor-injection",                               │                                                            │
+│     "e2e-conventions"                                      │                                                            │
+│   ],                                                       │                                                            │
+│   "forbiddenCriteria": [                                   │                                                            │
+│     "access-control-scoping",                              │                                                            │
+│     "test-verifies-...                                     │                                                            │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ {                                                          │ [PASS]                                                     │
+│   "patch": "clean-diff.patch",                             │ {"criteria":[{"id":"flyway-forward-only","applicable":tru… │
+│   "expectedCriteria": [],                                  │ a brand-new V6__add_visited_resorts_user_index.sql file is │
+│   "forbiddenCriteria": [                                   │ added (marked 'new file mode'); no existing V1-V5          │
+│     "flyway-forward-only",                                 │ migration is touched. The DDL is a plain CREAT...          │
+│     "ddl-auto-validate",                                   │                                                            │
+│     "constructor-injection",                               │                                                            │
+│     "access-control-scoping",                              │                                                            │
+│     "e2e-conventions",                                     │                                                            │
+│     "test-verifies-behavior"                               │                                                            │
+│ ...                                                        │                                                            │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ {                                                          │ [PASS]                                                     │
+│   "patch": "assertion-free-tests.patch",                   │ {"criteria":[{"id":"flyway-forward-only","applicable":fal… │
+│   "expectedCriteria": [                                    │ diff touches only a JUnit test file under src/test/java;   │
+│     "test-verifies-behavior"                               │ no SQL migration files are added or modified, so this      │
+│   ],                                                       │ criterion has nothing to govern here."},{"id...            │
+│   "forbiddenCriteria": [                                   │                                                            │
+│     "flyway-forward-only",                                 │                                                            │
+│     "ddl-auto-validate",                                   │                                                            │
+│     "constructor-injection",                               │                                                            │
+│     "access-control-scoping",                              │                                                            │
+│     "e2e-c...                                              │                                                            │
+└────────────────────────────────────────────────────────────┴────────────────────────────────────────────────────────────┘
+✓ Eval complete (ID: eval-ixW-2026-08-09T22:51:51)
+
+» View results: promptfoo view
+» Share with your team: https://promptfoo.app
+» Feedback: https://promptfoo.dev/feedback
+
+
+Results:
+  ✓ 4 passed (100%)
+  0 failed (0%)
+  0 errors (0%)
+Duration: 1m 31s (concurrency: 4)
+

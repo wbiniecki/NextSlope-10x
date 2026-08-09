@@ -1,0 +1,75 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @nextslope/code-reviewer@0.1.0 promptfoo
+> node --import tsx/esm scripts/emit-schema.ts && NODE_OPTIONS='--import tsx/esm' promptfoo eval -c promptfoo/promptfooconfig.yaml
+
+Wrote /Users/binieckw/projects/training/10xDevs/NextSlope/packages/code-reviewer/promptfoo/generated/verdict.schema.json
+(node:32761) ExperimentalWarning: DecompressInterceptor is experimental and subject to change
+(Use `node --trace-warnings ...` to show where the warning was created)
+Starting evaluation eval-dCj-2026-08-09T21:26:34
+Running 4 test cases (up to 4 at a time)...
+
+┌────────────────────────────────────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ fixture                                                    │ [review-agent (production path)] agent-prompt              │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ {                                                          │ [PASS]                                                     │
+│   "patch": "sample-diff.patch",                            │ {"criteria":[{"id":"flyway-forward-only","applicable":tru… │
+│   "expectedCriteria": [                                    │ diff modifies V3__create_preference_profiles.sql (no 'new  │
+│     "flyway-forward-only",                                 │ file mode' header, shown as context+addition), which is an │
+│     "ddl-auto-validate",                                   │ already-applied migration — corrections ...                │
+│     "constructor-injection",                               │                                                            │
+│     "access-control-scoping",                              │                                                            │
+│     "e2e-conventions"                                      │                                                            │
+│   ],                                                       │                                                            │
+│   "forbiddenCriteria": [                                   │                                                            │
+│     "test-verifies-behavio...                              │                                                            │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ {                                                          │ [PASS]                                                     │
+│   "patch": "sample-diff-broken.patch",                     │ {"criteria":[{"id":"flyway-forward-only","applicable":tru… │
+│   "expectedCriteria": [                                    │ an already-applied migration, is modified in place to add  │
+│     "flyway-forward-only",                                 │ a display_nickname column instead of introducing a new     │
+│     "ddl-auto-validate",                                   │ V{n+1} file ...                                            │
+│     "constructor-injection",                               │                                                            │
+│     "e2e-conventions"                                      │                                                            │
+│   ],                                                       │                                                            │
+│   "forbiddenCriteria": [                                   │                                                            │
+│     "access-control-scoping",                              │                                                            │
+│     "test-verifies-...                                     │                                                            │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ {                                                          │ [ERROR] max_turns: Exhausted the 3-turn budget before      │
+│   "patch": "clean-diff.patch",                             │ producing a result (Reached maximum number of turns (3) —  │
+│   "expectedCriteria": [],                                  │ terminal_reason: max_turns)                                │
+│   "forbiddenCriteria": [                                   │                                                            │
+│     "flyway-forward-only",                                 │                                                            │
+│     "ddl-auto-validate",                                   │                                                            │
+│     "constructor-injection",                               │                                                            │
+│     "access-control-scoping",                              │                                                            │
+│     "e2e-conventions",                                     │                                                            │
+│     "test-verifies-behavior"                               │                                                            │
+│ ...                                                        │                                                            │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ {                                                          │ [PASS]                                                     │
+│   "patch": "assertion-free-tests.patch",                   │ {"criteria":[{"id":"flyway-forward-only","applicable":fal… │
+│   "expectedCriteria": [                                    │ touches only a JUnit test file under src/test/java; no     │
+│     "test-verifies-behavior"                               │ migration files (V{n}__*.sql) are added or                 │
+│   ],                                                       │ modified."},{"id":"ddl-auto-validate","applicable":false.… │
+│   "forbiddenCriteria": [                                   │                                                            │
+│     "flyway-forward-only",                                 │                                                            │
+│     "ddl-auto-validate",                                   │                                                            │
+│     "constructor-injection",                               │                                                            │
+│     "access-control-scoping",                              │                                                            │
+│     "e2e-c...                                              │                                                            │
+└────────────────────────────────────────────────────────────┴────────────────────────────────────────────────────────────┘
+✓ Eval complete (ID: eval-dCj-2026-08-09T21:26:34)
+
+» View results: promptfoo view
+» Share with your team: https://promptfoo.app
+» Feedback: https://promptfoo.dev/feedback
+
+
+Results:
+  ✓ 3 passed (75.00%)
+  0 failed (0%)
+  ✗ 1 error (25.00%)
+Duration: 1m 45s (concurrency: 4)
+
