@@ -28,6 +28,7 @@ import {
 	readdirSync,
 	readFileSync,
 	rmSync,
+	statSync,
 	writeSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
@@ -83,6 +84,27 @@ const forbiddenFindingRangeSchema = z.strictObject({
 });
 
 /**
+ * `matchFindings` consumes greedily in declaration order, which is exact only while two entries for
+ * the same criterion and file do not overlap — an invariant its docblock states and the fixture
+ * currently honors by hand. Enforced here so the next entry someone adds cannot quietly break it:
+ * overlap cannot produce a false pass (consumption is one-to-one regardless), but it can produce a
+ * spurious failure, and this harness only fails after four paid runs.
+ */
+const expectedFindingsSchema = z.array(expectedFindingSchema).refine(
+	(findings) =>
+		findings.every((finding, index) =>
+			findings.slice(index + 1).every(
+				(other) =>
+					other.criterionId !== finding.criterionId ||
+					other.file !== finding.file ||
+					other.lineRange[1] < finding.lineRange[0] ||
+					other.lineRange[0] > finding.lineRange[1],
+			),
+		),
+	{ error: "expectedFindings ranges must not overlap for the same criterion and file" },
+);
+
+/**
  * `strictObject`, not a plain cast. Every field below the required four is optional and read through
  * `?? []`, so a mistyped key — `expectedFinding`, `forbiddenFindingRange`, or one nested a level too
  * deep — would silently disable that assertion and let the fixture pass on criterion ids alone,
@@ -97,14 +119,19 @@ const fixtureExpectationSchema = z.strictObject({
 	name: z
 		.string()
 		.regex(/^[a-z0-9-]+$/, { error: "name must be lowercase letters, digits, and hyphens" }),
-	patch: z.string().min(1),
+	// Constrained for the same reason `name` is: it becomes a path segment, at
+	// `join(FIXTURES_DIR, fixture.patch)`. Leaving one of the two unvalidated invites a reader to
+	// assume both are.
+	patch: z
+		.string()
+		.regex(/^[a-z0-9-]+\.patch$/, { error: "patch must be a lowercase-hyphenated .patch filename" }),
 	description: z.string().optional(),
 	expectedCriteria: z.array(z.enum(CRITERION_IDS)),
 	forbiddenCriteria: z.array(z.enum(CRITERION_IDS)),
 	/** Optional. A criterion listed here must come back `applicable: false`. */
 	expectedNotApplicable: z.array(z.enum(CRITERION_IDS)).optional(),
 	/** Optional. Each entry must match exactly one finding, one-to-one. */
-	expectedFindings: z.array(expectedFindingSchema).optional(),
+	expectedFindings: expectedFindingsSchema.optional(),
 	/** Optional. No finding for the named criterion may fall inside the range. */
 	forbiddenFindingRanges: z.array(forbiddenFindingRangeSchema).optional(),
 });
@@ -160,11 +187,24 @@ export function loadExpectations(path = EXPECTATIONS_PATH): FixtureExpectation[]
 	return parsed.data.fixtures;
 }
 
+const USAGE = `Usage: npm run verify [-- --artifacts-dir <path>]
+
+  --artifacts-dir <path>  Retain each fixture's review.json, review.md, and run.log under
+                          <path>/<fixture-name>/ instead of discarding a temporary directory.
+                          The destination must be an empty or non-existent directory.`;
+
 /**
- * `--artifacts-dir <path>`, or undefined for today's discard-the-output-directory behavior. A
- * destination that already holds files is refused rather than merged into: a half-overwritten
- * artifact directory silently mixes two runs, and these directories exist to be compared against a
- * baseline.
+ * An argv mistake, as opposed to a bad expectations file. Only these print `USAGE` — an operator who
+ * mistypes the flag needs to be told what the flag is, and they find out after kicking off a run
+ * they expected to pay for.
+ */
+class UsageError extends Error {}
+
+/**
+ * `--artifacts-dir <path>` resolved against the cwd, or undefined for the
+ * discard-the-output-directory default. Pure, like `src/cli.ts`'s `parseArgs`: the freshness check
+ * and the `mkdir` live in `prepareArtifactsDir`, so an invalid expectations file cannot leave an
+ * empty artifacts directory behind.
  */
 export function parseArtifactsDir(argv: string[]): string | undefined {
 	let value: string | undefined;
@@ -179,7 +219,7 @@ export function parseArtifactsDir(argv: string[]): string | undefined {
 		const flag = separator === -1 ? argument : argument.slice(0, separator);
 
 		if (flag !== "--artifacts-dir") {
-			throw new Error(`Unknown argument "${argument}"`);
+			throw new UsageError(`Unknown argument "${argument}"`);
 		}
 
 		if (separator === -1) {
@@ -190,21 +230,31 @@ export function parseArtifactsDir(argv: string[]): string | undefined {
 		}
 
 		if (value === undefined || value === "" || value.startsWith("--")) {
-			throw new Error("--artifacts-dir requires a path.");
+			throw new UsageError("--artifacts-dir requires a path.");
 		}
 	}
 
-	if (value === undefined) {
-		return undefined;
-	}
+	return value === undefined ? undefined : resolve(process.cwd(), value);
+}
 
-	const dir = resolve(process.cwd(), value);
-	if (existsSync(dir) && readdirSync(dir).length > 0) {
-		throw new Error(`--artifacts-dir ${dir} is not empty; point it at a fresh destination.`);
+/**
+ * A destination that already holds files is refused rather than merged into: a half-overwritten
+ * artifact directory silently mixes two runs, and these directories exist to be compared against a
+ * baseline.
+ */
+export function prepareArtifactsDir(dir: string): void {
+	if (existsSync(dir)) {
+		// Without this, pointing the flag at a regular file reaches `readdirSync` and surfaces a bare
+		// `ENOTDIR` scandir errno. `src/cli.ts` shapes the same mistake for `--diff-file`.
+		if (!statSync(dir).isDirectory()) {
+			throw new UsageError(`--artifacts-dir ${dir} is not a directory.`);
+		}
+		if (readdirSync(dir).length > 0) {
+			throw new UsageError(`--artifacts-dir ${dir} is not empty; point it at a fresh destination.`);
+		}
 	}
 
 	mkdirSync(dir, { recursive: true });
-	return dir;
 }
 
 export function inRange(line: number, [start, end]: LineRange): boolean {
@@ -482,7 +532,13 @@ function format(ids: string[]): string {
 
 async function main(): Promise<number> {
 	const artifactsDir = parseArtifactsDir(process.argv.slice(2));
+	// Before the directory is created, so an invalid expectations file fails without leaving an
+	// empty artifacts directory that the next run would then refuse as "not empty".
 	const fixtures = loadExpectations();
+	if (artifactsDir !== undefined) {
+		prepareArtifactsDir(artifactsDir);
+	}
+
 	console.log(`Running ${fixtures.length} fixture(s) through the review CLI — this makes real API calls.`);
 	if (artifactsDir !== undefined) {
 		console.log(`Retaining review.json, review.md, and run.log under ${artifactsDir}`);
@@ -523,6 +579,9 @@ if (invokedDirectly) {
 	// one-line message rather than a stack trace, since none of them is a harness bug.
 	process.exitCode = await main().catch((error: unknown) => {
 		console.error(error instanceof Error ? error.message : String(error));
+		if (error instanceof UsageError) {
+			console.error(`\n${USAGE}`);
+		}
 		return 1;
 	});
 }

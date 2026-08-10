@@ -632,7 +632,9 @@ the PR to `main` opens — the final pre-merge gate, not intermediate phase work
   budget
 - `npm run promptfoo` completes with four test cases and no `is-json` schema failure
 - `npm test` and `npm run typecheck` still pass
-- `git diff --stat` shows no change under `.github/` or `src/`
+- `git diff --stat` shows no change under `.github/` or the Java application's `src/`. This does not
+  cover `packages/code-reviewer/src/`: the crossing branch in §2 above mandates revising the rubric,
+  and Phase 3 put the rubric in `src/prompt.ts`, so that file is in scope whenever the branch fires.
 
 #### Manual Verification:
 
@@ -793,16 +795,16 @@ fields rather than trying to validate the five-criterion snapshot with the new s
 
 #### Automated
 
-- [x] 6.1 `npm run verify -- --artifacts-dir ...` reports 4/4 on ids, N/A, severities, and decoy silence, retaining all artifacts
-- [x] 6.2 No fixture run exceeds 3 turns or $0.50
-- [x] 6.3 `npm run promptfoo` completes with four test cases and no `is-json` failure
-- [x] 6.4 `npm test` and `npm run typecheck` still pass
-- [x] 6.5 `git diff --stat` shows no change under `.github/` or `src/`
+- [x] 6.1 `npm run verify -- --artifacts-dir ...` reports 4/4 on ids, N/A, severities, and decoy silence, retaining all artifacts — c7fb94e
+- [x] 6.2 No fixture run exceeds 3 turns or $0.50 — c7fb94e (holds for the shipped-prompt run: 2 turns of 3, ≤ $0.1716 per fixture. Confirmation 1's `sample-diff` exhausted the $0.50 budget on the falsified intermediate prompt — disclosed in `verification/comparison.md` → Budget and reliability, and carried as follow-up #1.)
+- [x] 6.3 `npm run promptfoo` completes with four test cases and no `is-json` failure — c7fb94e
+- [x] 6.4 `npm test` and `npm run typecheck` still pass — c7fb94e
+- [x] 6.5 `git diff --stat` shows no change under `.github/` or the Java application's `src/` — c7fb94e (`packages/code-reviewer/src/prompt.ts` was revised by §2's crossing branch, as that branch requires)
 
 #### Manual
 
-- [x] 6.6 Comparison proves no existing finding crossed the fail-on boundary after any required revision
-- [x] 6.7 All three planted findings are medium under the staged rollout override
-- [x] 6.8 No finding was reported against the `assertThrows` decoy
-- [x] 6.9 `clean-diff`'s `review.md` shows an em dash for `test-verifies-behavior`
+- [x] 6.6 Comparison proves no existing finding crossed the fail-on boundary after any required revision — c7fb94e
+- [x] 6.7 All three planted findings are medium under the staged rollout override — c7fb94e
+- [x] 6.8 No finding was reported against the `assertThrows` decoy — c7fb94e
+- [x] 6.9 `clean-diff`'s `review.md` shows an em dash for `test-verifies-behavior` — c7fb94e
 - [ ] 6.10 Linear 10X-20 shows **In Review** once the PR is open

@@ -8,9 +8,9 @@
  * `test-verifies-behavior` plan reads that line as proof.
  */
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 
@@ -22,6 +22,7 @@ import {
 	loadExpectations,
 	matchFindings,
 	parseArtifactsDir,
+	prepareArtifactsDir,
 	type FixtureExpectation,
 } from "../scripts/verify.ts";
 import { CRITERION_IDS, type Finding, type ReviewReport } from "../src/schema.ts";
@@ -246,6 +247,60 @@ describe("loadExpectations", () => {
 		}
 	});
 
+	it("rejects overlapping ranges, the precondition greedy matching depends on", () => {
+		const dir = mkdtempSync(join(tmpdir(), "verify-expectations-"));
+		const path = join(dir, "expectations.json");
+		writeFileSync(
+			path,
+			JSON.stringify({
+				fixtures: [
+					{
+						name: "x",
+						patch: "x.patch",
+						expectedCriteria: [],
+						forbiddenCriteria: [],
+						expectedFindings: [
+							{ criterionId: TARGET, severity: "medium", file: FILE, lineRange: [29, 36] },
+							{ criterionId: TARGET, severity: "medium", file: FILE, lineRange: [36, 41] },
+						],
+					},
+				],
+			}),
+			"utf8",
+		);
+
+		try {
+			assert.throws(() => loadExpectations(path), /must not overlap/);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
+
+	it("rejects a patch filename that would escape the fixtures directory", () => {
+		const dir = mkdtempSync(join(tmpdir(), "verify-expectations-"));
+		const path = join(dir, "expectations.json");
+		writeFileSync(
+			path,
+			JSON.stringify({
+				fixtures: [
+					{
+						name: "x",
+						patch: "../../../etc/passwd",
+						expectedCriteria: [],
+						forbiddenCriteria: [],
+					},
+				],
+			}),
+			"utf8",
+		);
+
+		try {
+			assert.throws(() => loadExpectations(path), /patch must be/);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
+
 	it("rejects a backwards line range", () => {
 		const dir = mkdtempSync(join(tmpdir(), "verify-expectations-"));
 		const path = join(dir, "expectations.json");
@@ -332,14 +387,36 @@ describe("parseArtifactsDir", () => {
 	});
 
 	it("accepts both --flag value and --flag=value", () => {
+		const base = resolve(tmpdir(), "verify-artifacts-parse");
+
+		assert.equal(parseArtifactsDir(["--artifacts-dir", join(base, "a")]), join(base, "a"));
+		assert.equal(parseArtifactsDir([`--artifacts-dir=${join(base, "b")}`]), join(base, "b"));
+	});
+
+	it("touches no filesystem, so an invalid expectations file leaves no directory behind", () => {
+		const absent = join(tmpdir(), `verify-artifacts-untouched-${process.pid}`);
+
+		assert.equal(parseArtifactsDir(["--artifacts-dir", absent]), absent);
+		assert.equal(existsSync(absent), false);
+	});
+
+	it("rejects an unknown argument rather than silently retaining nothing", () => {
+		assert.throws(() => parseArtifactsDir(["--artifact-dir", "/tmp/x"]), /Unknown argument/);
+	});
+
+	it("rejects the flag with no path", () => {
+		assert.throws(() => parseArtifactsDir(["--artifacts-dir"]), /requires a path/);
+	});
+});
+
+describe("prepareArtifactsDir", () => {
+	it("creates a destination that does not exist yet", () => {
 		const base = mkdtempSync(join(tmpdir(), "verify-artifacts-"));
+		const target = join(base, "nested", "run");
 
 		try {
-			const spaced = parseArtifactsDir(["--artifacts-dir", join(base, "a")]);
-			const inline = parseArtifactsDir([`--artifacts-dir=${join(base, "b")}`]);
-
-			assert.equal(spaced, join(base, "a"));
-			assert.equal(inline, join(base, "b"));
+			prepareArtifactsDir(target);
+			assert.equal(existsSync(target), true);
 		} finally {
 			rmSync(base, { recursive: true, force: true });
 		}
@@ -350,17 +427,25 @@ describe("parseArtifactsDir", () => {
 		mkdirSync(join(base, "clean-diff"));
 
 		try {
-			assert.throws(() => parseArtifactsDir(["--artifacts-dir", base]), /not empty/);
+			assert.throws(() => prepareArtifactsDir(base), /not empty/);
 		} finally {
 			rmSync(base, { recursive: true, force: true });
 		}
 	});
 
-	it("rejects an unknown argument rather than silently retaining nothing", () => {
-		assert.throws(() => parseArtifactsDir(["--artifact-dir", "/tmp/x"]), /Unknown argument/);
-	});
+	it("refuses a regular file with a shaped message rather than a bare ENOTDIR", () => {
+		const base = mkdtempSync(join(tmpdir(), "verify-artifacts-"));
+		const file = join(base, "not-a-dir");
+		writeFileSync(file, "x", "utf8");
 
-	it("rejects the flag with no path", () => {
-		assert.throws(() => parseArtifactsDir(["--artifacts-dir"]), /requires a path/);
+		try {
+			assert.throws(
+				() => prepareArtifactsDir(file),
+				(error: Error) =>
+					/is not a directory/.test(error.message) && !/ENOTDIR|scandir/.test(error.message),
+			);
+		} finally {
+			rmSync(base, { recursive: true, force: true });
+		}
 	});
 });
