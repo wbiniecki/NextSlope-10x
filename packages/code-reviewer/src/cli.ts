@@ -289,6 +289,14 @@ export async function run(argv: string[], deps: CliDeps): Promise<number> {
 
 	if (!result.ok) {
 		deps.logError(`Review did not complete (${result.kind}): ${result.diagnostic}`);
+		// Same wording as the success path below, so cost accounting sees a failed session too.
+		// Budget exhaustion spends the whole ceiling and used to print no cost line at all, which
+		// made `scripts/verify.ts` book the most expensive runs at $0.0000.
+		if (options.verbose && result.totalCostUsd !== undefined) {
+			deps.log(
+				`turns: ${result.numTurns ?? "unknown"}, total cost: $${result.totalCostUsd.toFixed(4)}`,
+			);
+		}
 		return exitCodeForFailure(result.kind);
 	}
 

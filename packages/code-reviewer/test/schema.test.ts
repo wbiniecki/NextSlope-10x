@@ -15,6 +15,7 @@ function wellFormedVerdict(): Verdict {
 	return {
 		criteria: CRITERION_IDS.map((id, index) => ({
 			id,
+			applicable: true,
 			score: index + 5,
 			justification: `Scored from the diff for ${id}.`,
 		})),
@@ -80,6 +81,20 @@ describe("verdictSchema", () => {
 		assert.equal(verdictSchema.safeParse(raw).success, false);
 	});
 
+	// Required rather than defaulted: a model that omits the field has told us nothing, and
+	// silently reading that as "applicable" is how a criterion nobody assessed ends up scored.
+	it("rejects a criterion score with no applicable field", () => {
+		const raw = JSON.parse(JSON.stringify(wellFormedVerdict()));
+		delete raw.criteria[0].applicable;
+		assert.equal(verdictSchema.safeParse(raw).success, false);
+	});
+
+	it("accepts a criterion marked not applicable, score and all", () => {
+		const raw = JSON.parse(JSON.stringify(wellFormedVerdict()));
+		raw.criteria[0].applicable = false;
+		assert.equal(verdictSchema.safeParse(raw).success, true);
+	});
+
 	it("rejects a non-integer or out-of-range score", () => {
 		for (const score of [0, 11, 7.5]) {
 			const raw = JSON.parse(JSON.stringify(wellFormedVerdict()));
@@ -133,9 +148,9 @@ describe("reviewReportSchema", () => {
 });
 
 describe("criterion and severity vocabularies", () => {
-	it("enumerates five distinct criteria", () => {
-		assert.equal(CRITERION_IDS.length, 5);
-		assert.equal(new Set(CRITERION_IDS).size, 5);
+	it("enumerates six distinct criteria", () => {
+		assert.equal(CRITERION_IDS.length, 6);
+		assert.equal(new Set(CRITERION_IDS).size, 6);
 	});
 
 	// `verdict.ts` compares severities by index against `--fail-on`, so the order is behavior.

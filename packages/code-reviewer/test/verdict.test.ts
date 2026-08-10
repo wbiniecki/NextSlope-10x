@@ -18,7 +18,12 @@ function finding(severity: Severity, overrides: Partial<Finding> = {}): Finding 
 /** Perfect scores everywhere, so any gate movement in a test is attributable to findings alone. */
 function verdictWith(findings: Finding[], score = 10): Verdict {
 	return {
-		criteria: CRITERION_IDS.map((id) => ({ id, score, justification: `Nothing to flag for ${id}.` })),
+		criteria: CRITERION_IDS.map((id) => ({
+			id,
+			applicable: true,
+			score,
+			justification: `Nothing to flag for ${id}.`,
+		})),
 		findings,
 	};
 }

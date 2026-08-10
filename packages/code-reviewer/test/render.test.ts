@@ -2,13 +2,19 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import { renderReport } from "../src/render.ts";
-import { CRITERION_IDS, type Finding, type ReviewReport } from "../src/schema.ts";
+import {
+	CRITERION_IDS,
+	type CriterionScore,
+	type Finding,
+	type ReviewReport,
+} from "../src/schema.ts";
 import { computeGate } from "../src/verdict.ts";
 
 function reportWith(findings: Finding[]): ReviewReport {
 	const verdict = {
 		criteria: CRITERION_IDS.map((id, index) => ({
 			id,
+			applicable: true,
 			score: 10 - index,
 			justification: `Assessed ${id} from the diff.`,
 		})),
@@ -52,6 +58,53 @@ describe("renderReport", () => {
 		assert.match(markdown, /line 4.*low.*flyway-forward-only/);
 	});
 
+	// A criterion the diff gives nothing to judge used to be forced into a 10/10, which reads as
+	// "audited and compliant" in the one place a reviewer actually looks.
+	it("renders an em dash instead of a score for a not-applicable criterion", () => {
+		const report = reportWith([]);
+		const first = report.criteria[0] as CriterionScore;
+		report.criteria[0] = { ...first, applicable: false, justification: "No test file is touched." };
+
+		const markdown = renderReport(report, { failOn: "high" });
+		const row = markdown
+			.split("\n")
+			.find((line) => line.startsWith(`| \`${first.id}\``)) as string;
+
+		assert.match(row, /\| — \|/);
+		assert.doesNotMatch(row, /\/10/);
+		assert.ok(row.includes("No test file is touched."));
+	});
+
+	// A model can mark a criterion `applicable: false` while still reporting a finding against it.
+	// The em dash must not survive that contradiction — the Blocking reasons section already names
+	// the criterion as the cause, so the score row should not read as "not assessed".
+	it("scores a criterion that carries a finding even when the model marked it not applicable", () => {
+		const report = reportWith([BLOCKING_FINDING]);
+		const scored = report.criteria.find(
+			(criterion) => criterion.id === BLOCKING_FINDING.criterionId,
+		) as CriterionScore;
+		const index = report.criteria.indexOf(scored);
+		report.criteria[index] = { ...scored, applicable: false };
+
+		const markdown = renderReport(report, { failOn: "high" });
+		const row = markdown
+			.split("\n")
+			.find((line) => line.startsWith(`| \`${scored.id}\``)) as string;
+
+		assert.doesNotMatch(row, /\| — \|/);
+		assert.match(row, /\/10/);
+	});
+
+	it("does not claim a clean sweep when no criterion applied at all", () => {
+		const report = reportWith([]);
+		report.criteria = report.criteria.map((criterion) => ({ ...criterion, applicable: false }));
+
+		const markdown = renderReport(report, { failOn: "high" });
+
+		assert.match(markdown, /\*\*Passed\*\* — no criterion applied to this diff\./);
+		assert.doesNotMatch(markdown, /no findings/);
+	});
+
 	it("scores every criterion in the canonical order regardless of model ordering", () => {
 		const report = reportWith([]);
 		report.criteria.reverse();
@@ -84,6 +137,7 @@ describe("renderReport", () => {
 		const report = reportWith([]);
 		report.criteria[0] = {
 			id: CRITERION_IDS[0],
+			applicable: true,
 			score: 3,
 			justification: "Uses SERIAL | AUTO_INCREMENT\ninstead of the portable idiom.",
 		};

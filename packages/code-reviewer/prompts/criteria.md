@@ -1,6 +1,6 @@
 # NextSlope Review Criteria
 
-Five criteria, each encoding a rule this repository already holds itself to. They are written for a
+Six criteria, each encoding a rule this repository already holds itself to. They are written for a
 reviewer scoring a diff — not for someone implementing a feature — so each one says what a violation
 looks like in diff form and, just as importantly, what does **not** count.
 
@@ -8,7 +8,7 @@ Every criterion carries a `Source:` line naming the rule it encodes, so a findin
 traced back to an existing repository convention rather than to reviewer preference.
 
 Each `##` heading's backticked identifier is the criterion `id` reported in the JSON verdict. A unit
-test asserts these five ids match the schema enum exactly in both directions, so do not rename one
+test asserts these six ids match the schema enum exactly in both directions, so do not rename one
 without updating `src/schema.ts`.
 
 ## `flyway-forward-only`
@@ -138,3 +138,83 @@ role or label fits; reusing session state across tests, which is an accepted con
 
 Source: `AGENTS.md` → E2E Testing Rules (Playwright-for-Java, `src/e2eTest/`);
 `src/e2eTest/java/com/nextslope/e2e/HtmxSmokeE2eTests.java`.
+
+## `test-verifies-behavior`
+
+A test that cannot fail is not a test. Every test this diff adds or changes must be able to fail
+when the behavior it names breaks — through an assertion, a mock verification, or an expected
+exception. This criterion is about a test's ability to detect a regression, not about its style,
+its naming, or how much it covers.
+
+**Scope:** test sources under `src/test/java/` and `src/e2eTest/java/` only. Anything under
+`packages/` is out of scope — that is developer tooling with its own conventions, and its tests are
+not judged here.
+
+**What counts as verification:** AssertJ `assertThat(...)`, MockMvc `.andExpect(...)`, Mockito
+`verify(...)` and `verifyNoInteractions(...)`, JUnit `assertTrue` / `assertEquals` / `assertThrows`
+/ `assertNotNull`, Playwright's `PlaywrightAssertions.assertThat(...)`, and this project's own
+`support/AccessControlAssertions` helpers such as `assertRedirectedToLogin(actions)`, which wrap
+`.andExpect(...)` behind a name. `assertThrows`, `assertNotNull`, and `verifyNoInteractions` appear
+nowhere in this repository today, so there is no in-repo example to generalize from — they count
+fully all the same.
+
+**A violation looks like:**
+
+- A test method with no verification at all: it exercises the unit and then ends.
+- A tautological assertion that cannot fail, such as `assertTrue(true)`, or asserting a literal
+  against itself.
+- A MockMvc test asserting only `status().isOk()` where this diff itself shows the endpoint returns
+  a body, a view, or a model — the controller change is in the diff, or the test's own setup or name
+  says what the response should contain. The status is verified; the behavior under test is not. Do
+  not open the controller to find out: if the diff does not show it, this is not a finding.
+- `assertNotNull`, or an `isNotNull()` chain, standing in for the assertion that would actually
+  check the value.
+- A Mockito `verify` aimed at the test's own stub, where the stub and the verification are both
+  visible in this diff, confirming only that the test called what the test set up.
+- A `catch` block that swallows the failure path with no `fail(...)`, so the test passes whether or
+  not the exception was thrown.
+- An assertion in a position that never executes: inside a lambda the test never runs, or after an
+  `Optional` the test leaves empty.
+- Soft assertions collected and never `assertAll()`-ed.
+- A test that builds a fixture and asserts against the fixture without ever invoking the unit under
+  test.
+- Assertions commented out, or replaced by a TODO.
+- `@Disabled` or `@Ignore` added to an existing test with no replacement coverage in the same diff.
+- An existing assertion weakened in place: a value check reduced to a null check, an exact
+  `isEqualTo` reduced to `isNotNull`, a removed `.andExpect(...)`.
+- A test whose only verification is inherited setup or a lifecycle method. Setup is never
+  verification, so you do not need to read the base class to decide this.
+
+**Not a violation:**
+
+- `NextslopeApplicationTests.contextLoads()` with an empty body. The verification *is* that the
+  Spring context starts, and `AGENTS.md` names it the dual-engine verification standard.
+- Verification performed through the named `support/AccessControlAssertions` helpers. Their
+  verification semantics are fixed by this criterion: treat a call to one as an assertion, and do
+  not ask for a second one in the test body.
+- A parameterized test that delegates to an assertion helper whose real verification is visible in
+  the same diff.
+- A test whose entire body is an `assertThrows(...)` call. The expected exception is the
+  verification.
+- Playwright auto-waiting assertions. `assertThat(locator)` waits and then verifies; it is not a
+  bare wait.
+- Non-test helpers that happen to live under a test source set, such as `UserFixtures` and
+  `ResortTestRepository`. They are infrastructure and are not expected to assert.
+- Extending `TwoUserIntegrationTestBase`, or adding `@BeforeEach` / `@AfterEach`, is setup rather
+  than verification. It is fine on its own, and it never excuses a test that verifies nothing.
+
+**Severity during rollout:** report every finding from this criterion at `medium`. Every one,
+whatever the violation — the cap covers the whole criterion, not a list of cases. That explicitly
+includes every finding that takes away verification which already existed: an assertion weakened in
+place, an assertion commented out or TODO'd, `@Disabled` or `@Ignore` added with no replacement, a
+swallowed exception, an assertion moved into a position that never runs, hard assertions turned soft
+and never `assertAll()`-ed, and any other removal you find. Those examples are illustrative, not the
+boundary.
+
+Use `medium` for them even though the global severity rubric would say `high`, and even though the
+rubric's own definition of `medium` ("regresses nothing") does not fit a case that removes a
+protection. This cap assigns the level directly and takes precedence over both. It is in force now,
+and stays in force until a separate change promotes these cases against a measured false-positive
+rate.
+
+Source: `AGENTS.md` → Testing; `context/foundation/test-plan.md`.

@@ -1,10 +1,10 @@
 # NextSlope code reviewer
 
 Reviews a unified diff against NextSlope's own conventions and writes a machine-readable verdict
-plus a human-readable summary. It scores five criteria derived from this repo's hard rules —
+plus a human-readable summary. It scores six criteria derived from this repo's hard rules —
 Flyway forward-only migrations, `ddl-auto=validate`, constructor injection, principal-scoped access
-control, and the E2E testing conventions — and blocks on findings at or above a severity threshold
-you choose.
+control, the E2E testing conventions, and tests that can actually fail — and blocks on findings at
+or above a severity threshold you choose.
 
 It is developer tooling. The package sits outside the Gradle build, is not in `settings.gradle`, and
 is not part of the deployed artifact.
@@ -59,7 +59,10 @@ injection away from a published PR comment.
 
 ```jsonc
 {
-  "criteria": [{ "id": "flyway-forward-only", "score": 3, "justification": "…" }],
+  "criteria": [
+    { "id": "flyway-forward-only", "applicable": true, "score": 3, "justification": "…" },
+    { "id": "e2e-conventions", "applicable": false, "score": 10, "justification": "…" }
+  ],
   "findings": [
     {
       "file": "src/main/resources/db/migration/V3__create_preference_profiles.sql",
@@ -76,6 +79,11 @@ injection away from a published PR comment.
 
 Scores are diagnostic only — they never move `passed`. Read `passed` rather than re-deriving it
 from `findings` and a threshold you would have to duplicate.
+
+`applicable: false` means the diff contained nothing that criterion governs. Its integer `score` is
+retained only because the schema requires one and carries no meaning — `review.md` renders an em
+dash rather than a number for such an entry, so "not assessed" is never mistaken for "fully
+compliant".
 
 **`review.md`** — the same report as plain GitHub-flavored markdown: verdict line, blocking reasons,
 a criterion score table, then findings grouped by file with line anchors. It is meant to be pasted

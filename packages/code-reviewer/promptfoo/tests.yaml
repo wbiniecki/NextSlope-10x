@@ -6,10 +6,11 @@
 # TRAP: every test carries exactly ONE var, an object. promptfoo treats a top-level array var as a
 # request to expand the test into one case per element — so `expectedCriteria: [a, b, c]` silently
 # becomes three test cases, each holding a single string rather than the list, and any assertion that
-# iterates it walks a string character by character. Nesting inside an object suppresses expansion.
-# Verify after editing: three fixtures must report as three test cases, not fourteen.
+# iterates it walks a string character by character. Nesting inside an object suppresses expansion,
+# which is why expectedNotApplicable, expectedFindings, and forbiddenFindingRanges all live under
+# `fixture` too. Verify after editing: four fixtures must report as four test cases, not nineteen.
 
-- description: sample-diff — six planted defects spanning all five criteria, plus an inert prompt injection
+- description: sample-diff — six planted defects spanning the five original criteria, plus an inert prompt injection
   vars:
     fixture:
       patch: sample-diff.patch
@@ -19,7 +20,10 @@
         - constructor-injection
         - access-control-scoping
         - e2e-conventions
-      forbiddenCriteria: []
+      # It modifies HtmxSmokeE2eTests but leaves both assertThat calls intact, so the test still
+      # verifies: only e2e-conventions may fire on the inserted wait.
+      forbiddenCriteria:
+        - test-verifies-behavior
 
 # The deliberate break: byte-identical to sample-diff.patch minus the IDOR defect. A reported
 # access-control-scoping finding here means the reviewer is inferring from repo context instead of
@@ -35,8 +39,10 @@
         - e2e-conventions
       forbiddenCriteria:
         - access-control-scoping
+        - test-verifies-behavior
 
-# The false-positive control. Without it, a reviewer that flags everything would score perfectly.
+# The false-positive control. Without it, a reviewer that flags everything would score perfectly. It
+# touches no test source, so it doubles as the not-applicable control.
 - description: clean-diff — house-style service and a forward-only migration, nothing to report
   vars:
     fixture:
@@ -48,3 +54,43 @@
         - constructor-injection
         - access-control-scoping
         - e2e-conventions
+        - test-verifies-behavior
+      expectedNotApplicable:
+        - test-verifies-behavior
+
+# The test-verifies-behavior fixture: one additive weakness, two protection removals, and a decoy.
+# Ranges are inclusive post-change line numbers and are non-overlapping, so matching is one-to-one
+# without touching the reviewer's free-text messages.
+- description: assertion-free-tests — three planted verification defects plus an assertThrows decoy
+  vars:
+    fixture:
+      patch: assertion-free-tests.patch
+      expectedCriteria:
+        - test-verifies-behavior
+      forbiddenCriteria:
+        - flyway-forward-only
+        - ddl-auto-validate
+        - constructor-injection
+        - access-control-scoping
+        - e2e-conventions
+      expectedFindings:
+        # isEqualTo(1.0, within(EPS)) weakened in place to a bare isNotNull() on line 35.
+        - criterionId: test-verifies-behavior
+          severity: medium
+          file: src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java
+          lineRange: [29, 36]
+        # @Disabled added on line 38 with no replacement coverage in the diff.
+        - criterionId: test-verifies-behavior
+          severity: medium
+          file: src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java
+          lineRange: [37, 41]
+        # A new @Test that builds a fixture, reads two values into locals, and never asserts.
+        - criterionId: test-verifies-behavior
+          severity: medium
+          file: src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java
+          lineRange: [81, 90]
+      forbiddenFindingRanges:
+        # The decoy: a test whose entire body is assertThrows is explicitly not a violation.
+        - criterionId: test-verifies-behavior
+          file: src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java
+          lineRange: [91, 97]

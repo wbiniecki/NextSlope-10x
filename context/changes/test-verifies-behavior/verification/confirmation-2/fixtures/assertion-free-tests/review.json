@@ -1,0 +1,65 @@
+{
+  "criteria": [
+    {
+      "id": "flyway-forward-only",
+      "applicable": false,
+      "score": 10,
+      "justification": "The diff touches only a test file under src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java. No migration files (V{n}__*.sql) are added or modified, so this criterion governs nothing in this diff."
+    },
+    {
+      "id": "ddl-auto-validate",
+      "applicable": false,
+      "score": 10,
+      "justification": "No changes to ddl-auto configuration, entities, or persistent field mappings appear in this diff; it is limited to unit test logic for a scoring class."
+    },
+    {
+      "id": "constructor-injection",
+      "applicable": false,
+      "score": 10,
+      "justification": "No production Spring components (@Controller/@Service/@Component/@Repository/@Configuration) are touched; the diff only modifies a plain unit test class."
+    },
+    {
+      "id": "access-control-scoping",
+      "applicable": false,
+      "score": 10,
+      "justification": "The diff does not touch any request path, controller, or repository query related to owned-data resolution; it is confined to a scoring algorithm's unit tests."
+    },
+    {
+      "id": "e2e-conventions",
+      "applicable": false,
+      "score": 10,
+      "justification": "The changed file lives under src/test/java/, not src/e2eTest/java/, so the Playwright/E2E conventions do not govern this diff at all."
+    },
+    {
+      "id": "test-verifies-behavior",
+      "applicable": true,
+      "score": 2,
+      "justification": "This diff introduces three separate violations of this criterion in the same test class: an existing exact-value assertion is weakened to a bare isNotNull() check, an existing test is disabled with no replacement coverage, and a brand-new test computes values but never asserts on them. Only the fourth new test (scoringWithoutAProfileIsRejected, using assertThrows) actually verifies behavior. The net effect is a meaningful loss of regression-detection ability in this file."
+    }
+  ],
+  "findings": [
+    {
+      "file": "src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java",
+      "line": 35,
+      "criterionId": "test-verifies-behavior",
+      "severity": "medium",
+      "message": "The original assertion `assertThat(breakdown.alignDiff()).isEqualTo(1.0, within(EPS));` was weakened to `assertThat(breakdown).isNotNull();`. This is a value check reduced to a null check, removing the test's ability to detect a regression in the actual alignment computation while still appearing to pass."
+    },
+    {
+      "file": "src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java",
+      "line": 38,
+      "criterionId": "test-verifies-behavior",
+      "severity": "medium",
+      "message": "@Disabled(\"Alignment maths is being retuned; re-enable once ScoringConfig settles.\") is added to the existing test difficultyAlignmentDropsWithNormalizedL1Distance with no replacement coverage added in this diff, silently removing verification of the L1-distance alignment formula."
+    },
+    {
+      "file": "src/test/java/com/nextslope/recommendation/WeightedDistanceScorerTests.java",
+      "line": 82,
+      "criterionId": "test-verifies-behavior",
+      "severity": "medium",
+      "message": "New test hardSkewedResortIsScoredForABeginnerProfile computes `alignment` and `combined` from the scorer's output but never asserts on either value (no assertThat/assertEquals/etc.), so it cannot fail even if the scoring logic regresses."
+    }
+  ],
+  "passed": true,
+  "reasons": []
+}

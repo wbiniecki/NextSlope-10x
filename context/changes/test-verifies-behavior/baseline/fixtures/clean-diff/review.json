@@ -1,0 +1,32 @@
+{
+  "criteria": [
+    {
+      "id": "flyway-forward-only",
+      "score": 10,
+      "justification": "The diff adds a new highest-numbered migration V6__add_visited_resorts_user_index.sql (marked 'new file mode' in the diff header) rather than editing V1-V5. The DDL used, CREATE INDEX ... ON visited_resorts (user_id), is portable and parses identically on H2 (PostgreSQL mode) and real Postgres, with no engine-specific syntax, no down/rollback script, and a correctly formatted filename."
+    },
+    {
+      "id": "ddl-auto-validate",
+      "score": 10,
+      "justification": "No changes to spring.jpa.hibernate.ddl-auto in any properties/YAML file. ResortCatalogStatsService is a plain @Service, not a JPA @Entity, and introduces no new persistent field or column mapping, so no matching migration is required for it. The accompanying V6 migration only adds an index, not a schema/entity mismatch risk."
+    },
+    {
+      "id": "constructor-injection",
+      "score": 10,
+      "justification": "ResortCatalogStatsService uses @RequiredArgsConstructor with a single private final ResortRepository field and no field/setter @Autowired or @Inject, and no hand-written constructor duplicating the Lombok annotation."
+    },
+    {
+      "id": "access-control-scoping",
+      "score": 10,
+      "justification": "The new service operates purely over the shared resort catalog (findByActiveTrueOrderByCountryAscNameAsc) with no user/profile identifier taken from a client-supplied path, param, or body, and no ownership predicate is dropped. The Javadoc explicitly and correctly distinguishes this shared reference data from user-owned paths that must go through CurrentUserService.requireUserId, matching the 'not a violation' guidance for shared, non-owned entities."
+    },
+    {
+      "id": "e2e-conventions",
+      "score": 10,
+      "justification": "The diff contains no changes under src/e2eTest/java/, so none of the Playwright/E2E conventions (waits, locators, teardown order, seeded-resort deletion, spinner assertions, shared-state restoration, test naming) are implicated or violated."
+    }
+  ],
+  "findings": [],
+  "passed": true,
+  "reasons": []
+}

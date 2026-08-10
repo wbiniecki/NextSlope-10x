@@ -1,0 +1,10 @@
+$ /opt/homebrew/Cellar/node/26.3.0/bin/node --import tsx/esm /Users/binieckw/projects/training/10xDevs/NextSlope/packages/code-reviewer/src/cli.ts --diff-file /Users/binieckw/projects/training/10xDevs/NextSlope/packages/code-reviewer/fixtures/assertion-free-tests.patch --out /Users/binieckw/projects/training/10xDevs/NextSlope/context/changes/test-verifies-behavior/verification/confirmation/fixtures/assertion-free-tests --verbose
+
+diff: /Users/binieckw/projects/training/10xDevs/NextSlope/packages/code-reviewer/fixtures/assertion-free-tests.patch (2039 bytes, limit 200000)
+configured model: claude-sonnet-5, budget: $0.50, max turns: 3
+fail-on: high
+resolved model: claude-sonnet-5 (2.1.224)
+turns: 2, total cost: $0.1084
+modelUsage: {"claude-haiku-4-5-20251001":{"inputTokens":6207,"outputTokens":16,"cacheReadInputTokens":0,"cacheCreationInputTokens":0,"webSearchRequests":0,"costUSD":0.006287,"contextWindow":200000,"maxOutputTokens":32000,"canonicalModel":"claude-haiku-4-5","provider":"firstParty"},"claude-sonnet-5":{"inputTokens":2,"outputTokens":3473,"cacheReadInputTokens":3957,"cacheCreationInputTokens":8136,"webSearchRequests":0,"costUSD":0.1021041,"contextWindow":1000000,"maxOutputTokens":64000,"canonicalModel":"claude-sonnet-5","provider":"firstParty"}}
+Wrote /Users/binieckw/projects/training/10xDevs/NextSlope/context/changes/test-verifies-behavior/verification/confirmation/fixtures/assertion-free-tests/review.json and /Users/binieckw/projects/training/10xDevs/NextSlope/context/changes/test-verifies-behavior/verification/confirmation/fixtures/assertion-free-tests/review.md
+Passed — no findings at or above high.

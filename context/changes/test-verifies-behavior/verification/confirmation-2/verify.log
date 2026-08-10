@@ -1,0 +1,32 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @nextslope/code-reviewer@0.1.0 verify
+> node --import tsx/esm scripts/verify.ts --artifacts-dir ../../context/changes/test-verifies-behavior/verification/confirmation-2/fixtures
+
+Running 4 fixture(s) through the review CLI — this makes real API calls.
+Retaining review.json, review.md, and run.log under /Users/binieckw/projects/training/10xDevs/NextSlope/context/changes/test-verifies-behavior/verification/confirmation-2/fixtures
+
+PASS  sample-diff  (cli exit 3)
+  expected   flyway-forward-only, ddl-auto-validate, constructor-injection, access-control-scoping, e2e-conventions
+  forbidden  test-verifies-behavior
+  observed   flyway-forward-only, ddl-auto-validate, constructor-injection, access-control-scoping, e2e-conventions
+
+PASS  sample-diff-broken  (cli exit 3)
+  expected   flyway-forward-only, ddl-auto-validate, constructor-injection, e2e-conventions
+  forbidden  access-control-scoping, test-verifies-behavior
+  observed   flyway-forward-only, ddl-auto-validate, constructor-injection, e2e-conventions
+
+PASS  clean-diff  (cli exit 0)
+  expected   (none)
+  forbidden  flyway-forward-only, ddl-auto-validate, constructor-injection, access-control-scoping, e2e-conventions, test-verifies-behavior
+  observed   (none)
+  n/a        test-verifies-behavior
+
+PASS  assertion-free-tests  (cli exit 0)
+  expected   test-verifies-behavior
+  forbidden  flyway-forward-only, ddl-auto-validate, constructor-injection, access-control-scoping, e2e-conventions
+  observed   test-verifies-behavior
+  findings   3/3 matched, 0 hit in 1 forbidden range(s)
+
+4/4 fixtures passed.
+Total cost: $0.5104

@@ -1,0 +1,123 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @nextslope/code-reviewer@0.1.0 test
+> node --import tsx/esm --test test/*.test.ts
+
+▶ parseArgs
+  ✔ requires --diff-file (0.796125ms)
+  ✔ applies the documented defaults (0.963584ms)
+  ✔ accepts every flag in both --flag value and --flag=value form (0.146792ms)
+  ✔ rejects an unknown flag rather than ignoring it (0.082667ms)
+  ✔ rejects a flag whose value is missing (0.087709ms)
+  ✔ rejects a severity outside the enumeration (0.078084ms)
+  ✔ rejects a non-positive or non-numeric budget (0.081083ms)
+  ✔ allows --help without --diff-file (0.065291ms)
+✔ parseArgs (3.305667ms)
+▶ exitCodeForFailure
+  ✔ maps a startup failure to the invalid-input code (0.121917ms)
+  ✔ maps every post-startup failure to the no-usable-result code (0.091083ms)
+✔ exitCodeForFailure (0.329375ms)
+▶ run
+  ▶ input rejection
+    ✔ exits 1 for a missing diff file without starting a session (1.963292ms)
+    ✔ exits 1 for an unreadable diff path without starting a session (1.2605ms)
+    ✔ exits 1 for an oversized diff, naming the actual and maximum byte counts (1.661125ms)
+    ✔ exits 1 for an invalid invocation and prints usage (0.738083ms)
+    ✔ accepts a diff exactly at the byte limit (4.740875ms)
+  ✔ input rejection (10.560375ms)
+  ▶ completed runs
+    ✔ exits 0 and writes both artifacts when nothing blocks (3.171083ms)
+    ✔ exits 3 when a finding is at or above the threshold (3.584917ms)
+    ✔ lets --fail-on move the same verdict between exit 0 and exit 3 (5.157584ms)
+    ✔ writes artifacts into --out, creating the directory (3.013625ms)
+    ✔ passes the configured model, budget, and delimited diff into the session (1.382792ms)
+    ✔ logs the cost signals under --verbose and stays quiet without it (3.4975ms)
+  ✔ completed runs (20.010583ms)
+  ▶ failed runs
+    ✔ maps a startup failure to exit 1 (1.525833ms)
+    ✔ maps each post-startup failure to exit 2 and surfaces its diagnostic (2.354583ms)
+  ✔ failed runs (3.951375ms)
+✔ run (34.683208ms)
+▶ parseCriterionIds
+  ✔ matches the schema enum exactly, with no extras or omissions on either side (1.484292ms)
+  ✔ finds each criterion exactly once (0.108833ms)
+  ✔ reads ids from backticked headings only, ignoring inline code elsewhere (0.154792ms)
+✔ parseCriterionIds (2.701292ms)
+▶ buildReviewPrompt
+  ✔ delimits the diff as untrusted data (0.192042ms)
+  ✔ instructs the model to treat diff content as evidence rather than commands (0.232292ms)
+  ✔ states the untrusted-data rule before the diff itself (0.074917ms)
+  ✔ carries every criterion id (0.102ms)
+  ✔ embeds the criteria document (0.071917ms)
+  ✔ asks for every criterion to be scored, including unviolated ones (0.15425ms)
+  ✔ prefers the diff as evidence over exploratory file reading (0.116583ms)
+  ✔ anchors findings to a file and line drawn from the diff (0.125292ms)
+  ✔ does not ask the model for an overall pass or fail decision (0.238333ms)
+✔ buildReviewPrompt (1.593083ms)
+▶ buildReviewPrompt against delimiter escape
+  ✔ keeps a diff that spells out the bare marker fully inside the delimited block (0.107375ms)
+  ✔ closes the block only on the nonce-bearing marker (0.068708ms)
+  ✔ does not close the block on a marker carrying a guessed nonce (0.06825ms)
+  ✔ varies the delimiters with the nonce (0.080208ms)
+✔ buildReviewPrompt against delimiter escape (0.426583ms)
+▶ renderReport
+  ✔ renders a clean report as passed with no findings (1.969125ms)
+  ✔ renders a blocked report with its reasons and the threshold that blocked it (0.299667ms)
+  ✔ reports advisory findings as passed rather than hiding them (0.158916ms)
+  ✔ scores every criterion in the canonical order regardless of model ordering (1.144125ms)
+  ✔ groups findings by file with line anchors (11.123625ms)
+  ✔ keeps a table row intact when prose contains pipes or newlines (0.265083ms)
+  ✔ ends with exactly one trailing newline so it pastes cleanly as a comment body (0.164375ms)
+  ✔ falls back to generic threshold wording when no fail-on is supplied (0.112458ms)
+✔ renderReport (16.52ms)
+▶ verdictJsonSchema
+  ✔ declares draft-07, the only draft the SDK accepts (0.622167ms)
+  ✔ describes an object requiring both criteria and findings (0.952125ms)
+✔ verdictJsonSchema (2.495125ms)
+▶ verdictSchema
+  ✔ accepts a well-formed verdict (1.445084ms)
+  ✔ accepts a verdict with no findings (0.144333ms)
+  ✔ rejects a verdict scoring fewer than every criterion (0.457709ms)
+  ✔ rejects a verdict that scores one criterion several times (0.202625ms)
+  ✔ rejects an unknown criterion id (0.21125ms)
+  ✔ rejects a non-integer or out-of-range score (0.363625ms)
+  ✔ rejects an unknown finding severity (0.160583ms)
+  ✔ rejects a finding with no file anchor (0.195584ms)
+  ✔ strips a model-supplied gate field instead of carrying it through (0.107833ms)
+✔ verdictSchema (3.597625ms)
+▶ reviewReportSchema
+  ✔ accepts a verdict enriched with the computed gate (0.368916ms)
+  ✔ rejects a report missing its computed gate fields (0.155042ms)
+  ✔ rejects a report whose passed field is not a boolean (0.102542ms)
+✔ reviewReportSchema (0.728084ms)
+▶ criterion and severity vocabularies
+  ✔ enumerates five distinct criteria (0.063541ms)
+  ✔ orders severities ascending (0.047208ms)
+✔ criterion and severity vocabularies (0.159292ms)
+▶ computeGate
+  ✔ passes a verdict with no findings (1.679084ms)
+  ✔ blocks on a finding at the threshold (0.153416ms)
+  ✔ blocks on a finding above the threshold (0.077291ms)
+  ✔ passes findings below the threshold, reporting no reasons for them (0.087208ms)
+  ✔ reports only the blocking findings when severities are mixed (0.143ms)
+  ✔ moves the same verdict from passing to blocked as the threshold tightens (0.475042ms)
+  ✔ defaults to failing on high (0.384084ms)
+  ✔ ignores criterion scores entirely (0.124583ms)
+  ✔ still blocks on a blocking finding when every criterion scores a perfect ten (0.11675ms)
+  ✔ names the severity, criterion, and location in each reason (0.218208ms)
+  ✔ orders reasons most severe first, then by location (12.73ms)
+✔ computeGate (17.450791ms)
+▶ isBlocking
+  ✔ compares by severity order, not alphabetically (0.0715ms)
+✔ isBlocking (0.136208ms)
+▶ isSeverity
+  ✔ accepts the four known severities and nothing else (0.096667ms)
+✔ isSeverity (0.147875ms)
+ℹ tests 76
+ℹ suites 17
+ℹ pass 76
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 630.39675

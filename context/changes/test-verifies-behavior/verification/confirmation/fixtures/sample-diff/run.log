@@ -1,0 +1,6 @@
+$ /opt/homebrew/Cellar/node/26.3.0/bin/node --import tsx/esm /Users/binieckw/projects/training/10xDevs/NextSlope/packages/code-reviewer/src/cli.ts --diff-file /Users/binieckw/projects/training/10xDevs/NextSlope/packages/code-reviewer/fixtures/sample-diff.patch --out /Users/binieckw/projects/training/10xDevs/NextSlope/context/changes/test-verifies-behavior/verification/confirmation/fixtures/sample-diff --verbose
+
+diff: /Users/binieckw/projects/training/10xDevs/NextSlope/packages/code-reviewer/fixtures/sample-diff.patch (5403 bytes, limit 200000)
+configured model: claude-sonnet-5, budget: $0.50, max turns: 3
+fail-on: high
+Review did not complete (max_budget_usd): Hit the configured $0.50 budget before producing a result (Reached maximum budget ($0.5) — terminal_reason: budget_exhausted)

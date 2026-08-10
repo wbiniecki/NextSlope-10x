@@ -45,7 +45,12 @@ const SAMPLE_DIFF = [
 
 function verdictWith(findings: Finding[]): Verdict {
 	return {
-		criteria: CRITERION_IDS.map((id) => ({ id, score: 8, justification: `Scored ${id}.` })),
+		criteria: CRITERION_IDS.map((id) => ({
+			id,
+			applicable: true,
+			score: 8,
+			justification: `Scored ${id}.`,
+		})),
 		findings,
 	};
 }
@@ -99,11 +104,17 @@ function runnerReturning(verdict: Verdict): { runner: SessionRunner; calls: numb
 	return state;
 }
 
-function runnerFailing(kind: AgentFailureKind): SessionRunner {
+function runnerFailing(
+	kind: AgentFailureKind,
+	// Both are absent when the session died before `system`/`init` arrived, so the default omits
+	// them rather than zeroing them.
+	spend: { totalCostUsd?: number; numTurns?: number } = {},
+): SessionRunner {
 	return (async () => ({
 		ok: false as const,
 		kind,
 		diagnostic: `simulated ${kind}`,
+		...spend,
 	})) as SessionRunner;
 }
 
@@ -457,6 +468,32 @@ describe("run", () => {
 				assert.equal(code, EXIT_NO_USABLE_RESULT, `${kind} should exit 2`);
 				assert.match(errors.join("\n"), new RegExp(`simulated ${kind}`));
 			}
+		});
+
+		it("reports a budget-exhausted session's cost in the shape the harness scrapes", async () => {
+			const code = await run(
+				["--diff-file", diffPath, "--verbose"],
+				depsWith(runnerFailing("max_budget_usd", { totalCostUsd: 0.4987, numTurns: 3 })),
+			);
+
+			assert.equal(code, EXIT_NO_USABLE_RESULT);
+			// The literal regex from `scripts/verify.ts`: a failed session that prints no cost line
+			// is booked at $0.0000, understating spend on exactly the runs that cost the ceiling.
+			const scraped = /total cost: \$([0-9.]+)/.exec(logs.join("\n"));
+			assert.equal(scraped?.[1], "0.4987");
+			assert.match(logs.join("\n"), /turns: 3, total cost/);
+		});
+
+		it("stays quiet about a failed session's cost without --verbose", async () => {
+			await run(
+				["--diff-file", diffPath],
+				depsWith(runnerFailing("max_budget_usd", { totalCostUsd: 0.4987, numTurns: 3 })),
+			);
+
+			assert.equal(
+				logs.some((line) => line.includes("total cost")),
+				false,
+			);
 		});
 	});
 });
