@@ -807,4 +807,4 @@ fields rather than trying to validate the five-criterion snapshot with the new s
 - [x] 6.7 All three planted findings are medium under the staged rollout override — c7fb94e
 - [x] 6.8 No finding was reported against the `assertThrows` decoy — c7fb94e
 - [x] 6.9 `clean-diff`'s `review.md` shows an em dash for `test-verifies-behavior` — c7fb94e
-- [ ] 6.10 Linear 10X-20 shows **In Review** once the PR is open
+- [x] 6.10 Linear 10X-20 shows **In Review** once the PR is open — [PR #40](https://github.com/wbiniecki/NextSlope-10x/pull/40)
