@@ -42,6 +42,14 @@ out/
 /.cursor/**/skill-explainer.md
 /.cursor/**/m[0-9]l[0-9]-*
 
+### Claude Code — per-machine agent settings. Scoped to settings.local.json, not the whole ###
+### directory: settings.json is the shareable counterpart a future change may want tracked. ###
+.claude/settings.local.json
+
+### Git worktrees — a checkout here is a second working copy of this repo (its own build ###
+### output and node_modules included), never content this repo should carry.              ###
+.worktrees/
+
 ### Neon CLI ###
 .neon
 /ski-resorts-data/
@@ -52,6 +60,9 @@ out/
 ### Node tooling (packages/) ###
 packages/**/node_modules/
 packages/**/dist/
+
+### Playwright CLI local state (browser e2e tier) ###
+.playwright-cli/
 
 ### Promptfoo working files — the JSON Schema is regenerated from src/schema.ts on ###
 ### every run, so a committed copy could only ever be a stale second source.       ###
