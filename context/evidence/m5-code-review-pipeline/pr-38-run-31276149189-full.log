@@ -1,0 +1,474 @@
+Review	Set up job	﻿2026-08-08T20:08:03.1261146Z Current runner version: '2.336.0'
+Review	Set up job	2026-08-08T20:08:03.1300355Z ##[group]Runner Image Provisioner
+Review	Set up job	2026-08-08T20:08:03.1301755Z Hosted Compute Agent
+Review	Set up job	2026-08-08T20:08:03.1302838Z Version: 20260707.563
+Review	Set up job	2026-08-08T20:08:03.1303900Z Commit: 02667638d2b423fbc733a8e32a88b44996a3ba6e
+Review	Set up job	2026-08-08T20:08:03.1305065Z Build Date: 2026-07-07T19:33:50Z
+Review	Set up job	2026-08-08T20:08:03.1306485Z Worker ID: {5a10d9cf-d898-44a1-b7eb-74a48a9ab712}
+Review	Set up job	2026-08-08T20:08:03.1307804Z Azure Region: eastus2
+Review	Set up job	2026-08-08T20:08:03.1308838Z ##[endgroup]
+Review	Set up job	2026-08-08T20:08:03.1310791Z ##[group]Operating System
+Review	Set up job	2026-08-08T20:08:03.1311830Z Ubuntu
+Review	Set up job	2026-08-08T20:08:03.1312655Z 24.04.4
+Review	Set up job	2026-08-08T20:08:03.1313490Z LTS
+Review	Set up job	2026-08-08T20:08:03.1314411Z ##[endgroup]
+Review	Set up job	2026-08-08T20:08:03.1315286Z ##[group]Runner Image
+Review	Set up job	2026-08-08T20:08:03.1316510Z Image: ubuntu-24.04
+Review	Set up job	2026-08-08T20:08:03.1317536Z Version: 20260720.247.2
+Review	Set up job	2026-08-08T20:08:03.1319343Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260720.247/images/ubuntu/Ubuntu2404-Readme.md
+Review	Set up job	2026-08-08T20:08:03.1322414Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260720.247
+Review	Set up job	2026-08-08T20:08:03.1324065Z ##[endgroup]
+Review	Set up job	2026-08-08T20:08:03.1326368Z ##[group]GITHUB_TOKEN Permissions
+Review	Set up job	2026-08-08T20:08:03.1329724Z Contents: read
+Review	Set up job	2026-08-08T20:08:03.1330715Z Issues: write
+Review	Set up job	2026-08-08T20:08:03.1331554Z Metadata: read
+Review	Set up job	2026-08-08T20:08:03.1332540Z PullRequests: write
+Review	Set up job	2026-08-08T20:08:03.1333440Z ##[endgroup]
+Review	Set up job	2026-08-08T20:08:03.1337047Z Secret source: Actions
+Review	Set up job	2026-08-08T20:08:03.1339057Z Prepare workflow directory
+Review	Set up job	2026-08-08T20:08:03.1801262Z Prepare all required actions
+Review	Set up job	2026-08-08T20:08:03.1869284Z Getting action download info
+Review	Set up job	2026-08-08T20:08:03.3925221Z Download action repository 'actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3' (SHA:3a2844b7e9c422d3c10d287c895573f7108da1b3)
+Review	Set up job	2026-08-08T20:08:03.6638765Z Download action repository 'actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+Review	Set up job	2026-08-08T20:08:03.8382562Z Complete job name: Review
+Review	Checkout	﻿2026-08-08T20:08:03.9185036Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Review	Checkout	2026-08-08T20:08:03.9194096Z ##[group]Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+Review	Checkout	2026-08-08T20:08:03.9195008Z with:
+Review	Checkout	2026-08-08T20:08:03.9195439Z   fetch-depth: 0
+Review	Checkout	2026-08-08T20:08:03.9196120Z   ref: d7e229910a20b42aa43a7d245a88f9a03c5ff6ec
+Review	Checkout	2026-08-08T20:08:03.9196749Z   repository: wbiniecki/NextSlope-10x
+Review	Checkout	2026-08-08T20:08:03.9200998Z   token: ***
+Review	Checkout	2026-08-08T20:08:03.9201442Z   ssh-strict: true
+Review	Checkout	2026-08-08T20:08:03.9201885Z   ssh-user: git
+Review	Checkout	2026-08-08T20:08:03.9202340Z   persist-credentials: true
+Review	Checkout	2026-08-08T20:08:03.9202830Z   clean: true
+Review	Checkout	2026-08-08T20:08:03.9203285Z   sparse-checkout-cone-mode: true
+Review	Checkout	2026-08-08T20:08:03.9203899Z   fetch-tags: false
+Review	Checkout	2026-08-08T20:08:03.9204347Z   show-progress: true
+Review	Checkout	2026-08-08T20:08:03.9204972Z   lfs: false
+Review	Checkout	2026-08-08T20:08:03.9205395Z   submodules: false
+Review	Checkout	2026-08-08T20:08:03.9205961Z   set-safe-directory: true
+Review	Checkout	2026-08-08T20:08:03.9206734Z ##[endgroup]
+Review	Checkout	2026-08-08T20:08:04.0711962Z Syncing repository: wbiniecki/NextSlope-10x
+Review	Checkout	2026-08-08T20:08:04.0714761Z ##[group]Getting Git version info
+Review	Checkout	2026-08-08T20:08:04.0716238Z Working directory is '/home/runner/work/NextSlope-10x/NextSlope-10x'
+Review	Checkout	2026-08-08T20:08:04.0773218Z [command]/usr/bin/git version
+Review	Checkout	2026-08-08T20:08:04.0940570Z git version 2.54.0
+Review	Checkout	2026-08-08T20:08:04.0945616Z ##[endgroup]
+Review	Checkout	2026-08-08T20:08:04.0953554Z Temporarily overriding HOME='/home/runner/work/_temp/65ee9152-4c9d-42e8-84e3-439171a19054' before making global git config changes
+Review	Checkout	2026-08-08T20:08:04.0956477Z Adding repository directory to the temporary git global config as a safe directory
+Review	Checkout	2026-08-08T20:08:04.0959162Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/NextSlope-10x/NextSlope-10x
+Review	Checkout	2026-08-08T20:08:04.2488750Z Deleting the contents of '/home/runner/work/NextSlope-10x/NextSlope-10x'
+Review	Checkout	2026-08-08T20:08:04.2491625Z ##[group]Initializing the repository
+Review	Checkout	2026-08-08T20:08:04.2493469Z [command]/usr/bin/git init /home/runner/work/NextSlope-10x/NextSlope-10x
+Review	Checkout	2026-08-08T20:08:04.2511699Z hint: Using 'master' as the name for the initial branch. This default branch name
+Review	Checkout	2026-08-08T20:08:04.2514291Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Review	Checkout	2026-08-08T20:08:04.2516673Z hint: to use in all of your new repositories, which will suppress this warning,
+Review	Checkout	2026-08-08T20:08:04.2518709Z hint: call:
+Review	Checkout	2026-08-08T20:08:04.2519699Z hint:
+Review	Checkout	2026-08-08T20:08:04.2521125Z hint: 	git config --global init.defaultBranch <name>
+Review	Checkout	2026-08-08T20:08:04.2522705Z hint:
+Review	Checkout	2026-08-08T20:08:04.2524231Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Review	Checkout	2026-08-08T20:08:04.2528258Z hint: 'development'. The just-created branch can be renamed via this command:
+Review	Checkout	2026-08-08T20:08:04.2529562Z hint:
+Review	Checkout	2026-08-08T20:08:04.2530264Z hint: 	git branch -m <name>
+Review	Checkout	2026-08-08T20:08:04.2531016Z hint:
+Review	Checkout	2026-08-08T20:08:04.2532015Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Review	Checkout	2026-08-08T20:08:04.2533691Z Initialized empty Git repository in /home/runner/work/NextSlope-10x/NextSlope-10x/.git/
+Review	Checkout	2026-08-08T20:08:04.2541131Z [command]/usr/bin/git remote add origin https://github.com/wbiniecki/NextSlope-10x
+Review	Checkout	2026-08-08T20:08:04.8034522Z ##[endgroup]
+Review	Checkout	2026-08-08T20:08:04.8036935Z ##[group]Disabling automatic garbage collection
+Review	Checkout	2026-08-08T20:08:04.8038743Z [command]/usr/bin/git config --local gc.auto 0
+Review	Checkout	2026-08-08T20:08:04.8042624Z ##[endgroup]
+Review	Checkout	2026-08-08T20:08:04.8044388Z ##[group]Setting up auth
+Review	Checkout	2026-08-08T20:08:04.8046185Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Review	Checkout	2026-08-08T20:08:04.8078639Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Review	Checkout	2026-08-08T20:08:04.8465033Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Review	Checkout	2026-08-08T20:08:04.8506872Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Review	Checkout	2026-08-08T20:08:04.8790455Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Review	Checkout	2026-08-08T20:08:04.8815659Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Review	Checkout	2026-08-08T20:08:04.9069887Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Review	Checkout	2026-08-08T20:08:04.9114132Z ##[endgroup]
+Review	Checkout	2026-08-08T20:08:04.9118290Z ##[group]Fetching the repository
+Review	Checkout	2026-08-08T20:08:04.9127419Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+Review	Checkout	2026-08-08T20:08:05.7391770Z From https://github.com/wbiniecki/NextSlope-10x
+Review	Checkout	2026-08-08T20:08:05.7394153Z  * [new branch]      feature/10x-19-ci-cd-code-review -> origin/feature/10x-19-ci-cd-code-review
+Review	Checkout	2026-08-08T20:08:05.7398812Z  * [new branch]      feature/10x-6-account-authentication -> origin/feature/10x-6-account-authentication
+Review	Checkout	2026-08-08T20:08:05.7400684Z  * [new branch]      main       -> origin/main
+Review	Checkout	2026-08-08T20:08:05.7417698Z  * [new branch]      test/negative-verification -> origin/test/negative-verification
+Review	Checkout	2026-08-08T20:08:05.7439596Z [command]/usr/bin/git rev-parse --verify --quiet d7e229910a20b42aa43a7d245a88f9a03c5ff6ec^{object}
+Review	Checkout	2026-08-08T20:08:05.7471630Z d7e229910a20b42aa43a7d245a88f9a03c5ff6ec
+Review	Checkout	2026-08-08T20:08:05.7480144Z ##[endgroup]
+Review	Checkout	2026-08-08T20:08:05.7481676Z ##[group]Determining the checkout info
+Review	Checkout	2026-08-08T20:08:05.7484081Z ##[endgroup]
+Review	Checkout	2026-08-08T20:08:05.7498832Z [command]/usr/bin/git sparse-checkout disable
+Review	Checkout	2026-08-08T20:08:05.7563045Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Review	Checkout	2026-08-08T20:08:05.7609086Z ##[group]Checking out the ref
+Review	Checkout	2026-08-08T20:08:05.7612229Z [command]/usr/bin/git checkout --progress --force d7e229910a20b42aa43a7d245a88f9a03c5ff6ec
+Review	Checkout	2026-08-08T20:08:05.7896754Z Note: switching to 'd7e229910a20b42aa43a7d245a88f9a03c5ff6ec'.
+Review	Checkout	2026-08-08T20:08:05.7904259Z 
+Review	Checkout	2026-08-08T20:08:05.7905346Z You are in 'detached HEAD' state. You can look around, make experimental
+Review	Checkout	2026-08-08T20:08:05.7908354Z changes and commit them, and you can discard any commits you make in this
+Review	Checkout	2026-08-08T20:08:05.7910714Z state without impacting any branches by switching back to a branch.
+Review	Checkout	2026-08-08T20:08:05.7912181Z 
+Review	Checkout	2026-08-08T20:08:05.7913130Z If you want to create a new branch to retain commits you create, you may
+Review	Checkout	2026-08-08T20:08:05.7916049Z do so (now or later) by using -c with the switch command. Example:
+Review	Checkout	2026-08-08T20:08:05.7917625Z 
+Review	Checkout	2026-08-08T20:08:05.7918209Z   git switch -c <new-branch-name>
+Review	Checkout	2026-08-08T20:08:05.7919458Z 
+Review	Checkout	2026-08-08T20:08:05.7920063Z Or undo this operation with:
+Review	Checkout	2026-08-08T20:08:05.7920943Z 
+Review	Checkout	2026-08-08T20:08:05.7921396Z   git switch -
+Review	Checkout	2026-08-08T20:08:05.7922017Z 
+Review	Checkout	2026-08-08T20:08:05.7923165Z Turn off this advice by setting config variable advice.detachedHead to false
+Review	Checkout	2026-08-08T20:08:05.7924895Z 
+Review	Checkout	2026-08-08T20:08:05.7926347Z HEAD is now at d7e2299 test: deliberate flyway-forward-only violation (do not merge)
+Review	Checkout	2026-08-08T20:08:05.7931138Z ##[endgroup]
+Review	Checkout	2026-08-08T20:08:05.8084788Z [command]/usr/bin/git log -1 --format=%H
+Review	Checkout	2026-08-08T20:08:05.8087723Z d7e229910a20b42aa43a7d245a88f9a03c5ff6ec
+Review	Compute the merge-base diff	﻿2026-08-08T20:08:05.8309262Z ##[group]Run set -euo pipefail
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8310131Z [36;1mset -euo pipefail[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8311444Z [36;1m# set -euo pipefail rather than &&-chaining: a merge-base failure must fail the step[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8313622Z [36;1m# loudly instead of leaving an absent diff the reviewer would report as invalid_input —[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8315407Z [36;1m# a shell bug masquerading as a reviewer problem.[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8317517Z [36;1mgit fetch --no-tags origin "+refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF"[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8319165Z [36;1mbase_sha="$(git merge-base "origin/$BASE_REF" HEAD)"[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8320862Z [36;1m# Lockfiles are excluded and nothing else is. They are machine-generated, no review[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8322988Z [36;1m# criterion can apply to them, and one dependency install produces a diff several times[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8325089Z [36;1m# the CLI's 200 KB MAX_DIFF_BYTES guard — which would make every review on that PR exit 1[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8327188Z [36;1m# and report invalid_input, reviewing none of the hand-written code.[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8328496Z [36;1mgit diff "$base_sha" HEAD -- . \[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8329387Z [36;1m  ':(exclude)**/package-lock.json' \[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8330315Z [36;1m  ':(exclude)**/pnpm-lock.yaml' \[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8331252Z [36;1m  ':(exclude)**/yarn.lock' > "$DIFF_FILE"[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8332103Z [36;1m[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8332657Z [36;1mecho "Base ref: $BASE_REF ($base_sha)"[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8333654Z [36;1mecho "Diff bytes: $(wc -c < "$DIFF_FILE")"[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8334632Z [36;1mgit diff --stat "$base_sha" HEAD[0m
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8391003Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8392068Z env:
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8392495Z   BASE_REF: main
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8393094Z   DIFF_FILE: /home/runner/work/_temp/pr.diff
+Review	Compute the merge-base diff	2026-08-08T20:08:05.8393906Z ##[endgroup]
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0595339Z Base ref: main (148739200b200657e616d1e54bea30afab13c6e4)
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0611850Z Diff bytes: 119249
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0716769Z  .github/actions/ai-reviewer/action.yml             |   179 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0719127Z  .github/workflows/review.yml                       |   208 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0723521Z  .gitignore                                         |     5 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0726535Z  context/changes/ci-cd-code-review/change.md        |    15 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0728689Z  context/changes/ci-cd-code-review/plan-brief.md    |   126 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0730734Z  context/changes/ci-cd-code-review/plan.md          |   667 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0732980Z  context/changes/ci-cd-code-review/requirements.md  |   224 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0735253Z  .../ci-cd-code-review/reviews/plan-review.md       |   148 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0738680Z  packages/code-reviewer/package-lock.json           | 12538 +++++++++++++++++--
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0741274Z  packages/code-reviewer/package.json                |     3 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0743218Z  packages/code-reviewer/promptfoo/assertions.js     |    68 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0745124Z  packages/code-reviewer/promptfoo/grader.js         |    63 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0747236Z  packages/code-reviewer/promptfoo/prompt.js         |    45 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0748713Z  .../promptfoo/promptfooconfig.compare.yaml         |    59 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0750051Z  .../code-reviewer/promptfoo/promptfooconfig.yaml   |    51 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0751379Z  packages/code-reviewer/promptfoo/provider.js       |    64 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0752723Z  packages/code-reviewer/promptfoo/tests.yaml        |    50 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0754069Z  packages/code-reviewer/scripts/emit-schema.ts      |    23 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0755373Z  packages/code-reviewer/src/cli.ts                  |     2 +-
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0756961Z  .../resources/db/migration/V1__create_users.sql    |     1 +
+Review	Compute the merge-base diff	2026-08-08T20:08:06.0758168Z  20 files changed, 13400 insertions(+), 1139 deletions(-)
+Review	Review the diff	﻿2026-08-08T20:08:06.1169770Z Prepare all required actions
+Review	Review the diff	2026-08-08T20:08:06.1170918Z Getting action download info
+Review	Review the diff	2026-08-08T20:08:06.1738132Z Download action repository 'actions/setup-node@820762786026740c76f36085b0efc47a31fe5020' (SHA:820762786026740c76f36085b0efc47a31fe5020)
+Review	Review the diff	2026-08-08T20:08:06.4451843Z ##[group]Run ./.github/actions/ai-reviewer
+Review	Review the diff	2026-08-08T20:08:06.4452219Z with:
+Review	Review the diff	2026-08-08T20:08:06.4453177Z   oauth-token: ***
+Review	Review the diff	2026-08-08T20:08:06.4453456Z   diff-file: /home/runner/work/_temp/pr.diff
+Review	Review the diff	2026-08-08T20:08:06.4453878Z   pr-title: TEST: negative verification of the AI reviewer (DO NOT MERGE)
+Review	Review the diff	2026-08-08T20:08:06.4456535Z   pr-body: Scratch PR proving the AI reviewer can **block**, not just pass. Close without merging.
+Review	Review the diff	
+Review	Review the diff	Every review run so far returned `passed`, so three paths were unproven against the real API:
+Review	Review the diff	the exit-3 to `blocked` mapping, adding `ai-cr:failed`, and removing a stale `ai-cr:passed`.
+Review	Review the diff	
+Review	Review the diff	Planted defect: `V1__create_users.sql`, an already-applied migration, is edited in place instead
+Review	Review the diff	of adding a new `V6__` file — a `flyway-forward-only` violation.
+Review	Review the diff	
+Review	Review the diff	Expected: `ai-cr:failed`, a comment with a Blocking reasons section, and `verdict=blocked`.
+Review	Review the diff	A follow-up commit reverts the defect to prove the label swaps back.
+Review	Review the diff	
+Review	Review the diff	`ci.yml` is expected to fail red here (Flyway checksum mismatch). That is the point of the defect.
+Review	Review the diff	2026-08-08T20:08:06.4459021Z   node-version: 24
+Review	Review the diff	2026-08-08T20:08:06.4459271Z ##[endgroup]
+Review	Review the diff	2026-08-08T20:08:06.4521668Z ##[start-action display=Check exactly one credential was supplied;id=review.__run]
+Review	Review the diff	2026-08-08T20:08:06.4553214Z ##[group]Run set -euo pipefail
+Review	Review the diff	2026-08-08T20:08:06.4553592Z [36;1mset -euo pipefail[0m
+Review	Review the diff	2026-08-08T20:08:06.4553902Z [36;1mif [[ -n "$API_KEY" && -n "$OAUTH_TOKEN" ]]; then[0m
+Review	Review the diff	2026-08-08T20:08:06.4554401Z [36;1m  # Claude Code would silently prefer the API key (its auth precedence ranks the key[0m
+Review	Review the diff	2026-08-08T20:08:06.4554993Z [36;1m  # above the OAuth token), leaving no way to tell which account paid for a verdict.[0m
+Review	Review the diff	2026-08-08T20:08:06.4555564Z [36;1m  echo "::error::Supply exactly one of api-key or oauth-token, not both." >&2[0m
+Review	Review the diff	2026-08-08T20:08:06.4556174Z [36;1m  exit 1[0m
+Review	Review the diff	2026-08-08T20:08:06.4556400Z [36;1mfi[0m
+Review	Review the diff	2026-08-08T20:08:06.4556665Z [36;1mif [[ -z "$API_KEY" && -z "$OAUTH_TOKEN" ]]; then[0m
+Review	Review the diff	2026-08-08T20:08:06.4557190Z [36;1m  echo "::error::No credential supplied. Set either the api-key or the oauth-token input." >&2[0m
+Review	Review the diff	2026-08-08T20:08:06.4557881Z [36;1m  exit 1[0m
+Review	Review the diff	2026-08-08T20:08:06.4558099Z [36;1mfi[0m
+Review	Review the diff	2026-08-08T20:08:06.4609145Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Review	Review the diff	2026-08-08T20:08:06.4609527Z env:
+Review	Review the diff	2026-08-08T20:08:06.4609740Z   API_KEY: 
+Review	Review the diff	2026-08-08T20:08:06.4610388Z   OAUTH_TOKEN: ***
+Review	Review the diff	2026-08-08T20:08:06.4610631Z ##[endgroup]
+Review	Review the diff	2026-08-08T20:08:06.4705570Z ##[end-action id=review.__run;outcome=success;conclusion=success;duration_ms=18]
+Review	Review the diff	2026-08-08T20:08:06.4708863Z ##[start-action display=Resolve the reviewer package directory;id=review.resolve]
+Review	Review the diff	2026-08-08T20:08:06.4732773Z ##[group]Run set -euo pipefail
+Review	Review the diff	2026-08-08T20:08:06.4733136Z [36;1mset -euo pipefail[0m
+Review	Review the diff	2026-08-08T20:08:06.4733600Z [36;1m# The action sits at .github/actions/ai-reviewer, so the package it wraps is three levels[0m
+Review	Review the diff	2026-08-08T20:08:06.4734206Z [36;1m# up and then into packages/. Resolved from github.action_path rather than[0m
+Review	Review the diff	2026-08-08T20:08:06.4734778Z [36;1m# github.workspace so the action does not depend on where the caller checked out.[0m
+Review	Review the diff	2026-08-08T20:08:06.4735597Z [36;1mpackage_dir="$(cd "/home/runner/work/NextSlope-10x/NextSlope-10x/./.github/actions/ai-reviewer/../../../packages/code-reviewer" && pwd)"[0m
+Review	Review the diff	2026-08-08T20:08:06.4736582Z [36;1mecho "package-dir=$package_dir" >> "$GITHUB_OUTPUT"[0m
+Review	Review the diff	2026-08-08T20:08:06.4788140Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Review	Review the diff	2026-08-08T20:08:06.4788527Z ##[endgroup]
+Review	Review the diff	2026-08-08T20:08:06.4897478Z ##[end-action id=review.resolve;outcome=success;conclusion=success;duration_ms=18]
+Review	Review the diff	2026-08-08T20:08:06.4902362Z ##[start-action display=Set up Node;id=review.__actions_setup-node]
+Review	Review the diff	2026-08-08T20:08:06.4967789Z ##[group]Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+Review	Review the diff	2026-08-08T20:08:06.4968203Z with:
+Review	Review the diff	2026-08-08T20:08:06.4968421Z   node-version: 24
+Review	Review the diff	2026-08-08T20:08:06.4968653Z   check-latest: false
+Review	Review the diff	2026-08-08T20:08:06.4971300Z   token: ***
+Review	Review the diff	2026-08-08T20:08:06.4971549Z   package-manager-cache: true
+Review	Review the diff	2026-08-08T20:08:06.4971846Z ##[endgroup]
+Review	Review the diff	2026-08-08T20:08:06.6626420Z Found in cache @ /opt/hostedtoolcache/node/24.18.0/x64
+Review	Review the diff	2026-08-08T20:08:06.6629223Z ##[group]Environment details
+Review	Review the diff	2026-08-08T20:08:07.1977158Z node: v24.18.0
+Review	Review the diff	2026-08-08T20:08:07.1978117Z npm: 11.16.0
+Review	Review the diff	2026-08-08T20:08:07.1986003Z yarn: 1.22.22
+Review	Review the diff	2026-08-08T20:08:07.1987203Z ##[endgroup]
+Review	Review the diff	2026-08-08T20:08:07.2037722Z ##[end-action id=review.__actions_setup-node;outcome=success;conclusion=success;duration_ms=713]
+Review	Review the diff	2026-08-08T20:08:07.2040425Z ##[start-action display=Install reviewer dependencies;id=review.__run_2]
+Review	Review the diff	2026-08-08T20:08:07.2066732Z ##[group]Run npm ci
+Review	Review the diff	2026-08-08T20:08:07.2066998Z [36;1mnpm ci[0m
+Review	Review the diff	2026-08-08T20:08:07.2121237Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Review	Review the diff	2026-08-08T20:08:07.2121624Z ##[endgroup]
+Review	Review the diff	2026-08-08T20:08:12.8551564Z npm warn deprecated boolean@3.2.0: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+Review	Review the diff	2026-08-08T20:08:13.1256029Z npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+Review	Review the diff	2026-08-08T20:08:20.6070267Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+Review	Review the diff	2026-08-08T20:09:00.3295467Z 
+Review	Review the diff	2026-08-08T20:09:00.3297049Z added 700 packages, and audited 701 packages in 53s
+Review	Review the diff	2026-08-08T20:09:00.3300610Z 
+Review	Review the diff	2026-08-08T20:09:00.3301264Z 150 packages are looking for funding
+Review	Review the diff	2026-08-08T20:09:00.3312225Z   run `npm fund` for details
+Review	Review the diff	2026-08-08T20:09:00.3708944Z 
+Review	Review the diff	2026-08-08T20:09:00.3709966Z 9 vulnerabilities (3 moderate, 6 high)
+Review	Review the diff	2026-08-08T20:09:00.3738299Z npm warn allow-scripts 6 packages have install scripts not yet covered by allowScripts:
+Review	Review the diff	2026-08-08T20:09:00.3738953Z 
+Review	Review the diff	2026-08-08T20:09:00.3739900Z npm warn allow-scripts   sharp@0.34.5 (install: node install/check.js || npm run build)
+Review	Review the diff	2026-08-08T20:09:00.3740763Z To address issues that do not require attention, run:
+Review	Review the diff	2026-08-08T20:09:00.3742438Z npm warn allow-scripts   @playwright/browser-chromium@1.62.1 (install: node install.js)
+Review	Review the diff	2026-08-08T20:09:00.3743224Z   npm audit fix
+Review	Review the diff	2026-08-08T20:09:00.3744213Z npm warn allow-scripts   @swc/core@1.15.47 (postinstall: node postinstall.js)
+Review	Review the diff	2026-08-08T20:09:00.3744775Z 
+Review	Review the diff	2026-08-08T20:09:00.3745478Z npm warn allow-scripts   esbuild@0.28.1 (postinstall: node install.js)
+Review	Review the diff	2026-08-08T20:09:00.3746492Z To address all issues (including breaking changes), run:
+Review	Review the diff	2026-08-08T20:09:00.3766829Z npm warn allow-scripts   onnxruntime-node@1.24.3 (postinstall: node ./script/install)
+Review	Review the diff	2026-08-08T20:09:00.3767641Z   npm audit fix --force
+Review	Review the diff	2026-08-08T20:09:00.3786740Z npm warn allow-scripts   protobufjs@7.6.5 (postinstall: node scripts/postinstall)
+Review	Review the diff	2026-08-08T20:09:00.3787428Z 
+Review	Review the diff	2026-08-08T20:09:00.3787957Z npm warn allow-scripts
+Review	Review the diff	2026-08-08T20:09:00.3788432Z Run `npm audit` for details.
+Review	Review the diff	2026-08-08T20:09:00.3807406Z npm warn allow-scripts Run `npm approve-scripts --allow-scripts-pending` to review, or `npm approve-scripts <pkg>` to allow.
+Review	Review the diff	2026-08-08T20:09:00.4815388Z ##[end-action id=review.__run_2;outcome=success;conclusion=success;duration_ms=53277]
+Review	Review the diff	2026-08-08T20:09:00.4821734Z ##[start-action display=Credential smoke (temporary diagnostic);id=review.__run_3]
+Review	Review the diff	2026-08-08T20:09:00.4840218Z ##[group]Run set +e
+Review	Review the diff	2026-08-08T20:09:00.4840511Z [36;1mset +e[0m
+Review	Review the diff	2026-08-08T20:09:00.4840755Z [36;1mif [[ -n "$API_KEY" ]]; then[0m
+Review	Review the diff	2026-08-08T20:09:00.4841086Z [36;1m  export ANTHROPIC_API_KEY="$API_KEY"[0m
+Review	Review the diff	2026-08-08T20:09:00.4841401Z [36;1melse[0m
+Review	Review the diff	2026-08-08T20:09:00.4841693Z [36;1m  export CLAUDE_CODE_OAUTH_TOKEN="$OAUTH_TOKEN"[0m
+Review	Review the diff	2026-08-08T20:09:00.4842232Z [36;1mfi[0m
+Review	Review the diff	2026-08-08T20:09:00.4842468Z [36;1mnpm run smoke --silent[0m
+Review	Review the diff	2026-08-08T20:09:00.4842751Z [36;1mecho "smoke exited $?"[0m
+Review	Review the diff	2026-08-08T20:09:01.1499804Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Review	Review the diff	2026-08-08T20:09:01.1500435Z env:
+Review	Review the diff	2026-08-08T20:09:01.1500801Z   API_KEY: 
+Review	Review the diff	2026-08-08T20:09:01.1502276Z   OAUTH_TOKEN: ***
+Review	Review the diff	2026-08-08T20:09:01.1502613Z ##[endgroup]
+Review	Review the diff	2026-08-08T20:09:01.9067168Z env.ANTHROPIC_API_KEY: unset (expecting a CLI login credential)
+Review	Review the diff	2026-08-08T20:09:03.1308229Z init.claude_code_version: 2.1.224
+Review	Review the diff	2026-08-08T20:09:03.1313706Z init.apiKeySource: none
+Review	Review the diff	2026-08-08T20:09:03.1315483Z init.model: claude-sonnet-5
+Review	Review the diff	2026-08-08T20:09:03.1324121Z init.permissionMode: dontAsk
+Review	Review the diff	2026-08-08T20:09:03.1348674Z init.tools: Task, Bash, CronCreate, CronDelete, CronList, DesignSync, Edit, EnterWorktree, ExitWorktree, ListAgents, Monitor, NotebookEdit, PushNotification, Read, RemoteTrigger, ReportFindings, ScheduleWakeup, SendMessage, ShareOnboardingGuide, Skill, TaskCreate, TaskGet, TaskList, TaskOutput, TaskStop, TaskUpdate, ToolSearch, WebFetch, WebSearch, Workflow, Write
+Review	Review the diff	2026-08-08T20:09:06.0587063Z result.subtype: success
+Review	Review the diff	2026-08-08T20:09:06.0591335Z result.num_turns: 1
+Review	Review the diff	2026-08-08T20:09:06.0592299Z result.total_cost_usd: 0.14577000000000004
+Review	Review the diff	2026-08-08T20:09:06.0593242Z result.result: pong
+Review	Review the diff	2026-08-08T20:09:06.3704839Z smoke exited 0
+Review	Review the diff	2026-08-08T20:09:06.3712956Z ##[end-action id=review.__run_3;outcome=success;conclusion=success;duration_ms=5889]
+Review	Review the diff	2026-08-08T20:09:06.3724170Z ##[start-action display=Review the diff;id=review.review]
+Review	Review the diff	2026-08-08T20:09:06.3752537Z ##[group]Run # GitHub invokes `shell: bash` as `bash --noprofile --norc -e -o pipefail`, so errexit is
+Review	Review the diff	2026-08-08T20:09:06.3753694Z [36;1m# GitHub invokes `shell: bash` as `bash --noprofile --norc -e -o pipefail`, so errexit is[0m
+Review	Review the diff	2026-08-08T20:09:06.3754721Z [36;1m# already ON and `set -uo pipefail` does not clear it. Without this `set +e` the step aborts[0m
+Review	Review the diff	2026-08-08T20:09:06.3756176Z [36;1m# the moment the reviewer exits non-zero and never reaches the mapping below, turning[0m
+Review	Review the diff	2026-08-08T20:09:06.3757159Z [36;1m# documented outcomes 1-3 into an action failure and leaving `verdict` unset.[0m
+Review	Review the diff	2026-08-08T20:09:06.3757829Z [36;1mset +e[0m
+Review	Review the diff	2026-08-08T20:09:06.3758182Z [36;1mset -uo pipefail[0m
+Review	Review the diff	2026-08-08T20:09:06.3758592Z [36;1mmkdir -p "$REPORT_DIR"[0m
+Review	Review the diff	2026-08-08T20:09:06.3759462Z [36;1mecho "report-dir=$REPORT_DIR" >> "$GITHUB_OUTPUT"[0m
+Review	Review the diff	2026-08-08T20:09:06.3759962Z [36;1m[0m
+Review	Review the diff	2026-08-08T20:09:06.3760564Z [36;1m# Exported rather than declared above so exactly one credential variable exists — an[0m
+Review	Review the diff	2026-08-08T20:09:06.3761521Z [36;1m# empty ANTHROPIC_API_KEY alongside a real token invites a "which one authenticated?"[0m
+Review	Review the diff	2026-08-08T20:09:06.3762517Z [36;1m# question that emptiness semantics shouldn't have to answer. The SDK reaches these[0m
+Review	Review the diff	2026-08-08T20:09:06.3763483Z [36;1m# because agent.ts never sets options.env, so the native subprocess inherits them[0m
+Review	Review the diff	2026-08-08T20:09:06.3764213Z [36;1m# (trap 4 in the package's AGENTS.md).[0m
+Review	Review the diff	2026-08-08T20:09:06.3764723Z [36;1mif [[ -n "$API_KEY" ]]; then[0m
+Review	Review the diff	2026-08-08T20:09:06.3765281Z [36;1m  export ANTHROPIC_API_KEY="$API_KEY"[0m
+Review	Review the diff	2026-08-08T20:09:06.3766074Z [36;1melse[0m
+Review	Review the diff	2026-08-08T20:09:06.3766529Z [36;1m  export CLAUDE_CODE_OAUTH_TOKEN="$OAUTH_TOKEN"[0m
+Review	Review the diff	2026-08-08T20:09:06.3767064Z [36;1mfi[0m
+Review	Review the diff	2026-08-08T20:09:06.3767388Z [36;1m[0m
+Review	Review the diff	2026-08-08T20:09:06.3767934Z [36;1m# Exit codes 1-3 are meaningful outcomes for the caller to branch on, not action[0m
+Review	Review the diff	2026-08-08T20:09:06.3768848Z [36;1m# failures, so `set -e` stays off and the numeric code is captured explicitly.[0m
+Review	Review the diff	2026-08-08T20:09:06.3769786Z [36;1m# `continue-on-error: true` would expose only success/failure and `cmd || true` would[0m
+Review	Review the diff	2026-08-08T20:09:06.3770795Z [36;1m# discard $? — either collapses the four-way verdict into pass/fail and silently drops[0m
+Review	Review the diff	2026-08-08T20:09:06.3771685Z [36;1m# the "no misleading label on a missing verdict" behaviour.[0m
+Review	Review the diff	2026-08-08T20:09:06.3772828Z [36;1mnpm run review --silent -- --diff-file "$DIFF_FILE" --out "$REPORT_DIR" --verbose[0m
+Review	Review the diff	2026-08-08T20:09:06.3773528Z [36;1mcode=$?[0m
+Review	Review the diff	2026-08-08T20:09:06.3773865Z [36;1m[0m
+Review	Review the diff	2026-08-08T20:09:06.3774195Z [36;1mcase "$code" in[0m
+Review	Review the diff	2026-08-08T20:09:06.3774588Z [36;1m  0) verdict=passed ;;[0m
+Review	Review the diff	2026-08-08T20:09:06.3775032Z [36;1m  1) verdict=invalid_input ;;[0m
+Review	Review the diff	2026-08-08T20:09:06.3775508Z [36;1m  2) verdict=no_result ;;[0m
+Review	Review the diff	2026-08-08T20:09:06.3776154Z [36;1m  3) verdict=blocked ;;[0m
+Review	Review the diff	2026-08-08T20:09:06.3776561Z [36;1m  *)[0m
+Review	Review the diff	2026-08-08T20:09:06.3777141Z [36;1m    echo "::error::Reviewer exited $code, outside the documented 0-3 contract." >&2[0m
+Review	Review the diff	2026-08-08T20:09:06.3777826Z [36;1m    exit 1[0m
+Review	Review the diff	2026-08-08T20:09:06.3778170Z [36;1m    ;;[0m
+Review	Review the diff	2026-08-08T20:09:06.3778503Z [36;1mesac[0m
+Review	Review the diff	2026-08-08T20:09:06.3778829Z [36;1m[0m
+Review	Review the diff	2026-08-08T20:09:06.3779254Z [36;1mecho "Reviewer exited $code -> verdict=$verdict"[0m
+Review	Review the diff	2026-08-08T20:09:06.3779858Z [36;1mecho "exit-code=$code" >> "$GITHUB_OUTPUT"[0m
+Review	Review the diff	2026-08-08T20:09:06.3780452Z [36;1mecho "verdict=$verdict" >> "$GITHUB_OUTPUT"[0m
+Review	Review the diff	2026-08-08T20:09:06.3846769Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Review	Review the diff	2026-08-08T20:09:06.3847350Z env:
+Review	Review the diff	2026-08-08T20:09:06.3847661Z   API_KEY: 
+Review	Review the diff	2026-08-08T20:09:06.3848679Z   OAUTH_TOKEN: ***
+Review	Review the diff	2026-08-08T20:09:06.3849085Z   DIFF_FILE: /home/runner/work/_temp/pr.diff
+Review	Review the diff	2026-08-08T20:09:06.3849641Z   REPORT_DIR: /home/runner/work/_temp/ai-reviewer
+Review	Review the diff	2026-08-08T20:09:06.3850134Z ##[endgroup]
+Review	Review the diff	2026-08-08T20:09:07.1705193Z diff: /home/runner/work/_temp/pr.diff (119249 bytes, limit 200000)
+Review	Review the diff	2026-08-08T20:09:07.1707129Z configured model: claude-sonnet-5, budget: $0.50, max turns: 3
+Review	Review the diff	2026-08-08T20:09:07.1708042Z fail-on: high
+Review	Review the diff	2026-08-08T20:09:40.5654750Z resolved model: claude-sonnet-5 (2.1.224)
+Review	Review the diff	2026-08-08T20:09:40.5673503Z Blocked — 1 finding(s) at or above high:
+Review	Review the diff	2026-08-08T20:09:40.5674035Z turns: 3, total cost: $0.4558
+Review	Review the diff	2026-08-08T20:09:40.5678589Z   - critical: flyway-forward-only at src/main/resources/db/migration/V1__create_users.sql:6 — This edits the existing, already-applied V1__create_users.sql to add a display_name VARCHAR(100) column, rather than adding a new V6__ migration. V1-V5 are committed and applied; on Neon's free tier (no rollback) this in-place edit can never be corrected, and any environment that already ran V1 will have a schema that silently diverges from this file going forward. The fix is a new forward-only migration such as V6__add_display_name_to_users.sql performing an ALTER TABLE.
+Review	Review the diff	2026-08-08T20:09:40.5698775Z modelUsage: {"claude-haiku-4-5-20251001":{"inputTokens":38765,"outputTokens":15,"cacheReadInputTokens":0,"cacheCreationInputTokens":0,"webSearchRequests":0,"costUSD":0.03884,"contextWindow":200000,"maxOutputTokens":32000,"canonicalModel":"claude-haiku-4-5","provider":"firstParty"},"claude-sonnet-5":{"inputTokens":4,"outputTokens":3185,"cacheReadInputTokens":56352,"cacheCreationInputTokens":58713,"webSearchRequests":0,"costUSD":0.41697059999999997,"contextWindow":1000000,"maxOutputTokens":64000,"canonicalModel":"claude-sonnet-5","provider":"firstParty"}}
+Review	Review the diff	2026-08-08T20:09:40.5704756Z Wrote /home/runner/work/_temp/ai-reviewer/review.json and /home/runner/work/_temp/ai-reviewer/review.md
+Review	Review the diff	2026-08-08T20:09:40.6150651Z Reviewer exited 3 -> verdict=blocked
+Review	Review the diff	2026-08-08T20:09:40.6160791Z ##[end-action id=review.review;outcome=success;conclusion=success;duration_ms=34243]
+Review	Publish the report to the job summary	﻿2026-08-08T20:09:40.6226252Z ##[group]Run set -uo pipefail
+Review	Publish the report to the job summary	2026-08-08T20:09:40.6226600Z [36;1mset -uo pipefail[0m
+Review	Publish the report to the job summary	2026-08-08T20:09:40.6226948Z [36;1mif [ -n "${REPORT_DIR:-}" ] && [ -f "$REPORT_DIR/review.md" ]; then[0m
+Review	Publish the report to the job summary	2026-08-08T20:09:40.6227390Z [36;1m  cat "$REPORT_DIR/review.md" >> "$GITHUB_STEP_SUMMARY"[0m
+Review	Publish the report to the job summary	2026-08-08T20:09:40.6227724Z [36;1melse[0m
+Review	Publish the report to the job summary	2026-08-08T20:09:40.6228101Z [36;1m  echo "No report was rendered (verdict: ${VERDICT:-none})." >> "$GITHUB_STEP_SUMMARY"[0m
+Review	Publish the report to the job summary	2026-08-08T20:09:40.6228515Z [36;1mfi[0m
+Review	Publish the report to the job summary	2026-08-08T20:09:40.6275104Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Review	Publish the report to the job summary	2026-08-08T20:09:40.6275444Z env:
+Review	Publish the report to the job summary	2026-08-08T20:09:40.6275809Z   REPORT_DIR: /home/runner/work/_temp/ai-reviewer
+Review	Publish the report to the job summary	2026-08-08T20:09:40.6276125Z   VERDICT: blocked
+Review	Publish the report to the job summary	2026-08-08T20:09:40.6276346Z ##[endgroup]
+Review	Swap the pass/fail label	﻿2026-08-08T20:09:40.6453675Z ##[group]Run actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
+Review	Swap the pass/fail label	2026-08-08T20:09:40.6454088Z with:
+Review	Swap the pass/fail label	2026-08-08T20:09:40.6456877Z   script: const swap = {
+Review	Swap the pass/fail label	  passed: { add: 'ai-cr:passed', remove: 'ai-cr:failed' },
+Review	Swap the pass/fail label	  blocked: { add: 'ai-cr:failed', remove: 'ai-cr:passed' },
+Review	Swap the pass/fail label	}[process.env.VERDICT];
+Review	Swap the pass/fail label	
+Review	Swap the pass/fail label	// invalid_input and no_result mean no verdict was produced, so either label would be
+Review	Swap the pass/fail label	// a claim this run never made. Leave whatever is there alone.
+Review	Swap the pass/fail label	if (swap === undefined) {
+Review	Swap the pass/fail label	  core.info(`verdict=${process.env.VERDICT || 'none'} — leaving labels untouched.`);
+Review	Swap the pass/fail label	  return;
+Review	Swap the pass/fail label	}
+Review	Swap the pass/fail label	
+Review	Swap the pass/fail label	const issue_number = context.payload.pull_request.number;
+Review	Swap the pass/fail label	await github.rest.issues.addLabels({
+Review	Swap the pass/fail label	  ...context.repo,
+Review	Swap the pass/fail label	  issue_number,
+Review	Swap the pass/fail label	  labels: [swap.add],
+Review	Swap the pass/fail label	});
+Review	Swap the pass/fail label	
+Review	Swap the pass/fail label	try {
+Review	Swap the pass/fail label	  await github.rest.issues.removeLabel({ ...context.repo, issue_number, name: swap.remove });
+Review	Swap the pass/fail label	} catch (error) {
+Review	Swap the pass/fail label	  // 404 is the normal case: on a first run the counterpart label was never applied.
+Review	Swap the pass/fail label	  if (error.status !== 404) throw error;
+Review	Swap the pass/fail label	}
+Review	Swap the pass/fail label	
+Review	Swap the pass/fail label	2026-08-08T20:09:40.6461853Z   github-token: ***
+Review	Swap the pass/fail label	2026-08-08T20:09:40.6462145Z   debug: false
+Review	Swap the pass/fail label	2026-08-08T20:09:40.6462396Z   user-agent: actions/github-script
+Review	Swap the pass/fail label	2026-08-08T20:09:40.6462687Z   result-encoding: json
+Review	Swap the pass/fail label	2026-08-08T20:09:40.6462923Z   retries: 0
+Review	Swap the pass/fail label	2026-08-08T20:09:40.6463171Z   retry-exempt-status-codes: 400,401,403,404,422
+Review	Swap the pass/fail label	2026-08-08T20:09:40.6463473Z env:
+Review	Swap the pass/fail label	2026-08-08T20:09:40.6463674Z   VERDICT: blocked
+Review	Swap the pass/fail label	2026-08-08T20:09:40.6463894Z ##[endgroup]
+Review	Swap the pass/fail label	2026-08-08T20:09:41.5629429Z DELETE /repos/wbiniecki/NextSlope-10x/issues/38/labels/ai-cr%3Apassed - 404 with id DC10:3F77DF:405BF7E:D971FFE:6A778D05 in 118ms
+Review	Post the review comment	﻿2026-08-08T20:09:41.5760841Z ##[group]Run actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
+Review	Post the review comment	2026-08-08T20:09:41.5761251Z with:
+Review	Post the review comment	2026-08-08T20:09:41.5765371Z   script: const fs = require('fs');
+Review	Post the review comment	const path = require('path');
+Review	Post the review comment	const { VERDICT, REPORT_DIR, REVIEWED_SHA } = process.env;
+Review	Post the review comment	
+Review	Post the review comment	// No report exists for these two, so the comment explains the exit code instead.
+Review	Post the review comment	const explanation = {
+Review	Post the review comment	  invalid_input: 'The reviewer exited `1` — invalid invocation or input, or a startup/auth failure before a session ran. No review was produced.',
+Review	Post the review comment	  no_result: 'The reviewer exited `2` — a session started but produced no usable result. No review was produced.',
+Review	Post the review comment	};
+Review	Post the review comment	
+Review	Post the review comment	const rendered = (VERDICT === 'passed' || VERDICT === 'blocked') && REPORT_DIR
+Review	Post the review comment	  ? fs.readFileSync(path.join(REPORT_DIR, 'review.md'), 'utf8')
+Review	Post the review comment	  : explanation[VERDICT] ?? `The review step did not complete (verdict: ${VERDICT || 'none'}).`;
+Review	Post the review comment	
+Review	Post the review comment	// A new comment per push, never an upsert, so this footer is the only thing telling a
+Review	Post the review comment	// reader which commit a given comment describes. It deliberately does not name the
+Review	Post the review comment	// model: review.json carries no run provenance and the workflow passes no --model.
+Review	Post the review comment	const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+Review	Post the review comment	const footer = `Reviewed commit \`${REVIEWED_SHA}\` · [workflow run](${runUrl})`;
+Review	Post the review comment	
+Review	Post the review comment	await github.rest.issues.createComment({
+Review	Post the review comment	  ...context.repo,
+Review	Post the review comment	  issue_number: context.payload.pull_request.number,
+Review	Post the review comment	  body: `${rendered.trimEnd()}\n\n---\n${footer}\n`,
+Review	Post the review comment	});
+Review	Post the review comment	
+Review	Post the review comment	2026-08-08T20:09:41.5772671Z   github-token: ***
+Review	Post the review comment	2026-08-08T20:09:41.5772908Z   debug: false
+Review	Post the review comment	2026-08-08T20:09:41.5773154Z   user-agent: actions/github-script
+Review	Post the review comment	2026-08-08T20:09:41.5773433Z   result-encoding: json
+Review	Post the review comment	2026-08-08T20:09:41.5773666Z   retries: 0
+Review	Post the review comment	2026-08-08T20:09:41.5773909Z   retry-exempt-status-codes: 400,401,403,404,422
+Review	Post the review comment	2026-08-08T20:09:41.5774211Z env:
+Review	Post the review comment	2026-08-08T20:09:41.5774415Z   VERDICT: blocked
+Review	Post the review comment	2026-08-08T20:09:41.5774678Z   REPORT_DIR: /home/runner/work/_temp/ai-reviewer
+Review	Post the review comment	2026-08-08T20:09:41.5775038Z   REVIEWED_SHA: d7e229910a20b42aa43a7d245a88f9a03c5ff6ec
+Review	Post the review comment	2026-08-08T20:09:41.5775367Z ##[endgroup]
+Review	Post Review the diff	﻿2026-08-08T20:09:42.2010410Z Post job cleanup.
+Review	Post Review the diff	2026-08-08T20:09:42.2013752Z ##[start-action display=Set up Node;id=__69d2245c-b6bc-4303-b4d4-5ec827e37639.__actions_setup-node]
+Review	Post Review the diff	2026-08-08T20:09:42.2053739Z Post job cleanup.
+Review	Post Review the diff	2026-08-08T20:09:42.3620940Z ##[end-action id=__69d2245c-b6bc-4303-b4d4-5ec827e37639.__actions_setup-node;outcome=success;conclusion=success;duration_ms=160]
+Review	Post Checkout	﻿2026-08-08T20:09:42.3844169Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Review	Post Checkout	2026-08-08T20:09:42.3846465Z Post job cleanup.
+Review	Post Checkout	2026-08-08T20:09:42.5434314Z [command]/usr/bin/git version
+Review	Post Checkout	2026-08-08T20:09:42.5536586Z git version 2.54.0
+Review	Post Checkout	2026-08-08T20:09:42.5624302Z Temporarily overriding HOME='/home/runner/work/_temp/ef1d25ea-a90b-45ba-bc06-a428a8e87576' before making global git config changes
+Review	Post Checkout	2026-08-08T20:09:42.5632752Z Adding repository directory to the temporary git global config as a safe directory
+Review	Post Checkout	2026-08-08T20:09:42.5644810Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/NextSlope-10x/NextSlope-10x
+Review	Post Checkout	2026-08-08T20:09:42.5707322Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Review	Post Checkout	2026-08-08T20:09:42.5797453Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Review	Post Checkout	2026-08-08T20:09:42.6207854Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Review	Post Checkout	2026-08-08T20:09:42.6226566Z http.https://github.com/.extraheader
+Review	Post Checkout	2026-08-08T20:09:42.6259687Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+Review	Post Checkout	2026-08-08T20:09:42.6310646Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Review	Post Checkout	2026-08-08T20:09:42.6775314Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Review	Post Checkout	2026-08-08T20:09:42.6827245Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Review	Complete job	﻿2026-08-08T20:09:42.7277835Z Cleaning up orphan processes
+Review	Complete job	2026-08-08T20:09:42.7564172Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

@@ -1,0 +1,16 @@
+Review	Review the diff	﻿2026-08-08T20:08:06.1169770Z Prepare all required actions
+Review	Review the diff	2026-08-08T20:08:06.1170918Z Getting action download info
+Review	Review the diff	2026-08-08T20:08:06.1738132Z Download action repository 'actions/setup-node@820762786026740c76f36085b0efc47a31fe5020' (SHA:820762786026740c76f36085b0efc47a31fe5020)
+Review	Review the diff	2026-08-08T20:08:06.4451843Z ##[group]Run ./.github/actions/ai-reviewer
+Review	Review the diff	2026-08-08T20:08:06.4452219Z with:
+Review	Review the diff	2026-08-08T20:09:07.1705193Z diff: /home/runner/work/_temp/pr.diff (119249 bytes, limit 200000)
+Review	Review the diff	2026-08-08T20:09:07.1707129Z configured model: claude-sonnet-5, budget: $0.50, max turns: 3
+Review	Review the diff	2026-08-08T20:09:07.1708042Z fail-on: high
+Review	Review the diff	2026-08-08T20:09:40.5654750Z resolved model: claude-sonnet-5 (2.1.224)
+Review	Review the diff	2026-08-08T20:09:40.5673503Z Blocked — 1 finding(s) at or above high:
+Review	Review the diff	2026-08-08T20:09:40.5674035Z turns: 3, total cost: $0.4558
+Review	Review the diff	2026-08-08T20:09:40.5678589Z   - critical: flyway-forward-only at src/main/resources/db/migration/V1__create_users.sql:6 — This edits the existing, already-applied V1__create_users.sql to add a display_name VARCHAR(100) column, rather than adding a new V6__ migration. V1-V5 are committed and applied; on Neon's free tier (no rollback) this in-place edit can never be corrected, and any environment that already ran V1 will have a schema that silently diverges from this file going forward. The fix is a new forward-only migration such as V6__add_display_name_to_users.sql performing an ALTER TABLE.
+Review	Review the diff	2026-08-08T20:09:40.5698775Z modelUsage: {"claude-haiku-4-5-20251001":{"inputTokens":38765,"outputTokens":15,"cacheReadInputTokens":0,"cacheCreationInputTokens":0,"webSearchRequests":0,"costUSD":0.03884,"contextWindow":200000,"maxOutputTokens":32000,"canonicalModel":"claude-haiku-4-5","provider":"firstParty"},"claude-sonnet-5":{"inputTokens":4,"outputTokens":3185,"cacheReadInputTokens":56352,"cacheCreationInputTokens":58713,"webSearchRequests":0,"costUSD":0.41697059999999997,"contextWindow":1000000,"maxOutputTokens":64000,"canonicalModel":"claude-sonnet-5","provider":"firstParty"}}
+Review	Review the diff	2026-08-08T20:09:40.5704756Z Wrote /home/runner/work/_temp/ai-reviewer/review.json and /home/runner/work/_temp/ai-reviewer/review.md
+Review	Review the diff	2026-08-08T20:09:40.6150651Z Reviewer exited 3 -> verdict=blocked
+Review	Review the diff	2026-08-08T20:09:40.6160791Z ##[end-action id=review.review;outcome=success;conclusion=success;duration_ms=34243]
